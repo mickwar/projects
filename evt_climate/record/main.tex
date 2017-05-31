@@ -1,9 +1,12 @@
 \documentclass[12pt]{article}
 
 \usepackage{amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage[font=scriptsize]{caption}
 \include{setup}
 
 \setlength\parindent{0pt}
+
 
 \begin{document}
 
@@ -64,5 +67,229 @@ Extremal: need to enforce $r = \theta p^\theta \leq p^\theta = q$. Use prior $p(
 \bigskip
 
 Extremal: how to handle interexceedance times on groups? Suppose we have a time series that is 200 observations long. Due to some seasonal effects, we only wish to examine Obs 1--50 and Obs 101--150. If we observe an exceedance at Obs 45 and Obs 107, do we compute an interexceedance time as $107-45=62$? Do we consider a ``new'' data set that discards Obs 51--100 and 151--200, and so compute the interexceedance time as $57-45=12$ where the new Obs 57 is the old Obs 107? Or do we simply ignore the interexceedance time between the groups? How does this affect our estimate of the extremal index?
+
+
+\subsection*{Extremal index simulation study}
+
+\subsubsection*{Hierarchical}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_250_5.pdf}
+\caption{$\theta=0.15$, $n=250$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_500_5.pdf}
+\caption{$\theta=0.15$, $n=500$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_1000_5.pdf}
+\caption{$\theta=0.15$, $n=1000$, $R=5$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_250_10.pdf}
+\caption{$\theta=0.15$, $n=250$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_500_10.pdf}
+\caption{$\theta=0.15$, $n=500$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_1000_10.pdf}
+\caption{$\theta=0.15$, $n=1000$, $R=10$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_250_20.pdf}
+\caption{$\theta=0.15$, $n=250$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_500_20.pdf}
+\caption{$\theta=0.15$, $n=500$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_15_1000_20.pdf}
+\caption{$\theta=0.15$, $n=1000$, $R=20$}
+\end{center}
+\end{figure}
+
+
+
+
+
+
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_250_5.pdf}
+\caption{$\theta=0.50$, $n=250$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_500_5.pdf}
+\caption{$\theta=0.50$, $n=500$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_1000_5.pdf}
+\caption{$\theta=0.50$, $n=1000$, $R=5$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_250_10.pdf}
+\caption{$\theta=0.50$, $n=250$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_500_10.pdf}
+\caption{$\theta=0.50$, $n=500$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_1000_10.pdf}
+\caption{$\theta=0.50$, $n=1000$, $R=10$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_250_20.pdf}
+\caption{$\theta=0.50$, $n=250$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_500_20.pdf}
+\caption{$\theta=0.50$, $n=500$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_50_1000_20.pdf}
+\caption{$\theta=0.50$, $n=1000$, $R=20$}
+\end{center}
+\end{figure}
+
+
+
+
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_250_5.pdf}
+\caption{$\theta=0.85$, $n=250$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_500_5.pdf}
+\caption{$\theta=0.85$, $n=500$, $R=5$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_1000_5.pdf}
+\caption{$\theta=0.85$, $n=1000$, $R=5$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_250_10.pdf}
+\caption{$\theta=0.85$, $n=250$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_500_10.pdf}
+\caption{$\theta=0.85$, $n=500$, $R=10$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_1000_10.pdf}
+\caption{$\theta=0.85$, $n=1000$, $R=10$}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_250_20.pdf}
+\caption{$\theta=0.85$, $n=250$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_500_20.pdf}
+\caption{$\theta=0.85$, $n=500$, $R=20$}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=5.5in, height=2.45in]{../extremal_comparison/figs/sim_frechet_hier_85_1000_20.pdf}
+\caption{$\theta=0.85$, $n=1000$, $R=20$}
+\end{center}
+\end{figure}
+
+\subsubsection*{Wooster}
 
 \end{document}

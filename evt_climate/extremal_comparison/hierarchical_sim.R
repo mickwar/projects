@@ -35,17 +35,20 @@ for (theta in c(0.15, 0.5, 0.85)){
                 
                 ferro_ba = theta_hier(y, uu[j], likelihood = "ferro",
                     nburn = 40000, nmcmc = 20000)
-                fb.m[j,] = colMeans(ferro_ba$mcmc)
-                fb.v[j,] = quantile(ferro_ba$mcmc[,R+1], c(0.025, 0.975))
+                tmp = c(ferro_ba$keep, R+1)
+                fb.m[j, tmp] = colMeans(ferro_ba$mcmc)
+                fb.m[j, -tmp] = NA
+                fb.v[j,] = quantile(ferro_ba$mcmc[,which(tmp == R+1)], c(0.025, 0.975))
 
                 suveges_ba = theta_hier(y, uu[j], likelihood = "suveges",
                     nburn = 40000, nmcmc = 20000)
-                sb.m[j] = mean(suveges_ba$mcmc[,R+1])
-                sb.m[j,] = colMeans(suveges_ba$mcmc)
-                sb.v[j,] = quantile(suveges_ba$mcmc[,R+1], c(0.025, 0.975))
+                tmp = c(suveges_ba$keep, R+1)
+                sb.m[j, tmp] = colMeans(suveges_ba$mcmc)
+                sb.m[j, -tmp] = NA
+                sb.v[j,] = quantile(suveges_ba$mcmc[,which(tmp == R+1)], c(0.025, 0.975))
                 }
 
-            pdf(paste0("./figs/sim_frechet_hier_", as.character(theta),"_",n,"_",R, ".pdf"),
+            pdf(paste0("./figs/sim_frechet_hier_", as.character(theta),"_",n*R,"_",R, ".pdf"),
                 width = 12, height = 8)
             par(mfrow = c(1, 2))
             mains = c("Ferro Bayes", "Suveges Bayes")
