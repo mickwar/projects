@@ -1,14 +1,110 @@
 \documentclass[12pt]{article}
 
 \usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{dsfont}
 \usepackage[margin=1in]{geometry}
 \usepackage[font=scriptsize]{caption}
 \include{setup}
+\newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
+\newcommand{\ind}{\mathds{1}}
+\newcommand{\m}[1]{\mathbf{\bm{#1}}}
+\newcommand{\R}{I\hspace{-4.4pt}R}
 
 \setlength\parindent{0pt}
 
 
 \begin{document}
+
+\section{Introduction}
+
+We propose a hierarchical extension to standard univariate extreme value modeling. In the univariate setting it is common to work with a single time-series or spatial field. However, having multiple realizations from computer simulations at a variety of input settings suggests an extension to a hierarchical formulation.
+
+\section{Threshold exceedance model}
+
+A threshold exceedance model considers observations that are greater than some large threshold $u$. The standard approach is to use the approximation to the generalized Pareto distribution for the exceedances (see Theorem 4.1 of Coles (2001) page 75).
+\bigskip
+
+Let $X_1,X_2,\ldots$ be a sequence of independent random variables with common distribution. Then, assuming the conditions of the theorem hold, for large enough $u$, the distribution of $(X-u)$, conditional on $X>u$ is approximately
+\begin{align}
+P(X-u\leq y|X>u) \approx H(y) = 1 - \left(1+\frac{\xi y}{\sigma}\right)^{-1/\xi} \label{gpapprox}
+\end{align}
+defined on $\{y:y>0~\mathrm{and}~(1+\xi y/\sigma) >0\}$. $H(y)$ is the distribution function for a generalized Pareto random variable with parameters $\sigma>0$ and $\xi$.
+\bigskip
+
+For excesses $y_1,\ldots,y_k$ of a threshold $u$, the likelihood of $(\sigma,\xi)$ is derived from (\ref{gpapprox}) as
+\begin{align}
+L(y_1,\ldots,y_k;\sigma,\xi)=\sigma^{-k}\sum_{i=1}^k\left(1+\frac{\xi y_i}{\sigma}\right)_+^{-1/\xi-1}
+\end{align}
+where $z_+=\max(z,0)$.
+\bigskip
+
+% \begin{align*}
+% P(X-u\leq y|X > u) &= P(X\leq y+u|X > u) \\
+%  &= 1 - P(X> y+u|X > u) \\
+%  &= 1 - \frac{P(X>y+u, X>u)}{P(X>u)}  \\
+%  &= 1 - \frac{P(X>y+u)}{P(X>u)}  \\
+%  &= 1 - \frac{1-P(X-u \leq y)}{P(X>u)}  \\
+% \Rightarrow P(Y\leq y) = P(X-u\leq y) &= 1-P(X>u)\left(1 - P(X-u\leq y|X>u)\right) \\
+%  &= 1-\zeta\left(1+\frac{\xi y}{\sigma}\right)^{-1/xi} \\
+% \end{align*}
+% where $\zeta=P(X>u)$.
+% \bigskip
+
+\subsection{Hierarchical model}
+
+To extend this to the hierarchical setting, suppose we have $R$ replicates or computer simulations, each with $n_i$ observations, for $i=1,\ldots,R$. Let $X_{ij}$ denote the $j$th observation in replicate $i$. We assume
+\[ X_{ij} \overset{ind}\sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i. \]
+
+For a fixed $u$ and each $i$, define the following sets:
+\[ A_i = \{j:x_{ij}\leq u\},~~~ A_i^c = \{j: x_{ij}>u\} \]
+where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$. We define our exceedances as
+\[ y_{ij} = (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]
+so that all observations not exceeding $u$ are marked as $0$. Let $\m{y}_i=(y_{i,1},\ldots,y_{i,n_i})^\top$ and $\m{y}=(\m{y}_1^\top,\ldots,\m{y}_R^\top)^\top$.
+\bigskip
+
+\noindent The likelihood is given by
+\begin{eqnarray*}
+L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &=& \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma_i,\xi_i,\zeta_i) \\
+&=& \prod_{i=1}^R\left[\prod_{j\in A_i} F_{X_i}(u) \times \prod_{j\in A_i^c} f_{X_i}(y_{ij}+u)\right] \\
+&\approx& \prod_{i=1}^R\left[\prod_{j\in A_i} F_{X_i}(u) \times \prod_{j\in A_i^c} [1-F_{X_i}(u)]h(y_{ij}|\sigma_i,\xi_i)\right] \\
+&=& \prod_{i=1}^R\left[\prod_{j\in A_i} (1-\zeta_i)\times \prod_{j\in A_i^c} \frac{\zeta_i}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \\
+\end{eqnarray*}
+
+\noindent We are left with
+\[ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) = \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \]
+\noindent Note that the parameters describing the tail of $F_i$ (i.e. $\sigma_i,\xi_i$) depend only on those observations which exceeded $u$.
+
+
+
+\noindent These priors complete the hierarchical model formulation. Greek letters are random variables while English letters are fixed.
+\begin{eqnarray*}
+\sigma_i|\alpha, \beta &\sim& Gamma(\alpha, \beta) \\
+\xi_i|\xi, \tau^2  &\sim& Normal(\xi, \tau^2) \\
+\zeta_i|\mu, \eta &\sim& Beta(\mu\eta, (1-\mu)\eta) \\
+%\theta_i|\theta_\mu, \theta_\tau &\sim& Beta(\theta_\mu\theta_\tau, (1-\theta_\mu)\theta_\tau) \\
+ \\
+\alpha_\sigma \sim Gamma(a_\alpha, b_\alpha)&  &\beta_\sigma \sim Gamma(a_\beta, b_\beta) \\
+\xi \sim Normal(m, s^2)&  &\tau^2 \sim Gamma(a_\tau, b_\tau) \\
+\mu \sim Beta(a_\mu, b_\mu)&  &\eta \sim Gamma(a_\eta, b_\eta) \\
+%\theta_\mu \sim Beta(a_{\theta_\mu}, b_{\theta_\mu})&  &\theta_\tau \sim Gamma(a_{\theta_\tau}, b_{\theta_\tau})
+\end{eqnarray*}
+
+
+
+
+
+
+
+
+\section{De-trending}
+
+
+
+\section{Return levels}
+
+
 
 \section{Extremal Index}
 
@@ -50,6 +146,9 @@ S{\"u}veges (2007) derives an estimator based on the transformation $S_i=T_i-1$,
 where $N_C=\sum_{i=1}^{N-1}I(S_i\neq 0)=\sum_{i=1}^{N-1}I(T_i \neq 1)=N-1-m_1$ and $q=1-p$. Her estimator is the maximum likelihood estimator for the likelihood based on $S_i$,
 \[ L_2(\theta, q)= (1-\theta)^{N-1-N_C}\theta^{2N_C}e^{-\theta q \sum_{i=1}^{N-1}S_i}. \]
 \bigskip
+
+
+\section{Hierarchial formulation}
 
 
 
