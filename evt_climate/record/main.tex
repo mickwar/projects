@@ -19,14 +19,23 @@
 
 \section{Introduction}
 
-We propose a hierarchical extension to standard univariate extreme value modeling. In the univariate setting it is common to work with a single time-series or spatial field. However, having multiple realizations from computer simulations at a variety of input settings suggests an extension to a hierarchical formulation.
+We propose a hierarchical extension to univariate extreme value modeling. In the univariate setting it is common to work with a single time-series or spatial field. However, having multiple realizations from computer simulations at a variety of input settings suggests an extension to a hierarchical formulation. The extremal index $\theta$, in turn, is estimated hierarchically, requiring an adjustment to the declustering scheme. Simulation study for $\theta$. Hierarchical model on climate data.
 
 \section{Threshold exceedance model}
 
-A threshold exceedance model considers observations that are greater than some large threshold $u$. The standard approach is to use the approximation to the generalized Pareto distribution for the exceedances (see Theorem 4.1 of Coles (2001) page 75).
+A threshold exceedance model considers observations from a random variable $X$ that are greater than some large threshold $u$. If the distribution of $X$, $F_X$, is known, then we can compute the distribution of the exceedances. For $y>0$,
+\begin{align}
+P(X-u\leq y| X > u) = 1-\frac{1-F_X(y+u)}{1-F_X(u)}.
+\end{align}
+% \begin{align}
+% P(X-u\leq y| X > u) &= 1-P(X-u>y|X>u) = 1-\frac{P(X>u+y, X>u)}{P(X>u)} \nonumber \\
+%  &= 1-\frac{P(X>y+u)}{P(X>u)} = 1-\frac{1-F_X(y+u)}{1-F_X(u)}.
+% \end{align}
+
+When $F_X$ is not known, a standard approach is to approximate (1) with the generalized Pareto distribution (see Theorem 4.1 of Coles (2001) page 75). The following is a summary of the theorem.
 \bigskip
 
-Let $X_1,X_2,\ldots$ be a sequence of independent random variables with common distribution. Then, assuming the conditions of the theorem hold, for large enough $u$, the distribution of $(X-u)$, conditional on $X>u$ is approximately
+Let $X_1,X_2,\ldots$ be a sequence of independent random variables with common distribution. Then for large enough $u$, the distribution of $(X-u)$, conditional on $X>u$ is approximately
 \begin{align}
 P(X-u\leq y|X>u) \approx H(y) = 1 - \left(1+\frac{\xi y}{\sigma}\right)^{-1/\xi} \label{gpapprox}
 \end{align}
@@ -37,7 +46,7 @@ For excesses $y_1,\ldots,y_k$ of a threshold $u$, the likelihood of $(\sigma,\xi
 \begin{align}
 L(y_1,\ldots,y_k;\sigma,\xi)=\sigma^{-k}\sum_{i=1}^k\left(1+\frac{\xi y_i}{\sigma}\right)_+^{-1/\xi-1}
 \end{align}
-where $z_+=\max(z,0)$.
+where $z_+=\max(z,0)$. In many cases, the assumption of independence in observations may be too strong. When we have dependent random variables, which is likely the case in a time series, we employ a declustering scheme to obtain independent clusters (see Section 5).
 \bigskip
 
 % \begin{align*}
@@ -55,9 +64,8 @@ where $z_+=\max(z,0)$.
 \subsection{Hierarchical model}
 
 To extend this to the hierarchical setting, suppose we have $R$ replicates or computer simulations, each with $n_i$ observations, for $i=1,\ldots,R$. Let $X_{ij}$ denote the $j$th observation in replicate $i$. We assume
-\[ X_{ij} \overset{ind}\sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i. \]
-
-For a fixed $u$ and each $i$, define the following sets:
+\[ X_{ij} \sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i \]
+and all $X_{ij}$ are mutually conditionally independent. For a fixed $u$ and each $i$, define the following sets:
 \[ A_i = \{j:x_{ij}\leq u\},~~~ A_i^c = \{j: x_{ij}>u\} \]
 where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$. We define our exceedances as
 \[ y_{ij} = (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]

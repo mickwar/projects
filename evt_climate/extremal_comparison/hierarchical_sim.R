@@ -1,6 +1,26 @@
 library(mwBASE)
 library(mwEVT)
 
+### Simulation study:
+#   Calculate coverage (can I take 10000 samples, divide into 
+#   ten 1000 segments and compute 10 credible bounds?)
+#
+#   For several thetas   (3)
+#   Along a range of thresholds (12)
+#   For several replicates  (3)
+#   For several obs / replicate (3)
+#   For Ferro/Suveges Bayes
+#   3 * 12 * 3 * 3 * 2 = 648 is too many combinations
+#
+#   Solution:
+#   Extreme thetas, 0.15 0.85 (2)
+#   One threshold
+#   One replicate, 10
+#   One obs, 1000
+#   Both Ferro/Suveges
+#   2 * 1 * 1 * 1 * 2 = 4 combos
+
+
 ### Simulation: Frechet
 for (theta in c(0.15, 0.5, 0.85)){
     for (R in c(5, 10, 20)){
