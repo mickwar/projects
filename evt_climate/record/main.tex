@@ -17,10 +17,33 @@
 
 \begin{document}
 
+\section{Abstract}
+
+We propose a hierarchical extension to univariate extreme value modeling. In the univariate setting it is common to work with a single time-series or spatial field. However, having multiple realizations from computer simulations at a variety of input settings suggests an extension to a hierarchical formulation. The extremal index $\theta$, in turn, is estimated hierarchically, requiring an adjustment to the declustering scheme. The hierarchical model is fit to climate data.
+
 \section{Introduction}
 
-We propose a hierarchical extension to univariate extreme value modeling. In the univariate setting it is common to work with a single time-series or spatial field. However, having multiple realizations from computer simulations at a variety of input settings suggests an extension to a hierarchical formulation. The extremal index $\theta$, in turn, is estimated hierarchically, requiring an adjustment to the declustering scheme. Simulation study for $\theta$. Hierarchical model on climate data.
+Purpose of the univariate analysis?
+\bigskip
 
+We perform an extreme value analysis on the CanCM4 climate model. Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
+\bigskip
+
+Details on the differences between decadal, historical, and control runs.
+\bigskip
+
+Precipitation based on the observations is summed. Precipitation from the climate model is computed with a weighted sum, based on the number of locations in the observation product.
+\bigskip
+
+Description of data processing
+\bigskip
+
+Picture of the locations CanCM4/Obs produces
+\bigskip
+
+Time-series plot of the variables
+\bigskip
+ 
 \section{Threshold exceedance model}
 
 A threshold exceedance model considers observations from a random variable $X$ that are greater than some large threshold $u$. If the distribution of $X$, $F_X$, is known, then we can compute the distribution of the exceedances. For $y>0$,
