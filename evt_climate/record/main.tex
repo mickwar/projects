@@ -6,16 +6,26 @@
 \usepackage{dsfont}
 \usepackage[margin=1in]{geometry}
 \usepackage[font=scriptsize]{caption}
-\include{setup}
+\usepackage{dsfont}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{bm}
+\newcommand{\m}[1]{\mathbf{\bm{#1}}}
+\newcommand{\R}{I\hspace{-4.4pt}R}
 \newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
 \newcommand{\ind}{\mathds{1}}
 \newcommand{\m}[1]{\mathbf{\bm{#1}}}
 \newcommand{\R}{I\hspace{-4.4pt}R}
 
-\setlength\parindent{0pt}
+% \setlength\parindent{0pt}
 
 
 \begin{document}
+
+\begin{Large}
+\noindent Extreme value comparison of climate simulations and observations
+\end{Large}
+% A Bayesian hierarchical model for CanCM4 climate simulations, with an exploration of estimating the extremal index in the hierarchical setting, and a comparison between climate simulations and observations from a gridded product
 
 \section{Abstract}
 
@@ -23,10 +33,29 @@ We propose a hierarchical extension to univariate extreme value modeling. In the
 
 \section{Introduction}
 
-Purpose of the univariate analysis?
+
+
+Extreme value theory provides the framework for analyzing the stochastic behavior of a process at very large (small) values. This entails calculating the probability distribution of the maximum (minimum) of a sequence of random variabes. 
+
+Equivalently, extreme value analyses study the tails of probability distributions associated with some data generating mechanism. 
+
+In extreme value analyses, a primary interest is to understand 
+
+The standard approach is to appeal to asymtoptic arguments.
+
+We can calculate useful quantities such as return levels.
+
+This allows us to extrapolate beyond the span of historical data.
+
+
+We compare three types of climate model simulations 
+
+The Fourth Generation Atmospheric General Circulation Model (CanCM4) from Canada 
+
+Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
 \bigskip
 
-We perform an extreme value analysis on the CanCM4 climate model. Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
+Purpose of the univariate analysis?
 \bigskip
 
 Details on the differences between decadal, historical, and control runs.
@@ -43,10 +72,19 @@ Picture of the locations CanCM4/Obs produces
 
 Time-series plot of the variables
 \bigskip
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box1.pdf}
+\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box2.pdf}
+\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box3.pdf}
+\end{center}
+\caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations.}
+\end{figure}
  
 \section{Threshold exceedance model}
 
-A threshold exceedance model considers observations from a random variable $X$ that are greater than some large threshold $u$. If the distribution of $X$, $F_X$, is known, then we can compute the distribution of the exceedances. For $y>0$,
+A threshold exceedance model considers observations from a random variable $X$ that are greater than some large threshold $u$. If the distribution of $X$, $F_X$, is known, then we can compute the distribution of the exceedances $Y=X-u$. For $y>0$,
 \begin{align}
 P(X-u\leq y| X > u) = 1-\frac{1-F_X(y+u)}{1-F_X(u)}.
 \end{align}
