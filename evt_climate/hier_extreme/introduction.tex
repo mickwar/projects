@@ -1,0 +1,26 @@
+\section{Introduction}
+\label{intro}
+
+In extreme value analysis, a primary interest is in modeling the upper tail of a sequence of random variables $X_1,\ldots,X_n$ each with marginal distribution $F$. The standard approach begins by selecting a threshold $u$ and assuming the exceedances $Y_i=X_i-u$ follow a generalized Pareto distribution having distribution function
+\[ H(y) = 1 - \left(1 - \xi \frac{y}{\sigma}\right)^{-1/\xi} \]
+for $y>0$. The assumption is based on an approximation due to asymptotic theory for which at least two conditions must be satisfied: (1) the threshold $u$ is high enough, and (2) the $X_i$'s are independent.
+
+When the second condition is not met (which is often the case in a time-series), estimation can instead be based on clusters of exceedances. That is, it could be expected that exceedances will arrive together in (independent) groups or clusters. Clusters can formed by choosing a run parameter $K$ and then grouping those exceedances which are seperated by no more than $K$ non-exceedances. This is called runs declustering. \cite{ferro2003inference} provide a method for automatically declustering observations based on an estimate of the extremal index.
+
+The extremal index, $\theta$, appears in the following way. For stationary process $X_1,X_2,\ldots$ with marginal distributions $F$, and $X_1^*,X_2^*,\ldots$ independent with marginal distributions $F$, let $M_n=\max(X_1,\ldots,X_n)$, and $M_n^*=\max(X_1^*,\ldots,X_n^*)$. Under suitable regularity conditions
+\[ P((M_n-b_n)/a_n \leq z) \rightarrow G_1(z) \]
+as $n\rightarrow\infty$ for normalizing sequences $a_n>0$ and $b_n$, where $G_1$ is a non-degenerate distribution function, if and only if
+\[ P((M_n^*-b_n)/a_n \leq z) \rightarrow G_2(z),\]
+where
+\[ G_2(z)=G_1^\theta(z) \]
+for $\theta\in(0,1]$.
+
+can be loosely interpreted as
+\[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1}. \]
+
+
+This provides the foundation for a likelihood-based procedure to estimating $(\xi, \sigma)$.
+
+In a time-series analysis, it is uncommon, and sometimes impossible, to have multiple realizations of a stochastic process over the same time domain. For example, we cannot go back in time, tweak a few variables, and observe new climatological data. With a computer model, there is no such constraint. Even for a deterministic model, variability can be induced by evaluating the model at a variety of input settings.
+
+\cite{ferro2003inference} propose a likelihood for estimating $\theta$.
