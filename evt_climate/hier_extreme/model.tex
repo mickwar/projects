@@ -1,0 +1,27 @@
+\section{Hierarchical model}
+\label{model}
+
+Suppose we have $R$ simulations from a climate model. If we assume these simulations are indepedent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution
+\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
+Under model (\ref{ferro}), we place a similar prior on the $p_i$
+\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
+Since model (\ref{suveges}) does not properly allow for the estimation of $p_i$, we fix each $p_i$ to be the empirical estimate of $F_i(u)$.
+
+The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume
+\begin{align*}
+\theta &\sim Beta(a_\theta, b_\theta) \\
+\nu &\sim Gamma(a_\nu, b_\nu) \\
+p &\sim Beta(a_p, b_p) \\
+\tau &\sim Gamma(a_\tau, b_\tau) 
+\end{align*}
+with the hyperparameters assumed to be
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{rlcl}
+$\theta$: & $a_\theta = 1/2        $ &~~& $b_\theta = 1               $ \\
+$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\
+$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\
+$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
+\end{tabular}
+\end{center}
+%\end{table}
