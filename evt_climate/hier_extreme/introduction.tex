@@ -7,7 +7,7 @@ for $y>0$ defined on $\{y:1+\xi y/\sigma>0\}$. The assumption is based on an app
 
 When the second condition is not met (which is often the case in a time-series), inference can instead be based on clusters of exceedances. That is, because of dependence between observations, it could be expected that exceedances will arrive together in groups or clusters. Clusters can be formed by choosing a run parameter $K$ and then grouping those exceedances which are seperated by no more than $K$ non-exceedances. This is called runs declustering with the clusters assumed to be independent. \cite{ferro2003inference} provide a method for automatically declustering observations based on an estimate of the extremal index.
 
-The extremal index, $\theta$, appears in the following way. For stationary process $X_1,X_2,\ldots$ with marginal distributions $F$, and $X_1^*,X_2^*,\ldots$ independent with marginal distributions $F$, let $M_n=\max(X_1,\ldots,X_n)$, and $M_n^*=\max(X_1^*,\ldots,X_n^*)$. Under suitable regularity conditions
+The extremal index, $\theta$, appears in the following way (see \cite{coles2001introduction}). For stationary process $X_1,X_2,\ldots$ with marginal distributions $F$, and $X_1^*,X_2^*,\ldots$ independent with marginal distributions $F$, let $M_n=\max(X_1,\ldots,X_n)$, and $M_n^*=\max(X_1^*,\ldots,X_n^*)$. Under suitable regularity conditions
 \[ P((M_n-b_n)/a_n \leq z) \rightarrow G_1(z) \]
 as $n\rightarrow\infty$ for normalizing sequences $a_n>0$ and $b_n$, where $G_1$ is a non-degenerate distribution function, if and only if
 \[ P((M_n^*-b_n)/a_n \leq z) \rightarrow G_2(z),\]
@@ -17,7 +17,7 @@ for $\theta\in(0,1]$. The extremal index plays the important role of controlling
 \[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1}. \]
 Therefore, if $\theta$ is known, we can form clusters such that our average cluster size is roughly $\theta^{-1}$.
 
-Our interest in this paper is to extend the estimators of $\theta$ provided by \cite{ferro2003inference} and \cite{suveges2007likelihood} to a hierarchical setting. In a time-series analysis, it is uncommon, and sometimes impossible, to have multiple realizations of a stochastic process over the same time domain. For example, we cannot go back in time, tweak a few variables, and observe new climatological data. With a computer model, there is no such constraint. Even for a deterministic model, variability can be induced by evaluating the model at a variety of input settings. Hence, we have several time-series that have their own extremal index, but it is believed that there is a commonality between them. The hierarchical model will also allow us to make inference on a climate simulation not yet observed.
+Our interest in this paper is to extend the estimators of $\theta$ provided by \cite{ferro2003inference} and \cite{suveges2010model} to a hierarchical setting. In a time-series analysis, it is uncommon, and sometimes impossible, to have multiple realizations of a stochastic process over the same time domain. For example, we cannot go back in time, tweak a few variables, and observe new climatological data. With a computer model, there is no such constraint. Even for a deterministic model, variability can be induced by evaluating the model at a variety of input settings. Hence, we have several time-series that have their own extremal index, but it is believed that there is a commonality between them. The hierarchical model will also allow us to make inference on a climate simulation not yet observed.
 
 Estimation of the extremal index is based on the asymptotic distribution of interarrival times. Suppose we have observations $X_1,\ldots,X_n$. For a threshold $u$, the $N$ exceedances $Y_i=X_i-u$ given $X_i>u$ occur at times $1\leq j_1<\cdots< j_N\leq n$. The observed interexceedance times are given by $T_i=j_{i+1}-j_i$ for $i=1,\ldots,N-1$.
 
@@ -26,7 +26,7 @@ Estimation of the extremal index is based on the asymptotic distribution of inte
 l_1(\theta, p; \m{T}) =& m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \log(1-p^\theta)\} \nonumber \\
  &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
 \end{align}
-where $m_1=\sum_{i=1}^{N-1}\ind(T_i=1)$ and $p=F(u)=1-\overline{F}(u)$. S{\"u}veges (2007) defines $S_i^{(K)}=\max\{T_i-K,0\}$ and gives this log-likelihood
+where $m_1=\sum_{i=1}^{N-1}\ind(T_i=1)$ and $p=F(u)=1-\overline{F}(u)$. \cite{suveges2010model} defines $S_i^{(K)}=\max\{T_i-K,0\}$ and gives this log-likelihood
 %\[ L_2(\theta, p)= (1-\theta)^{N-1-N_C}\theta^{2N_C}e^{-\theta (1-p) \sum_{i=1}^{N-1}S_i}. \]
 \begin{align}
 l_2(\theta, p; \m{S}^{(K)})= (N-1-N_C)\log(1-\theta)+2N_C\log(\theta)-\theta (1-p) \sum_{i=1}^{N-1}S_i^{(K)}. \label{suveges}

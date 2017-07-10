@@ -1,7 +1,7 @@
 \section{Hierarchical model}
 \label{model}
 
-Suppose we have $R$ simulations from a climate model. If we assume these simulations are indepedent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution
+Suppose we have $R$ simulations from a climate model with observations from simulation $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are indepedent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution
 \[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
 Under model (\ref{ferro}), we place a similar prior on the $p_i$
 \[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
@@ -25,3 +25,4 @@ $  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
 \end{tabular}
 \end{center}
 %\end{table}
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{ij}\leq u)$.
