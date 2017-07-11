@@ -21,22 +21,17 @@ library(mwEVT)
 #   Both Ferro/Suveges
 #   2 * 1 * 1 * 1 * 2 = 4 combos
 
-R = 10
-n = 1000
-B = 200
+library(foreach)
+library(doMC)
+registerDoMC(4)
 
 
-### Simulation: Frechet
-set.seed(1)
 
-theta = 0.10
 
-fb.v = matrix(0, B, 2)
-fb.r = double(B)
-sb.v = matrix(0, B, 2)
-sb.r = double(B)
+doit = function(k, R, n, uq, theta){
 
-for (k in 1:B){
+    cat("\r", k, "     ")
+    ### Simulation: Frechet
     ww = matrix(-1/log(runif(n*R)), n, R)
     y = matrix(0, n, R)
     y[1,] = ww[1,] / theta
@@ -44,36 +39,60 @@ for (k in 1:B){
         y[i,] = apply(rbind((1-theta)*y[i-1,], ww[i,]), 2, max)
 
     ### For split up sequences
-    uu = quantile(y, 0.90)
-    # K = 12
-    # uu = seq(quantile(y, 0.80), quantile(y, 0.97), length = K)
+    uu = quantile(y, uq)
     N = sapply(uu, function(x) sum(y > x))
 
-    # N = round(seq(1000, 10, length = K))
-    # uu = sapply(N, function(x) quantile(y, 1 - x/n))
-
-    up = mean(y <= uu)
-        
     ferro_ba = theta_hier(y, uu, likelihood = "ferro",
-        nburn = 10000, nmcmc = 10000)
-    tmp = c(ferro_ba$keep, R+1)
-#   fb.v[k,] = quantile(ferro_ba$mcmc[,which(tmp == R+1)], c(0.025, 0.975))
-    fb.v[k,] = hpd_mult(ferro_ba$mcmc[,which(tmp == R+1)], force_uni = TRUE)
-    
-
-    # RMSE
-    fb.r[k] = sqrt(mean((ferro_ba$mcmc[,which(tmp == R+1)] - theta)^2))
+        nburn = 10000, nmcmc = 10000, display = 0)
+    tmp1 = c(ferro_ba$keep, R+1)
+    fb.v = apply(ferro_ba$mcmc, 2, hpd_mult, force_uni = TRUE)
+    fb.r = apply(ferro_ba$mcmc, 2, function(x) sqrt(mean((x-theta)^2)))
 
     suveges_ba = theta_hier(y, uu, likelihood = "suveges",
-        nburn = 10000, nmcmc = 10000)
-    tmp = c(suveges_ba$keep, R+1)
-#   sb.v[k,] = quantile(suveges_ba$mcmc[,which(tmp == R+1)], c(0.025, 0.975))
-    sb.v[k,] = hpd_mult(suveges_ba$mcmc[,which(tmp == R+1)], force_uni = TRUE)
+        nburn = 10000, nmcmc = 10000, display = 0)
+    tmp2 = c(suveges_ba$keep, R+1)
+    sb.v = apply(suveges_ba$mcmc, 2, hpd_mult, force_uni = TRUE)
+    sb.r = apply(suveges_ba$mcmc, 2, function(x) sqrt(mean((x-theta)^2)))
 
-    # RMSE
-    sb.r[k] = sqrt(mean((suveges_ba$mcmc[,which(tmp == R+1)] - theta)^2))
+    out = NA*double(4*(R+1))
+    out[tmp1 + 0*(R+1)] = (fb.v[1,] < theta & fb.v[2,] > theta)
+    out[tmp1 + 1*(R+1)] = fb.r
+    out[tmp2 + 2*(R+1)] = (sb.v[1,] < theta & sb.v[2,] > theta)
+    out[tmp2 + 3*(R+1)] = sb.r
 
+    names(out)[(0*(R+1)+1):(1*(R+1))] = paste0("Fe_Int", 1:(R+1))
+    names(out)[(1*(R+1)+1):(2*(R+1))] = paste0("Fe_RMSE", 1:(R+1))
+    names(out)[(2*(R+1)+1):(3*(R+1))] = paste0("Su_Int", 1:(R+1))
+    names(out)[(3*(R+1)+1):(4*(R+1))] = paste0("Su_RMSE", 1:(R+1))
+
+    return (out)
     }
+
+R = 10
+n = 1000    # nobs per time-series
+B = 100
+uq = c(0.95, 0.96, 0.97, 0.98, 0.99)
+out = rep(list(NULL), length(uq))
+for (j in 1:length(uq)){
+    out[[j]] = foreach(k=1:B, .combine=rbind) %dopar% doit(k, n = n, R = R, uq = uq[1], theta = theta)
+    cat("\n")
+    }
+
+save("out", file = "./comp.RData")
+
+
+
+
+
+
+colMeans(out, na.rm = TRUE)[1:11]
+colMeans(out, na.rm = TRUE)[23:33]
+
+plot(colMeans(out, na.rm = TRUE)[1:11], colMeans(out, na.rm = TRUE)[23:33])
+abline(0, 1)
+
+plot(colMeans(out, na.rm = TRUE)[12:22], colMeans(out, na.rm = TRUE)[34:44])
+abline(0, 1)
 
 
 # Coverage
