@@ -26,11 +26,10 @@ library(doMC)
 registerDoMC(4)
 
 
-
-
-doit = function(k, R, n, uq, theta){
+par_func = function(k, R, n, uq, theta){
 
     cat("\r", k, "     ")
+
     ### Simulation: Frechet
     ww = matrix(-1/log(runif(n*R)), n, R)
     y = matrix(0, n, R)
@@ -68,64 +67,61 @@ doit = function(k, R, n, uq, theta){
     return (out)
     }
 
+theta = 0.9
 R = 10
 n = 1000    # nobs per time-series
-B = 100
+B = 200
 uq = c(0.95, 0.96, 0.97, 0.98, 0.99)
 out = rep(list(NULL), length(uq))
-for (j in 1:length(uq)){
-    out[[j]] = foreach(k=1:B, .combine=rbind) %dopar% doit(k, n = n, R = R, uq = uq[1], theta = theta)
+
+for (j in length(uq):1){
+    out[[j]] = foreach(k=1:B, .combine=rbind) %dopar% par_func(k, n = n, R = R,
+        uq = uq[j], theta = theta)
     cat("\n")
     }
 
-save("out", file = "./comp.RData")
+save("out", file = "./comp_90.RData")
 
 
 
 
+pdf("./figs/sim_coverage_90.pdf", width = 6, height = 4)
+plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = c(0, 1), bty = 'n',
+    main = "Coverage", ylab = "Probability", xlab = "Threshold quantile")
+abline(h = 0.95, lty = 2)
+title(main = bquote(paste(theta, " = 0.9")), line = 0.5, cex.main = 1.3)
+for (j in 1:R){
+    points(uq-0.0005, sapply(out, function(x) mean(x[,j], na.rm = TRUE)),
+        col = 'lightblue', pch = 15)
+    points(uq+0.0005, sapply(out, function(x) mean(x[,j+2*(R+1)], na.rm = TRUE)),
+        col = 'pink', pch = 16)
+    }
+points(uq-0.0005, sapply(out, function(x) mean(x[,R+1], na.rm = TRUE)),
+    col = 'blue', pch = 15)
+points(uq+0.0005, sapply(out, function(x) mean(x[,3*(R+1)], na.rm = TRUE)),
+    col = 'red', pch = 16)
+legend(uq[1], 0.3, legend = c("Ferro", "Suveges"), col = c("blue", "red"),
+    pch = c(15, 16), bty = 'n', cex = 1.3)
+dev.off()
 
 
-colMeans(out, na.rm = TRUE)[1:11]
-colMeans(out, na.rm = TRUE)[23:33]
+pdf("./figs/sim_rmse_90.pdf", width = 6, height = 4)
+ylim = range(sapply(out, function(x) colMeans(x[,grep("RMSE", colnames(x))], na.rm = TRUE)))
+plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = ylim, bty = 'n',
+    main = "RMSE", ylab = "RMSE", xlab = "Threshold quantile")
+title(main = bquote(paste(theta, " = 0.9")), line = 0.5, cex.main = 1.3)
+for (j in 1:R){
+    points(uq-0.0005, sapply(out, function(x) mean(x[,j+1*(R+1)], na.rm = TRUE)),
+        col = 'lightblue', pch = 15)
+    points(uq+0.0005, sapply(out, function(x) mean(x[,j+3*(R+1)], na.rm = TRUE)),
+        col = 'pink', pch = 16)
+    }
+points(uq-0.0005, sapply(out, function(x) mean(x[,2*(R+1)], na.rm = TRUE)),
+    col = 'blue', pch = 15)
+points(uq+0.0005, sapply(out, function(x) mean(x[,4*(R+1)], na.rm = TRUE)),
+    col = 'red', pch = 16)
+legend(uq[1], ylim[2], legend = c("Ferro", "Suveges"), col = c("blue", "red"),
+    pch = c(15, 16), bty = 'n', cex = 1.3)
+dev.off()
 
-plot(colMeans(out, na.rm = TRUE)[1:11], colMeans(out, na.rm = TRUE)[23:33])
-abline(0, 1)
 
-plot(colMeans(out, na.rm = TRUE)[12:22], colMeans(out, na.rm = TRUE)[34:44])
-abline(0, 1)
-
-
-# Coverage
-mean(apply(fb.v, 1, function(x) x[1] < theta && x[2] > theta))
-mean(apply(sb.v, 1, function(x) x[1] < theta && x[2] > theta))
-
-plot(0, type = 'n', xlim = c(1, B), ylim = c(0, 1))
-segments(x0 = 1:B, x1 = 1:B, y0 = fb.v[,1], y1 = fb.v[,2])
-abline(h = theta)
-
-plot(0, type = 'n', xlim = c(1, B), ylim = c(0, 1))
-segments(x0 = 1:B, x1 = 1:B, y0 = sb.v[,1], y1 = sb.v[,2])
-abline(h = theta)
-
-plot(0, type = 'n', xlim = c(1, B/1), ylim = c(0, 1))
-segments(x0 = 1:B, x1 = 1:B, y0 = fb.v[,1], y1 = fb.v[,2], col = rgb(0,0,1,0.5))
-points(apply(fb.v, 1, mean), col = rgb(0,0,1,0.5))
-segments(x0 = 1:B+0.0, x1 = 1:B+0.0, y0 = sb.v[,1], y1 = sb.v[,2], col = rgb(1,0,0,0.5))
-points(apply(sb.v, 1, mean), col = rgb(1,0,0,0.5))
-abline(h = theta)
-
-# RMSE
-mean(fb.r)
-mean(sb.r)
-
-median(fb.r)
-median(sb.r)
-
-plot(density(fb.r))
-lines(density(sb.r), col = 'red')
-
-plot(density(apply(fb.v, 1, diff)))
-lines(density(apply(sb.v, 1, diff)), col = 'red')
-
-plot(apply(fb.v, 1, diff), apply(sb.v, 1, diff))
-cor(apply(fb.v, 1, diff), apply(sb.v, 1, diff))

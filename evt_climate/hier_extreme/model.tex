@@ -25,4 +25,10 @@ $  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
 \end{tabular}
 \end{center}
 %\end{table}
-where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$.
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro})
+
+By assuming indepedence between the simulations, we can construct the following log-likelihood
+\begin{align}
+L = \sum_{i=1}^R l_m(\theta_i, p_i; \mathcal{D}_i)
+\end{align}
+where $m=1,2$ and $\mathcal{D}_i$ denotes the data from simulation $i$ appropriate for the specified model $m$.
