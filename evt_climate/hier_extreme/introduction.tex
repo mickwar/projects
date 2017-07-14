@@ -2,7 +2,9 @@
 \label{intro}
 
 In extreme value analysis, a primary interest is in modeling the upper tail of a sequence of random variables $X_1,\ldots,X_n$ each with marginal distribution $F$. The standard approach begins by selecting a threshold $u$ and assuming the exceedances $Y_i=X_i-u$ follow a generalized Pareto distribution having distribution function
-\[ H(y) = 1 - \left(1 + \xi \frac{y}{\sigma}\right)^{-1/\xi} \]
+\begin{align}
+H(y) = 1 - \left(1 + \xi \frac{y}{\sigma}\right)^{-1/\xi} \label{gpmod}
+\end{align}
 for $y>0$ defined on $\{y:1+\xi y/\sigma>0\}$. The assumption is based on an approximation due to asymptotic theory for which at least two conditions must be satisfied: (1) the threshold $u$ is high enough, and (2) the $X_i$'s are independent.
 
 When the second condition is not met (which is often the case in a time-series), inference can instead be based on clusters of exceedances. That is, because of dependence between observations, it could be expected that exceedances will arrive together in groups or clusters. Clusters can be formed by choosing a run parameter $K$ and then grouping those exceedances which are seperated by no more than $K$ non-exceedances. This is called runs declustering with the clusters assumed to be independent. \cite{ferro2003inference} provide a method for automatically declustering observations based on an estimate of the extremal index.
