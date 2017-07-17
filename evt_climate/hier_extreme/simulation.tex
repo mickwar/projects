@@ -18,13 +18,7 @@ Let $\theta_0$ denote the true extremal index. $R$ sequences of size $n$ are sim
 \[ \sqrt{1/M \sum_{k=1}^M\left(\theta^{(k)}-\theta_0\right)^2}. \]
 This processes is repeated $B=500$. Coverage is computed by finding the number of intervals containing the true value $\theta_0$ and dividing by $B$. The mean RMSE is calculated as the mean of the RMSE's from the $B$ sets of samples.
 
-
-Results are shown in Figure \ref{figsim}. Likelihood (\ref{ferro}) produces coverage at or near $1$, which decreases toward the nominal $0.95$ as threshold increases. The RMSE, on the other hand, is increasing with threshold. The pattern holds for the three $\theta_0$'s considered. These results are in agreement with those shown by \cite{ferro2003inference}, Figure 2.
-
-In contrast, model (\ref{suveges}) with $K=1$ has coverage increasing with threshold toward $0.95$. The RMSE is also increasing, but is greater than the RMSE for (\ref{ferro}), except for $\theta_0=0.5$. For $\theta_0=0.9$, the RMSE does drop below that of (\ref{ferro}) at high thresholds. (Waiting for more code to run, to include $K=5$).
-
-
-\begin{figure}[H]
+\begin{figure}[th!]
 \begin{center}
 \includegraphics[scale=0.48]{../extremal_comparison/figs/sim_coverage_10.pdf}
 \includegraphics[scale=0.48]{../extremal_comparison/figs/sim_rmse_10.pdf}
@@ -36,3 +30,7 @@ In contrast, model (\ref{suveges}) with $K=1$ has coverage increasing with thres
 \caption{Coverage (left column) and mean RMSE (right) for the two likelihoods in the simulation study. Each row is based on a different extremal index, either $0.10$, $0.50$, or $0.90$. The darker points represent the hierarchical mean ($\theta$), the lighter points are from the individual sequences ($\theta_i$). The nominal coverage probability (0.95) is marked by the dashed horizontal line.}
 \label{figsim}
 \end{figure}
+
+Results are shown in Figure \ref{figsim}. Likelihood (\ref{ferro}) produces coverage at or near $1$, which decreases toward the nominal $0.95$ as threshold increases. The RMSE, on the other hand, is increasing with threshold. The pattern holds for the three $\theta_0$'s considered. These results are in agreement with those shown by \cite{ferro2003inference}, Figure 2.
+
+In contrast, model (\ref{suveges}) with $K=1$ has coverage increasing with threshold toward $0.95$. The RMSE is also increasing, but is greater than the RMSE for (\ref{ferro}), except for $\theta_0=0.5$. For $\theta_0=0.9$, the RMSE does drop below that of (\ref{ferro}) at high thresholds. (Waiting for more code to run, to include $K=5$).

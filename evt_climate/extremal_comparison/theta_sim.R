@@ -81,7 +81,7 @@ par_func = function(k, R, n, uq, theta){
     return (out)
     }
 
-for (theta in c(0.5, 0.9)){
+for (theta in c(0.1, 0.5, 0.9)){
     lab = as.character(round(theta*100))
     R = 10
     n = 1000    # nobs per time-series
@@ -99,54 +99,59 @@ for (theta in c(0.5, 0.9)){
     }
 
 
+for (theta in c(0.1, 0.5, 0.9)){
+    lab = as.character(round(theta*100))
+    load(file = paste0("./comp_", lab, ".RData"))
 
-pdf(paste0("./figs/sim_coverage_", lab, ".pdf"), width = 6, height = 5)
-plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = c(0, 1), bty = 'n',
-    main = "Coverage", ylab = "Probability", xlab = "Threshold quantile")
-abline(h = 0.95, lty = 2)
-title(main = bquote(paste(theta, " = ", .(theta))), line = 0.5, cex.main = 1.3)
-offset = c(-0.0010, 0, 0.0010)
-for (j in 1:R){
-    points(uq+offset[1], sapply(out, function(x) mean(x[,j], na.rm = TRUE)),
-        col = 'lightblue', pch = 15)
-    points(uq+offset[2], sapply(out, function(x) mean(x[,j+2*(R+1)], na.rm = TRUE)),
-        col = 'pink', pch = 16)
-    points(uq+offset[3], sapply(out, function(x) mean(x[,j+4*(R+1)], na.rm = TRUE)),
-        col = 'lightgreen', pch = 16)
+    pdf(paste0("./figs/sim_coverage_", lab, ".pdf"), width = 6, height = 5)
+    plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = c(0, 1), bty = 'n',
+        main = "Coverage", ylab = "Probability", xlab = "Threshold quantile")
+    abline(h = 0.95, lty = 2)
+    title(main = bquote(paste(theta, " = ", .(theta))), line = 0.5, cex.main = 1.3)
+    offset = c(-0.0010, 0, 0.0010)
+    for (j in 1:R){
+        points(uq+offset[1], sapply(out, function(x) mean(x[,j], na.rm = TRUE)),
+            col = 'lightblue', pch = 15)
+        points(uq+offset[2], sapply(out, function(x) mean(x[,j+2*(R+1)], na.rm = TRUE)),
+            col = 'pink', pch = 16)
+        points(uq+offset[3], sapply(out, function(x) mean(x[,j+4*(R+1)], na.rm = TRUE)),
+            col = 'lightgreen', pch = 16)
+        }
+    points(uq+offset[1], sapply(out, function(x) mean(x[,R+1], na.rm = TRUE)),
+        col = 'darkblue', pch = 15)
+    points(uq+offset[2], sapply(out, function(x) mean(x[,3*(R+1)], na.rm = TRUE)),
+        col = 'red', pch = 16)
+    points(uq+offset[3], sapply(out, function(x) mean(x[,5*(R+1)], na.rm = TRUE)),
+        col = 'darkgreen', pch = 16)
+    if (theta == 0.1)
+        legend(uq[1], 0.35, legend = c("Ferro", "Suveges, K=1", "Suveges, K=5"),
+            col = c("darkblue", "red", "darkgreen"), pch = c(15, 16, 16), bty = 'n', cex = 1.3)
+    dev.off()
+
+
+    pdf(paste0("./figs/sim_rmse_", lab, ".pdf"), width = 6, height = 5)
+    ylim = range(sapply(out, function(x) colMeans(x[,grep("RMSE", colnames(x))], na.rm = TRUE)))
+    plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = ylim, bty = 'n',
+        main = "RMSE", ylab = "RMSE", xlab = "Threshold quantile")
+    title(main = bquote(paste(theta, " = ", .(theta))), line = 0.5, cex.main = 1.3)
+    offset = c(-0.0010, 0, 0.0010)
+    for (j in 1:R){
+        points(uq+offset[1], sapply(out, function(x) mean(x[,j+1*(R+1)], na.rm = TRUE)),
+            col = 'lightblue', pch = 15)
+        points(uq+offset[2], sapply(out, function(x) mean(x[,j+3*(R+1)], na.rm = TRUE)),
+            col = 'pink', pch = 16)
+        points(uq+offset[3], sapply(out, function(x) mean(x[,j+5*(R+1)], na.rm = TRUE)),
+            col = 'lightgreen', pch = 16)
+        }
+    points(uq+offset[1], sapply(out, function(x) mean(x[,2*(R+1)], na.rm = TRUE)),
+        col = 'darkblue', pch = 15)
+    points(uq+offset[2], sapply(out, function(x) mean(x[,4*(R+1)], na.rm = TRUE)),
+        col = 'red', pch = 16)
+    points(uq+offset[3], sapply(out, function(x) mean(x[,6*(R+1)], na.rm = TRUE)),
+        col = 'darkgreen', pch = 16)
+    if (theta == 0.1)
+        legend(uq[1], ylim[2], legend = c("Ferro", "Suveges, K=1", "Suveges, K=5"),
+            col = c("blue", "red", "darkgreen"), pch = c(15, 16, 16), bty = 'n', cex = 1.3)
+    dev.off()
     }
-points(uq+offset[1], sapply(out, function(x) mean(x[,R+1], na.rm = TRUE)),
-    col = 'darkblue', pch = 15)
-points(uq+offset[2], sapply(out, function(x) mean(x[,3*(R+1)], na.rm = TRUE)),
-    col = 'red', pch = 16)
-points(uq+offset[3], sapply(out, function(x) mean(x[,5*(R+1)], na.rm = TRUE)),
-    col = 'darkgreen', pch = 16)
-legend(uq[1], 0.35, legend = c("Ferro", "Suveges, K=1", "Suveges, K=5"),
-    col = c("darkblue", "red", "darkgreen"), pch = c(15, 16, 16), bty = 'n', cex = 1.3)
-dev.off()
-
-
-pdf(paste0("./figs/sim_rmse_", lab, ".pdf"), width = 6, height = 5)
-ylim = range(sapply(out, function(x) colMeans(x[,grep("RMSE", colnames(x))], na.rm = TRUE)))
-plot(0, type = 'n', xlim = range(uq)+c(-0.0010,0.0010), ylim = ylim, bty = 'n',
-    main = "RMSE", ylab = "RMSE", xlab = "Threshold quantile")
-title(main = bquote(paste(theta, " = ", .(theta))), line = 0.5, cex.main = 1.3)
-offset = c(-0.0010, 0, 0.0010)
-for (j in 1:R){
-    points(uq+offset[1], sapply(out, function(x) mean(x[,j+1*(R+1)], na.rm = TRUE)),
-        col = 'lightblue', pch = 15)
-    points(uq+offset[2], sapply(out, function(x) mean(x[,j+3*(R+1)], na.rm = TRUE)),
-        col = 'pink', pch = 16)
-    points(uq+offset[3], sapply(out, function(x) mean(x[,j+5*(R+1)], na.rm = TRUE)),
-        col = 'lightgreen', pch = 16)
-    }
-points(uq+offset[1], sapply(out, function(x) mean(x[,2*(R+1)], na.rm = TRUE)),
-    col = 'darkblue', pch = 15)
-points(uq+offset[2], sapply(out, function(x) mean(x[,4*(R+1)], na.rm = TRUE)),
-    col = 'red', pch = 16)
-points(uq+offset[3], sapply(out, function(x) mean(x[,6*(R+1)], na.rm = TRUE)),
-    col = 'darkgreen', pch = 16)
-legend(uq[1], ylim[2], legend = c("Ferro", "Suveges, K=1", "Suveges, K=5"),
-    col = c("blue", "red", "darkgreen"), pch = c(15, 16, 16), bty = 'n', cex = 1.3)
-dev.off()
-
 
