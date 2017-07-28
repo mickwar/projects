@@ -94,9 +94,9 @@ Time-series plot of the variables
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box1.pdf}
-\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box2.pdf}
-\includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box3.pdf}
+\includegraphics[scale=0.26]{figs/cal_mod_box1.pdf}
+\includegraphics[scale=0.26]{figs/cal_mod_box2.pdf}
+\includegraphics[scale=0.26]{figs/cal_mod_box3.pdf}
 \end{center}
 \caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations. The data shown are from a single day in January.}
 \end{figure}
@@ -209,26 +209,41 @@ The posterior mean for $\theta$ is used, not samples, when obtaining the return 
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.5]{figs/shape.pdf}
+\includegraphics[scale=0.72]{figs/shape.pdf}
 \end{center}
+\caption{Posterior shape parameter, $\xi$, under each domain and each of the four data types. The points are the means and the lines mark the 95\% h.p.d. intervals. The value above each point is the threshold used in the analysis. Note: The $x$-axes are the same for every plot. The $y$-axes (for all subsequent figures) denote only the data type and thus hold no quantitative meaning.}
+\label{ksi}
 \end{figure}
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.5]{figs/log_sigma.pdf}
+\includegraphics[scale=0.72]{figs/log_sigma.pdf}
 \end{center}
+\caption{Natural logarithm of the posterior scale. For the CanCM4 simulations, the parameter shown is $\log (\alpha/\beta)$ (the mean scale) because $\sigma_i$ follows a Gamma distribution with mean $\alpha/\beta$. No change of variables is necessary for the observations. Note: The $x$-axes are the same for every plot.}
+\label{sigma}
 \end{figure}
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.5]{figs/rl20.pdf}
+\includegraphics[scale=0.72]{figs/rl20.pdf}
 \end{center}
+\caption{20-year return levels. Note: The left two columns have the same $x$-axes, which are different than those in the right two columns, which have the same.}
+\label{20rl}
 \end{figure}
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.5]{figs/rl50.pdf}
+\includegraphics[scale=0.72]{figs/rl50.pdf}
 \end{center}
+\caption{50-year return levels. The $x$-axes are the same as those in Figure \ref{20rl}.}
+\label{50rl}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.72]{figs/theta.pdf}
+\end{center}
+\caption{The mean extremal index. Like the parameters shown in Figures \ref{ksi} and \ref{sigma}, the hierarchical mean is shown for the CanCM4 simulations.}
 \end{figure}
 
 \section{Discussion}
