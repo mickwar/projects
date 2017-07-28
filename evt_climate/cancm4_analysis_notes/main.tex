@@ -23,12 +23,30 @@
 \begin{document}
 
 \begin{Large}
-\noindent Extreme value comparison of CanCM4 simulations and observations
+\noindent \textbf{Extreme value comparison of CanCM4 simulations and observations}
 \end{Large}
-% A Bayesian hierarchical model for CanCM4 climate simulations, with an exploration of estimating the extremal index in the hierarchical setting, and a comparison between climate simulations and observations from a gridded product
+\bigskip
+
+%\begin{large}
+\noindent \textbf{Mickey Warner}
+%end{large}
+
+
+\section{Abstract}
+\label{abstract}
+We fit a Bayesian hierarchical model to threshold exceedances from CanCM4 climate simulations. Three simulation classes are analyzed: decadal, historical, and pre-industrial control. These are compared against on observation product. We find that in some domains, the simulations are in agreement with the observations, but in others can be quite different.
 
 \section{Introduction}
 \label{intro}
+
+The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide array of atmospheric conditions across the globe. Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
+
+The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply just control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future.
+
+Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
+
+
+
 
 
 
@@ -70,6 +88,10 @@ Picture of the locations CanCM4/Obs produces
 Time-series plot of the variables
 \bigskip
 
+\section{Data pre-processing}
+
+\subsection{Aggregation}
+
 \begin{figure}
 \begin{center}
 \includegraphics[scale=0.26]{/home/mickey/files/repos/stat_clim_evt_repo/figs/cal_mod_box1.pdf}
@@ -78,6 +100,17 @@ Time-series plot of the variables
 \end{center}
 \caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations. The data shown are from a single day in January.}
 \end{figure}
+
+We will look at daily precipitation and maximum temperature, both over California during the 1990s. The quantities used in the analysis are total precipitation (a weighted sum) and average maximum temperature (weighted). (Expand). This leads to a $R$ univariate time series for each class of simulations. To each time-series is fit a dynamic linear model (DLM) having the first two harmonics. Anomalies are computed by taking the difference of the time-series and the smoothed predictions based on the DLM. For winter we look at only December, January, and February. For summer we have June, July, and August. Finally, we treat the time-series as though there is no gap between the seasons of interest. For example, 28 February is followed immediately by 1 December in the winter analysis. This completes our pre-processing. (After the processing, the sequences are assumed stationary).
+
+\subsection{De-trending}
+\label{anomaly}
+
+Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them.
+
+Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
+
+Include picture of smoothed DLM
  
 \section{Threshold exceedance model}
 \label{thresh}
@@ -150,18 +183,14 @@ We complete the hierarchical model formulation by specifying the following prior
 
 The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$.
 
+\subsection{Estimation}
+
 Ferro and Suveges propose ways for estimating $\theta$. It was our experience that the likelihood provided by Ferro worked better in estimating $\theta$ in a hierarchical setting than the likelihood proposed by Suveges. 
 
 Copy details from the other notes.
 
-\section{De-trending}
-\label{anomaly}
+\subsection{Declustering}
 
-Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them.
-
-Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
-
-Include picture of smoothed DLM
 
 
 \section{Return levels}
