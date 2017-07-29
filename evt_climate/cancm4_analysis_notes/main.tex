@@ -106,6 +106,15 @@ We will look at daily precipitation and maximum temperature, both over Californi
 \subsection{De-trending}
 \label{anomaly}
 
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.50]{figs/dlm.pdf}
+\end{center}
+\caption{One of the DLMs used to calculate the anomalies. Shown is one of the decadal replicates of average tasmax in California for about the first two and one-half years of the time-series. The green dashed lines mark the summer months.}
+\label{dlm}
+\end{figure}
+
+
 Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them.
 
 Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
