@@ -128,6 +128,62 @@ Each analysis is confined to a specific season, either winter or summer. Winter 
 
 An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
  
+
+\section{Extremal Index}
+\label{index}
+
+% Sloppy, may not be technically correct with regard to theta.
+The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the first model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
+
+\subsection{Estimation}
+
+\cite{ferro2003inference} propose estimating $\theta$ by considering the interexceedance times, the length of time between each random variable that exceeds the threshold. Suppose we have observations $X_1,\ldots,X_n$. For a threshold $u$, the $N$ exceedances $Y_i=X_i-u$ given $X_i>u$ occur at times $1\leq j_1<\cdots< j_N\leq n$. The observed interexceedance times are given by $T_i=j_{i+1}-j_i$ for $i=1,\ldots,N-1$. The following log-likelihood is then provided
+\begin{align}
+l(\theta, p; \m{T}) =& m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \log(1-p^\theta)\} \nonumber \\
+ &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
+\end{align}
+where $p$ is the probability of not exceeding the threshold. We require this likelihood to be used in a hierarchical model.
+
+Suppose we have $R$ replications from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
+\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
+Under model (\ref{ferro}), we place a similar prior on the $p_i$,
+\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
+
+The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume
+\begin{align*}
+\theta &\sim Beta(a_\theta, b_\theta) \\
+\nu &\sim Gamma(a_\nu, b_\nu) \\
+p &\sim Beta(a_p, b_p) \\
+\tau &\sim Gamma(a_\tau, b_\tau) 
+\end{align*}
+with the hyperparameters chosen to be
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{rlcl}
+$\theta$: & $a_\theta = 1          $ &~~& $b_\theta = 1/2             $ \\
+$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\
+$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\
+$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
+\end{tabular}
+\end{center}
+%\end{table}
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro})
+
+By assuming indepedence between the simulations, we can construct the following log-likelihood
+\begin{align}
+L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)})
+\end{align}
+where $\m{T}^{(i)}$ is the vector of interexceedance times for replicate $i$ having length $N_i$.
+
+\subsection{Declustering}
+
+Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the number of independent clusters.
+
+
+
+
+
+
 \section{Threshold exceedance model}
 \label{thresh}
 
@@ -197,57 +253,6 @@ We complete the hierarchical model formulation by specifying the following prior
 \zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
 \end{align}
 By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC, after a burn-in of $200,000$ iterations, $100,000$ samples are thereafter obtained.
-
-\section{Extremal Index}
-\label{index}
-
-% Sloppy, may not be technically correct with regard to theta.
-The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the first model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
-
-\subsection{Estimation}
-
-\cite{ferro2003inference} propose estimating $\theta$ by considering the interexceedance times, the length of time between each random variable that exceeds the threshold. Suppose we have observations $X_1,\ldots,X_n$. For a threshold $u$, the $N$ exceedances $Y_i=X_i-u$ given $X_i>u$ occur at times $1\leq j_1<\cdots< j_N\leq n$. The observed interexceedance times are given by $T_i=j_{i+1}-j_i$ for $i=1,\ldots,N-1$. The following log-likelihood is then provided
-\begin{align}
-l(\theta, p; \m{T}) =& m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \log(1-p^\theta)\} \nonumber \\
- &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
-\end{align}
-where $p$ is the probability of not exceeding the threshold. We require this likelihood to be used in a hierarchical model.
-
-Suppose we have $R$ replications from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
-\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
-Under model (\ref{ferro}), we place a similar prior on the $p_i$,
-\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
-
-The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume
-\begin{align*}
-\theta &\sim Beta(a_\theta, b_\theta) \\
-\nu &\sim Gamma(a_\nu, b_\nu) \\
-p &\sim Beta(a_p, b_p) \\
-\tau &\sim Gamma(a_\tau, b_\tau) 
-\end{align*}
-with the hyperparameters chosen to be
-%\begin{table}[h]
-\begin{center}
-\begin{tabular}{rlcl}
-$\theta$: & $a_\theta = 1          $ &~~& $b_\theta = 1/2             $ \\
-$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\
-$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\
-$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
-\end{tabular}
-\end{center}
-%\end{table}
-where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro})
-
-By assuming indepedence between the simulations, we can construct the following log-likelihood
-\begin{align}
-L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)})
-\end{align}
-where $\m{T}^{(i)}$ is the vector of interexceedance times for replicate $i$ having length $N_i$.
-
-\subsection{Declustering}
-
-Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the number of independent clusters.
-
 
 
 \section{Return levels}
