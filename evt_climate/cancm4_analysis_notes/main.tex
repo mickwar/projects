@@ -1,5 +1,6 @@
 \documentclass[12pt]{article}
 
+\usepackage[longnamesfirst]{natbib}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{bm}
@@ -18,6 +19,10 @@
 \newcommand{\R}{I\hspace{-4.4pt}R}
 
 % \setlength\parindent{0pt}
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
 
 
 \begin{document}
@@ -39,58 +44,58 @@ We fit a Bayesian hierarchical model to threshold exceedances from CanCM4 climat
 \section{Introduction}
 \label{intro}
 
-The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide array of atmospheric conditions across the globe. Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
+The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide array of atmospheric conditions across the globe. Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
 
-The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply just control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future.
+The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
-Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
+An observation product is obtain from Ed Mauer's website. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
+Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
 
+Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
 
-
-
-
-Extreme value theory provides the framework for analyzing the stochastic behavior of a process at very large (small) values. This entails calculating the probability distribution of the maximum (minimum) of a sequence of random variabes. 
-
-Equivalently, extreme value analyses study the tails of probability distributions associated with some data generating mechanism. 
-
-In extreme value analyses, a primary interest is to understand 
-
-The standard approach is to appeal to asymtoptic arguments.
-
-We can calculate useful quantities such as return levels.
-
-This allows us to extrapolate beyond the span of historical data.
+The main focus of this paper is to compare the extreme values of the observation product with those of CanCM4 climate simulations. The comparison is done mostly through visualization of the differences between posterior parameters and a useful quantity called the return level (section \ref{return}).
 
 
-We compare three types of climate model simulations 
 
-The Fourth Generation Atmospheric General Circulation Model (CanCM4) from Canada 
 
-Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
-\bigskip
 
-Purpose of the univariate analysis?
-\bigskip
-
-Details on the differences between decadal, historical, and control runs.
-\bigskip
-
-Precipitation based on the observations is summed. Precipitation from the climate model is computed with a weighted sum, based on the number of locations in the observation product.
-\bigskip
-
-Description of data processing
-\bigskip
-
-Picture of the locations CanCM4/Obs produces
-\bigskip
-
-Time-series plot of the variables
-\bigskip
+% Extreme value theory provides the framework for analyzing the stochastic behavior of a process at very large (small) values. This entails calculating the probability distribution of the maximum (minimum) of a sequence of random variabes. 
+% 
+% Equivalently, extreme value analyses study the tails of probability distributions associated with some data generating mechanism. 
+% 
+% In extreme value analyses, a primary interest is to understand 
+% 
+% The standard approach is to appeal to asymtoptic arguments.
+% 
+% We can calculate useful quantities such as return levels.
+% 
+% This allows us to extrapolate beyond the span of historical data.
+% 
+% 
+% We compare three types of climate model simulations 
+% 
+% The Fourth Generation Atmospheric General Circulation Model (CanCM4) from Canada 
+% 
+% Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
+% 
+% Purpose of the univariate analysis?
+% 
+% Details on the differences between decadal, historical, and control runs.
+% 
+% Precipitation based on the observations is summed. Precipitation from the climate model is computed with a weighted sum, based on the number of locations in the observation product.
+% 
+% Description of data processing
+% 
+% Picture of the locations CanCM4/Obs produces
+% 
+% Time-series plot of the variables
 
 \section{Data pre-processing}
+\label{process}
 
 \subsection{Aggregation}
+\label{aggregate}
 
 \begin{figure}
 \begin{center}
@@ -98,10 +103,13 @@ Time-series plot of the variables
 \includegraphics[scale=0.26]{figs/cal_mod_box2.pdf}
 \includegraphics[scale=0.26]{figs/cal_mod_box3.pdf}
 \end{center}
-\caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations. The data shown are from a single day in January.}
+\caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations; the lighter gray points mean less weight is applied to the climate simulations and the darker gray means more weight. The data shown are from a single day in January.}
+\label{weight}
 \end{figure}
 
-We will look at daily precipitation and maximum temperature, both over California during the 1990s. The quantities used in the analysis are total precipitation (a weighted sum) and average maximum temperature (weighted). (Expand). This leads to a $R$ univariate time series for each class of simulations. To each time-series is fit a dynamic linear model (DLM) having the first two harmonics. Anomalies are computed by taking the difference of the time-series and the smoothed predictions based on the DLM. For winter we look at only December, January, and February. For summer we have June, July, and August. Finally, we treat the time-series as though there is no gap between the seasons of interest. For example, 28 February is followed immediately by 1 December in the winter analysis. This completes our pre-processing. (After the processing, the sequences are assumed stationary).
+In this subsection, we describe how the simulations and observations were made to be comparable. Figure \ref{weight} shows the spatial locations of each data source. The plots show only California, but the climate simulations were over the entire globe and the observation product over the United States.
+
+We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell. Then we count the number of locations from the observation product that are contained with each cell. The number of locations within the cells are used to weight the climate simulations (the right-most plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weight average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields time-series on daily time scales.
 
 \subsection{De-trending}
 \label{anomaly}
@@ -110,19 +118,21 @@ We will look at daily precipitation and maximum temperature, both over Californi
 \begin{center}
 \includegraphics[scale=0.50]{figs/dlm.pdf}
 \end{center}
-\caption{One of the DLMs used to calculate the anomalies. Shown is one of the decadal replicates of average tasmax in California for about the first two and one-half years of the time-series. The green dashed lines mark the beginning and the end of the summer months.}
+\caption{One of the DLMs used to calculate the anomalies. Shown is one of the decadal replicates of average \texttt{tasmax} in California for about the first two and one-half years of the time-series. The green dashed lines mark the beginning and the end of the summer months.}
 \label{dlm}
 \end{figure}
 
-
-Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them.
+Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them. 
 
 Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
 
-Include picture of smoothed DLM
+An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
  
 \section{Threshold exceedance model}
 \label{thresh}
+
+\subsection{Univariate}
+\label{univariate}
 
 Under some mild assumptions, for random variable $X$ and for large enough $u$, the distribution of $X-u$ (the exceedance), conditional on $X>u$ is approximately
 \begin{align}
@@ -174,7 +184,7 @@ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma
 &= \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
 \end{align}
 
-Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_i>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances.
+Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances.
 
 We complete the hierarchical model formulation by specifying the following priors:
 \begin{align}
@@ -186,19 +196,57 @@ We complete the hierarchical model formulation by specifying the following prior
 \alpha &\sim Gamma(a_\alpha, b_\alpha)&  &\beta \sim Gamma(a_\beta, b_\beta) \nonumber \\
 \zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
 \end{align}
+By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC, after a burn-in of $200,000$ iterations, $100,000$ samples are thereafter obtained.
 
 \section{Extremal Index}
 \label{index}
 
-The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$.
+% Sloppy, may not be technically correct with regard to theta.
+The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the first model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
 
 \subsection{Estimation}
 
-Ferro and Suveges propose ways for estimating $\theta$. It was our experience that the likelihood provided by Ferro worked better in estimating $\theta$ in a hierarchical setting than the likelihood proposed by Suveges. 
+\cite{ferro2003inference} propose estimating $\theta$ by considering the interexceedance times, the length of time between each random variable that exceeds the threshold. Suppose we have observations $X_1,\ldots,X_n$. For a threshold $u$, the $N$ exceedances $Y_i=X_i-u$ given $X_i>u$ occur at times $1\leq j_1<\cdots< j_N\leq n$. The observed interexceedance times are given by $T_i=j_{i+1}-j_i$ for $i=1,\ldots,N-1$. The following log-likelihood is then provided
+\begin{align}
+l(\theta, p; \m{T}) =& m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \log(1-p^\theta)\} \nonumber \\
+ &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
+\end{align}
+where $p$ is the probability of not exceeding the threshold. We require this likelihood to be used in a hierarchical model.
 
-Copy details from the other notes.
+Suppose we have $R$ replications from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
+\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
+Under model (\ref{ferro}), we place a similar prior on the $p_i$,
+\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
+
+The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume
+\begin{align*}
+\theta &\sim Beta(a_\theta, b_\theta) \\
+\nu &\sim Gamma(a_\nu, b_\nu) \\
+p &\sim Beta(a_p, b_p) \\
+\tau &\sim Gamma(a_\tau, b_\tau) 
+\end{align*}
+with the hyperparameters chosen to be
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{rlcl}
+$\theta$: & $a_\theta = 1          $ &~~& $b_\theta = 1/2             $ \\
+$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\
+$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\
+$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
+\end{tabular}
+\end{center}
+%\end{table}
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro})
+
+By assuming indepedence between the simulations, we can construct the following log-likelihood
+\begin{align}
+L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)})
+\end{align}
+where $\m{T}^{(i)}$ is the vector of interexceedance times for replicate $i$ having length $N_i$.
 
 \subsection{Declustering}
+
+Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the number of independent clusters.
 
 
 
@@ -250,9 +298,18 @@ The posterior mean for $\theta$ is used, not samples, when obtaining the return 
 
 \begin{figure}
 \begin{center}
+\includegraphics[scale=0.72]{figs/tail.pdf}
+\end{center}
+\caption{Mean and 95\% h.p.d. for the upper tail (i.e. the generalized pareto) of the ensemble average. Similar to Figures \ref{20rl} and \ref{50rl}, the left two columns have the same $x$-axes and the right two columns have the same $x$-axes.}
+\label{tail}
+\end{figure}
+
+\begin{figure}
+\begin{center}
 \includegraphics[scale=0.72]{figs/theta.pdf}
 \end{center}
 \caption{The mean extremal index. Like the parameters shown in Figures \ref{ksi} and \ref{sigma}, the hierarchical mean is shown for the CanCM4 simulations.}
+\label{theta}
 \end{figure}
 
 \section{Discussion}
@@ -261,5 +318,7 @@ The posterior mean for $\theta$ is used, not samples, when obtaining the return 
 
 
 
+\bibliography{refs}
+\bibliographystyle{asa}
 
 \end{document}
