@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage[longnamesfirst]{natbib}
+\usepackage{natbib}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{bm}
@@ -15,8 +15,6 @@
 \newcommand{\R}{I\hspace{-4.4pt}R}
 \newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
 \newcommand{\ind}{\mathds{1}}
-\newcommand{\m}[1]{\mathbf{\bm{#1}}}
-\newcommand{\R}{I\hspace{-4.4pt}R}
 
 % \setlength\parindent{0pt}
 
@@ -48,48 +46,15 @@ The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide arra
 
 The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
-An observation product is obtain from Ed Mauer's website. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
-
-Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
+An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
 Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
+
+Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
 
 The main focus of this paper is to compare the extreme values of the observation product with those of CanCM4 climate simulations. The comparison is done mostly through visualization of the differences between posterior parameters and a useful quantity called the return level (section \ref{return}).
 
 
-
-
-
-% Extreme value theory provides the framework for analyzing the stochastic behavior of a process at very large (small) values. This entails calculating the probability distribution of the maximum (minimum) of a sequence of random variabes. 
-% 
-% Equivalently, extreme value analyses study the tails of probability distributions associated with some data generating mechanism. 
-% 
-% In extreme value analyses, a primary interest is to understand 
-% 
-% The standard approach is to appeal to asymtoptic arguments.
-% 
-% We can calculate useful quantities such as return levels.
-% 
-% This allows us to extrapolate beyond the span of historical data.
-% 
-% 
-% We compare three types of climate model simulations 
-% 
-% The Fourth Generation Atmospheric General Circulation Model (CanCM4) from Canada 
-% 
-% Decadal, historical, and control runs are used to obtain precipitation and temperature over California and the U.S. We have observational data from Ed Maurer. We will consider two 10-year periods: 1962--1971 and 1990--1999. We will also split these into winter months (December, January, Februrary) and summer months (June, July, August). Precipitation in summer is not analyzed.
-% 
-% Purpose of the univariate analysis?
-% 
-% Details on the differences between decadal, historical, and control runs.
-% 
-% Precipitation based on the observations is summed. Precipitation from the climate model is computed with a weighted sum, based on the number of locations in the observation product.
-% 
-% Description of data processing
-% 
-% Picture of the locations CanCM4/Obs produces
-% 
-% Time-series plot of the variables
 
 \section{Data pre-processing}
 \label{process}
@@ -129,11 +94,12 @@ Each analysis is confined to a specific season, either winter or summer. Winter 
 An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
  
 
+
 \section{Extremal Index}
 \label{index}
 
 % Sloppy, may not be technically correct with regard to theta.
-The previously described model relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the first model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
+The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
 
 \subsection{Estimation}
 
@@ -144,7 +110,7 @@ l(\theta, p; \m{T}) =& m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \lo
 \end{align}
 where $p$ is the probability of not exceeding the threshold. We require this likelihood to be used in a hierarchical model.
 
-Suppose we have $R$ replications from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
+Suppose we have $R$ replicates from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
 \[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right). \]
 Under model (\ref{ferro}), we place a similar prior on the $p_i$,
 \[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
@@ -171,16 +137,15 @@ where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrizatio
 
 By assuming indepedence between the simulations, we can construct the following log-likelihood
 \begin{align}
-L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)})
+L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)}) \label{hiertheta}
 \end{align}
 where $\m{T}^{(i)}$ is the vector of interexceedance times for replicate $i$ having length $N_i$.
 
 \subsection{Declustering}
 
-Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the number of independent clusters.
+Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the estimated number of independent clusters. Let $T_{C_i}$ be the $C_i$th largest interexceedance time in $\m{T}^{(i)}$. In the case of ties, decrement $C_i$ by one until $T_{C_i+1}$ is strictly greater than $T_{C_i}$. Clusters are formed by grouping the exceedances that are separated in time by no more than $T_{C_i}$. In other words, two exceedances are in the same cluster if their interexceedance time is less than or equal to $T_{C_i}$.
 
-
-
+The $C_i$ clusters that will be formed using the above scheme are assumed to be independent. For each cluster we compute the cluster maximum, this being the ultimate quantity used in our inference.
 
 
 
@@ -200,22 +165,7 @@ Let $X_1,\ldots,X_n$ be a sequence of i.i.d. random variables and $u$ be a high 
 \begin{align}
 L(y_1,\ldots,y_k;\sigma,\xi)=\sigma^{-k}\sum_{i=1}^k\left(1+\frac{\xi y_i}{\sigma}\right)_+^{-1/\xi-1} \label{gplike}
 \end{align}
-where $z_+=\max(z,0)$. This provides the basis for an extreme value analysis.
-
-In many cases, the assumption of independence in observations may be too strong. When we have dependent random variables, which is likely the case in a time series, we employ a declustering scheme to obtain independent clusters, discussed in section \ref{index}
-\bigskip
-
-% \begin{align*}
-% P(X-u\leq y|X > u) &= P(X\leq y+u|X > u) \\
-%  &= 1 - P(X> y+u|X > u) \\
-%  &= 1 - \frac{P(X>y+u, X>u)}{P(X>u)}  \\
-%  &= 1 - \frac{P(X>y+u)}{P(X>u)}  \\
-%  &= 1 - \frac{1-P(X-u \leq y)}{P(X>u)}  \\
-% \Rightarrow P(Y\leq y) = P(X-u\leq y) &= 1-P(X>u)\left(1 - P(X-u\leq y|X>u)\right) \\
-%  &= 1-\zeta\left(1+\frac{\xi y}{\sigma}\right)^{-1/xi} \\
-% \end{align*}
-% where $\zeta=P(X>u)$.
-% \bigskip
+where $z_+=\max(z,0)$. This provides the basis for an extreme value analysis. For example, after declustering, the cluster maxima (which are roughly independent) may be fit using likelihood (\ref{gplike}).
 
 \subsection{Hierarchical model}
 \label{hier}
@@ -229,7 +179,6 @@ For a fixed $u$ and each $i$, define the following sets:
 where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$. We define our exceedances as
 \[ y_{ij} = (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]
 so that all observations not exceeding $u$ are marked as $0$. Let $\m{y}_i=(y_{i,1},\ldots,y_{i,n_i})^\top$ and $\m{y}=(\m{y}_1^\top,\ldots,\m{y}_R^\top)^\top$.
-\bigskip
 
 The likelihood is given by
 \begin{align}
@@ -240,7 +189,7 @@ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma
 &= \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
 \end{align}
 
-Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances.
+Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances. This justifies the use of cluster maxima for $\m{y}_i$.
 
 We complete the hierarchical model formulation by specifying the following priors:
 \begin{align}
@@ -252,22 +201,31 @@ We complete the hierarchical model formulation by specifying the following prior
 \alpha &\sim Gamma(a_\alpha, b_\alpha)&  &\beta \sim Gamma(a_\beta, b_\beta) \nonumber \\
 \zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
 \end{align}
-By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC, after a burn-in of $200,000$ iterations, $100,000$ samples are thereafter obtained.
+By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC.
+
 
 
 \section{Return levels}
 \label{return}
 
-The $m$-observation return level is
+A most useful quantity in an extreme value analysis is the return level. Generally, for a distribution $G$, the return level $x_m$ is the solution to
+\begin{align}
+G(x_m) = 1-\frac{1}{m}
+\end{align}
+and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
+
+When working with the generalized pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
 \begin{align}
 x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{rl}
 \end{align}
+where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. Using MCMC samples, we can obtain a distribution for $x_m$, but note that the posterior mean for $\theta$ is used, not samples obtained using (\ref{hiertheta}), when calculating the return level.
 
-The posterior mean for $\theta$ is used, not samples, when obtaining the return levels.
 
 
 \section{Results}
 \label{results}
+
+Figures and figures and figures
 
 \begin{figure}
 \begin{center}
