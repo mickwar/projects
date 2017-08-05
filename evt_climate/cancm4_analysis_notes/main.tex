@@ -99,7 +99,11 @@ An example of the method is shown in Figure \ref{dlm} for the first two and one-
 \label{index}
 
 % Sloppy, may not be technically correct with regard to theta.
-The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta$. We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
+The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta\in(0,1]$. The extremal index can loosely be interpreted as
+\[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1} \]
+so, for example, $\theta=0.5$.
+
+We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
 
 \subsection{Estimation}
 
@@ -185,7 +189,7 @@ The likelihood is given by
 L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma_i,\xi_i,\zeta_i) \nonumber \\
 &= \prod_{i=1}^R\left[\prod_{j\in A_i} F_{X_i}(u) \times \prod_{j\in A_i^c} f_{X_i}(y_{ij}+u)\right] \nonumber \\
 &\approx \prod_{i=1}^R\left[\prod_{j\in A_i} F_{X_i}(u) \times \prod_{j\in A_i^c} [1-F_{X_i}(u)]h(y_{ij}|\sigma_i,\xi_i)\right]~~~~~\mathrm{(approximation~(\ref{gpapprox}))} \nonumber \\
-&= \prod_{i=1}^R\left[\prod_{j\in A_i} (1-\zeta_i)\times \prod_{j\in A_i^c} \frac{\zeta_i}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right]~~~~~\mathrm{(\zeta_i=1-F_{X_i}(u))} \nonumber \\
+&= \prod_{i=1}^R\left[\prod_{j\in A_i} (1-\zeta_i)\times \prod_{j\in A_i^c} \frac{\zeta_i}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right]~~~~~(\zeta_i=1-F_{X_i}(u)) \nonumber \\
 &= \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
 \end{align}
 
@@ -233,6 +237,18 @@ For each of the four data sources (i.e. the three climate simulation classes and
 \item Region --- California or U.S.A.
 \end{enumerate}
 There are then 16 combinations of the factors to be made. For each combination, the hierarchial model described in section \ref{hier} is fit to the decadal, historical, and control runs; the univariate model in section \ref{univariate} is fit to the observation product since this data source does not have replicates.
+
+The next six figures shows posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
+
+The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can seem some departure from the observations. The numbers shown above the lines are the thresholds: $0.95$ quantile for the climate simulations and $0.85$ for the observations. The quantity itself is not too important since different thresholds may produce similar return levels. Figure \ref{sigma} shows the logarithm of the mean scale parameter, $\log(\sigma)$ for the observations and $\log(\alpha/\beta)$ for the simulations.
+
+Figures \ref{20rl} and \ref{50rl} give the $20$- and $50$-year return levels, respectively. In these figures, we have the same $x$-axes for the columns in total precipiation and for the columns under average maximum temperature. Some intervals are difficult to see given the scale, but we can still inspect how the return levels from the observations differ from those of the climate siulations. For winter precipitation, we see that the climate simulations underestimate the return level in california, but does much better when over the whole of the United States.
+
+Figure \ref{tail} shows posterior predictive samples (based on the mean parameters for the hierarchical model) drawn from the generalized Pareto distribution, conditioned on the random variables being greater than the given threshold. There is significant overlap of the simulations with the observations, but this alone does not suggest accuracy of the simulations. Thus, the aforementinoed return levels are necessary when determining similarities and differences.
+
+The posterior mean and 95\% highest posterior density intervals for the extremal index are shown in Figure \ref{theta}. The climate simulations seem to be consistent with the observations for the temperature, but not so for precipiation where they tend to overestimate $\theta$. Though, in terms of limiting mean cluster size, there is not a great difference between $1/0.5=2$ and $1/0.8=1.25$.
+
+Recall that these results are based on the anomalies, the difference between the daily values and their average. Predictions based on the hierarchical and univariate models proposed in section \ref{thresh} can only be of practical use if the average is also given. This may be simple to calculate for the climate simulations, but more care would be needed for projecting the average of the observations. We have not considered this in our analysis.
 
 \begin{figure}
 \begin{center}
@@ -282,8 +298,14 @@ There are then 16 combinations of the factors to be made. For each combination, 
 \label{theta}
 \end{figure}
 
-\section{Discussion}
-\label{discussion}
+
+
+% \section{Discussion}
+% \label{discussion}
+% 
+% We have proposed a hierarchical threshold model to account for replicates of climate simulations. The model was applied to a variety of factor combinations and compared to a univariate threshold model for observations. This can provide a quick comparison between the simulations and the observations, but a more complete model may incorporate all factors together perhaps in a hierarchical fashion.
+% 
+% Our results show that the CanCM4 climate model differs from the observations in some areas, but not all.
 
 
 
