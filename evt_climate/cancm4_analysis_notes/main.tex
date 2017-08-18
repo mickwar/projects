@@ -87,11 +87,26 @@ We will analyze precipitation and temperature over both California and the Unite
 \label{dlm}
 \end{figure}
 
-Each time-series is ``de-trended'' prior to declustering and parameter estimation. For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them. 
+Each time-series is ``de-trended'' prior to declustering and parameter estimation. This is accomplished through the use of dynamic linear models (DLMs). We will review some basic concepts for DLMs, see \cite{prado2010time} chapter 4 for more details.
 
-Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
+A normal DLM is specified by the quadruple $\{\m{F}_t, v_t, \m{G}_t, \m{W}_t\}$ which determine how a univariate time series $y_1,\ldots,y_T$ is modeled over time. We assume
+\begin{align}
+y_t &= \m{F}_t^\top\m{\theta}_t + \nu_t,~~~~~\nu_t\sim N(0, v_t) \\
+\m{\theta}_t &= \m{G}_t\m{\theta}_{t-1}+\m{w}_t~~~~~\m{w}_t\sim N(\m{0}, \m{W}_t)
+\end{align}
+where $\m{\theta}_t$ is the length $p$ state vector, $\m{F}_t$ is a length $p$ vector of known constants are regressors, $\nu_t$ is obersvation noise, $\m{G}_t$ is the known $p\times p$ state evolution matrix, and $\m{w}_t$ is the state evolution noise. Note that $\nu_s$ and $\m{w}_t$ are independent and mutually independent.
 
-An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
+After conditioning on the data up to time $T$, we wish to extrapolate back over time to obtain the posterior distrubitions $p(\m{\theta}_t|D_T)$ for all $t<T$. Knowing these distributions is useful since they allow us to calculate a smooth version of the time series.
+
+% When each component in the quadruple $\{\m{F}_t, v_t, \m{G}_t, \m{W}_t\}$ is known, it is possible to obtain posterior distributions of $(\m{\theta}_t|y_1,\ldots,y_T)$ for $t<T$ (details omitted). 
+% 
+% For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. 
+% 
+% From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them. 
+% 
+% Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
+% 
+% An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
  
 
 
@@ -224,6 +239,17 @@ x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{r
 \end{align}
 where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. Using MCMC samples, we can obtain a distribution for $x_m$, but note that the posterior mean for $\theta$ is used, not samples obtained using (\ref{hiertheta}), when calculating the return level.
 
+
+\section{Bhattacharyya distance}
+\label{bhatta}
+
+\begin{align}
+BC(p,q)=\int_\mathcal{X} \sqrt{p(x)q(x)} dx
+\end{align}
+
+Calculated using kernel density estimates for $p$ and $q$.
+
+\cite{bhattacharyya1943measure}
 
 
 \section{Results}
