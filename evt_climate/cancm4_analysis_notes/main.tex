@@ -46,6 +46,8 @@ The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide arra
 
 The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
+% TODO: Talk about the grids, degree spacing or km
+
 An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
 Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
@@ -84,30 +86,25 @@ We will analyze precipitation and temperature over both California and the Unite
 \includegraphics[scale=0.50]{figs/dlm.pdf}
 \end{center}
 \caption{One of the DLMs used to calculate the anomalies. Shown is one of the decadal replicates of average \texttt{tasmax} in California for about the first two and one-half years of the time-series. The green dashed lines mark the beginning and the end of the summer months.}
-\label{dlm}
+\label{dlm_fig}
 \end{figure}
 
 Each time-series is ``de-trended'' prior to declustering and parameter estimation. This is accomplished through the use of dynamic linear models (DLMs). We will review some basic concepts for DLMs, see \cite{prado2010time} chapter 4 for more details.
 
 A normal DLM is specified by the quadruple $\{\m{F}_t, v_t, \m{G}_t, \m{W}_t\}$ which determine how a univariate time series $y_1,\ldots,y_T$ is modeled over time. We assume
 \begin{align}
-y_t &= \m{F}_t^\top\m{\theta}_t + \nu_t,~~~~~\nu_t\sim N(0, v_t) \\
-\m{\theta}_t &= \m{G}_t\m{\theta}_{t-1}+\m{w}_t~~~~~\m{w}_t\sim N(\m{0}, \m{W}_t)
+y_t &= \m{F}_t^\top\m{\theta}_t + \nu_t,~~~~~\nu_t\sim N(0, v_t) \label{dlm_model} \\
+\m{\theta}_t &= \m{G}_t\m{\theta}_{t-1}+\m{w}_t~~~~~\m{w}_t\sim N(\m{0}, \m{W}_t) \nonumber
 \end{align}
 where $\m{\theta}_t$ is the length $p$ state vector, $\m{F}_t$ is a length $p$ vector of known constants are regressors, $\nu_t$ is obersvation noise, $\m{G}_t$ is the known $p\times p$ state evolution matrix, and $\m{w}_t$ is the state evolution noise. Note that $\nu_s$ and $\m{w}_t$ are independent and mutually independent.
 
-After conditioning on the data up to time $T$, we wish to extrapolate back over time to obtain the posterior distrubitions $p(\m{\theta}_t|D_T)$ for all $t<T$. Knowing these distributions is useful since they allow us to calculate a smooth version of the time series.
+An advantage to model (\ref{dlm_model}) is its capability in yielding a smooth and flexible mean across time. After conditioning on the data up to time $T$, we extrapolate back over time to obtain the posterior distributions $p(\m{\theta}_t|D_T)$ for all $t<T$, which have mean $\m{a}_t$. Using these distributions, and given $\m{F}_t$, the mean of $y_t$ is simply $\m{F}_t^\top\m{a}_t$ (we refer the reader to \cite{prado2010time} for the algorithmic details).
 
-% When each component in the quadruple $\{\m{F}_t, v_t, \m{G}_t, \m{W}_t\}$ is known, it is possible to obtain posterior distributions of $(\m{\theta}_t|y_1,\ldots,y_T)$ for $t<T$ (details omitted). 
-% 
-% For each time-series, we fit a dynamic linear model (DLM) with annual and semi-annual periods. 
-% 
-% From the DLMs we obtain a smoothed version of the time-series, and then take the difference between the original series with the smoothed version. The differences are called the anomalies and the subsequent analyses are performed on them. 
-% 
-% Each analysis is confined to a specific season, either winter or summer. Winter months are defined as December, January, and February, and summer months are June, July, and August. After de-trending based on the whole time-series, we remove all observations that do not belong to the season of interest. The remaining observations are concatenated so that, for example in winter, 28 February is followed immediately by 1 December.
-% 
-% An example of the method is shown in Figure \ref{dlm} for the first two and one-half years of one of the decadal replicates. The end result is a roughly stationary sequence, which we assume will be valid for an extreme value analysis.
- 
+We must omit further details in the interest of space. Our DLM is finalized in the following way. We construct $\m{F}_t$ and $\m{G}_t$ such that the evolution of $\m{\theta}_t$ has annual and semi-annual periods, i.e. the first and second harmonics. Higher harmonics did not seem to make significant contributions in modeling the time-series. A discount factor of $\delta=0.9999$ was chosen, signifying low systematic variance. We assume the prior for $v_t$ is an inverse gamma having sensible shape and scale parameters.
+
+In the end, we are left with what is shown in Figure \ref{dlm_fig}. The blue line in the left plot is the mean of $y_t$, $\m{F}_t^\top\m{a}_t$, given the whole time series. The interior of the vertical green lines mark the summer months. The right plot is the result of subtracting the observation $y_t$ with the mean from the DLM, which produces a roughly stationary sequence. Thus, in our extreme value analysis we work in the anomaly space.
+
+For each time-series to be analyzed, we fit a DLM having the characteristics described above to obtain the anomalies. When working within a specific season, either winter (December, January, February) or summer (June, July, August), we extract just those days contained in the season and treat the beginning of a season as the day that follows immediately after the last day. So, for example in winter, 28 February is followed immediately by 1 December.
 
 
 \section{Extremal Index}
@@ -115,8 +112,14 @@ After conditioning on the data up to time $T$, we wish to extrapolate back over 
 
 % Sloppy, may not be technically correct with regard to theta.
 The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta\in(0,1]$. The extremal index can loosely be interpreted as
-\[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1} \]
-so, for example, $\theta=0.5$.
+\[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1}. \]
+As an example, suppose $\theta=0.5$, then we would expect exceedances of a large threshold to occur in pairs; for $\theta=0.33$, in groups of 3.
+
+\cite{ferro2003inference} show that the extremal index arises in the limiting distribution of the times between exceedances of a threshold. If $T_\theta$ is the random variable for interexceedance times in the limit, then $T_\theta$ is distributed according to the mixture
+\begin{align}
+(1-\theta)\epsilon_0 + \theta \mu_\theta
+\end{align}
+where $\epsilon_0$ is the degenerate probability distribution at $0$ and $\mu_\theta$ is an exponential distribution with mean $\theta^{-1}$. This means that the role of $\theta$ is two-fold: it is both the proportion of non-zero interexceedance times and the inverse mean of non-zero interexceedance times. This poses a challenge when estimating $\theta$ since is it impossible to observe an interexceedance time of zero in practice.
 
 We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
 
@@ -233,7 +236,7 @@ G(x_m) = 1-\frac{1}{m}
 \end{align}
 and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
 
-When working with the generalized pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
+When working with the generalized Pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
 \begin{align}
 x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{rl}
 \end{align}
@@ -312,7 +315,7 @@ Recall that these results are based on the anomalies, the difference between the
 \begin{center}
 \includegraphics[scale=0.72]{figs/tail.pdf}
 \end{center}
-\caption{Mean and 95\% h.p.d. for the upper tail (i.e. the generalized pareto) of the ensemble average. Similar to Figures \ref{20rl} and \ref{50rl}, the left two columns have the same $x$-axes and the right two columns have the same $x$-axes.}
+\caption{Mean and 95\% h.p.d. for the upper tail (i.e. the generalized Pareto) of the ensemble average. Similar to Figures \ref{20rl} and \ref{50rl}, the left two columns have the same $x$-axes and the right two columns have the same $x$-axes.}
 \label{tail}
 \end{figure}
 
