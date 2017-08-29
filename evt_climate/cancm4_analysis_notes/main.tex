@@ -55,6 +55,7 @@ Being a threshold exceedance analysis, we must concern ourselves with exceedance
 Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
 
 The main focus of this paper is to compare the extreme values of the observation product with those of CanCM4 climate simulations. The comparison is done mostly through visualization of the differences between posterior parameters and a useful quantity called the return level (section \ref{return}).
+% TODO: change this last sentence to talk about Bhatta dist
 
 
 
@@ -235,6 +236,7 @@ A most useful quantity in an extreme value analysis is the return level. General
 G(x_m) = 1-\frac{1}{m}
 \end{align}
 and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
+% TODO: needs more intuition
 
 When working with the generalized Pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
 \begin{align}
@@ -246,13 +248,15 @@ where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u
 \section{Bhattacharyya distance}
 \label{bhatta}
 
+\cite{bhattacharyya1943measure} proposed a means for measuring the degree of similarity between two probability distributions. For two continuous random variables on support $\mathcal{X}$ with densities $p$ and $q$, the Bhattacharyya coefficient is defined as
 \begin{align}
-BC(p,q)=\int_\mathcal{X} \sqrt{p(x)q(x)} dx
+BC(p,q)=\int_\mathcal{X} \sqrt{p(x)q(x)} dx. \label{bhattacoef}
 \end{align}
-
-Calculated using kernel density estimates for $p$ and $q$.
-
-\cite{bhattacharyya1943measure}
+The Bhattacharyya distance is 
+\begin{align}
+D_B(p,q)=-\log BC(p,q).
+\end{align}
+We use kernel density estimation to calculate $p$ and $q$ along a grid of the support and then approximate the integral in (\ref{bhattacoef}). If the support is different for the two random variables (as will typically be the case when comparing random variables whose parameters determine the support such as the generalized Pareto), we will integrate over the intersection of the supports.
 
 
 \section{Results}
