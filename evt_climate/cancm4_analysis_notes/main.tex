@@ -46,7 +46,7 @@ The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide arra
 
 The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
-% TODO: Talk about the grids, degree spacing or km
+% TODO: Talk about the grids, degree spacing or km. About 2.5 degrees or >250ish km for CanCM4. For observations it's about 1/8 degree or 15ish km
 
 An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
@@ -199,9 +199,7 @@ where $z_+=\max(z,0)$. This provides the basis for an extreme value analysis. Fo
 
 Suppose we have $R$ replicates or computer simulations, each with $n_i$ observations, for $i=1,\ldots,R$. Let $X_{ij}$ denote the $j$th observation in replicate $i$. We assume
 \[ X_{ij} \sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i \]
-and all $X_{ij}$ are mutually conditionally independent. From (\ref{gplike}), we deriv
-
-For a fixed $u$ and each $i$, define the following sets:
+and all $X_{ij}$ are mutually conditionally independent. For a fixed $u$ and each $i$, define the following sets:
 \[ A_i = \{j:x_{ij}\leq u\},~~~ A_i^c = \{j: x_{ij}>u\} \]
 where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$. We define our exceedances as
 \[ y_{ij} = (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]
@@ -289,6 +287,7 @@ Figure \ref{tail} shows posterior predictive samples (based on the mean paramete
 The posterior mean and 95\% highest posterior density intervals for the extremal index are shown in Figure \ref{theta}. The climate simulations seem to be consistent with the observations for the temperature, but not so for precipiation where they tend to overestimate $\theta$. Though, in terms of limiting mean cluster size, there is not a great difference between $1/0.5=2$ and $1/0.8=1.25$.
 
 Recall that these results are based on the anomalies, the difference between the daily values and their average. Predictions based on the hierarchical and univariate models proposed in section \ref{thresh} can only be of practical use if the average is also given. This may be simple to calculate for the climate simulations, but more care would be needed for projecting the average of the observations. We have not considered this in our analysis.
+% TODO: These are based on aggregates over a large region, and so do not inform us about what the extremes might be at a particular location.
 
 \begin{figure}
 \begin{center}
