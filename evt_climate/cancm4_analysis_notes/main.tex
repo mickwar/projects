@@ -37,25 +37,22 @@
 
 \section{Abstract}
 \label{abstract}
-We fit a Bayesian hierarchical model to threshold exceedances from CanCM4 climate simulations. Three simulation classes are analyzed: decadal, historical, and pre-industrial control. These are compared against on observation product. We find that in some domains, the simulations are in agreement with the observations, but in others can be quite different.
+We fit a Bayesian hierarchical threshold exceedance model to CanCM4 climate simulation replicates (i.e. simulations having different input settings). Three simulation classes are analyzed: decadal, historical, and pre-industrial control. These are compared against an observation product to which a standard univariate threshold exceedance model is fit. Comparisons are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities. We find that in some domains, the simulations are in agreement with the observations, but in others can be quite different.
 
 \section{Introduction}
 \label{intro}
 
-The Fourth Generation Coupled Global Climate Model (CanCM4) produces a wide array of atmospheric conditions across the globe. Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
+The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
 
 The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
-% TODO: Talk about the grids, degree spacing or km. About 2.5 degrees or >250ish km for CanCM4. For observations it's about 1/8 degree or 15ish km
-
-An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid. To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
+An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid (about $1/8^\circ$ degree spacing). To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
 Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
 
 Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
 
-The main focus of this paper is to compare the extreme values of the observation product with those of CanCM4 climate simulations. The comparison is done mostly through visualization of the differences between posterior parameters and a useful quantity called the return level (section \ref{return}).
-% TODO: change this last sentence to talk about Bhatta dist
+The main focus of this paper is to compare the extreme values of the observation product with those of CanCM4 climate simulations. Specifically, a key question we address is, ``Could the observations have come from the climate model?'' We attempt to answer this by comparing posterior intervals for model parameters and other quantities such as return level (section \ref{return}) and Bhattacharyya distance (section \ref{bhatta}).
 
 
 
@@ -114,7 +111,7 @@ For each time-series to be analyzed, we fit a DLM having the characteristics des
 \label{index}
 
 % Sloppy, may not be technically correct with regard to theta.
-The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index, denoted by $\theta\in(0,1]$. The extremal index can loosely be interpreted as
+The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index \citep{leadbetter1983extremes}, denoted by $\theta\in(0,1]$. The extremal index can loosely be interpreted as
 \[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1}. \]
 As an example, suppose $\theta=0.5$, then we would expect exceedances of a large threshold to occur in pairs; for $\theta=0.33$, in groups of 3.
 
@@ -302,6 +299,14 @@ Recall that these results are based on the anomalies, the difference between the
 \includegraphics[scale=0.72]{figs/log_sigma.pdf}
 \end{center}
 \caption{Natural logarithm of the posterior scale. For the CanCM4 simulations, the parameter shown is $\log (\alpha/\beta)$ (the mean scale) because $\sigma_i$ follows a Gamma distribution with mean $\alpha/\beta$. No change of variables is necessary for the observations. Note: The $x$-axes are the same for every plot.}
+\label{sigma}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.72]{figs/zeta.pdf}
+\end{center}
+\caption{probability of exceedance}
 \label{sigma}
 \end{figure}
 
