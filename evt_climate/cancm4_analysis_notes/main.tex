@@ -22,6 +22,9 @@
 \setlength{\@fptop}{0pt}
 \makeatother
 
+% TODO: should make a reference to Coles somewhere
+
+% TODO: prepare new section for bivariate analysis (references)
 
 \begin{document}
 
@@ -219,11 +222,12 @@ We complete the hierarchical model formulation by specifying the following prior
 \sigma_i|\alpha, \beta &\sim Gamma(\alpha, \beta) \nonumber \\
 \zeta_i|\zeta, \eta &\sim Beta(\zeta\eta, (1-\zeta)\eta) \nonumber \\
  \label{priors} \\
-\xi &\sim Normal(m, s^2)&  &\tau^2 \sim Gamma(a_\tau, b_\tau) \nonumber \\
+\xi &\sim Normal(m, s^2)&  &\tau^2 \sim InvGamma(a_\tau, b_\tau) \nonumber \\
 \alpha &\sim Gamma(a_\alpha, b_\alpha)&  &\beta \sim Gamma(a_\beta, b_\beta) \nonumber \\
 \zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
 \end{align}
 By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC.
+% TODO: talk about the hyperparameters, latin letters. Some are intending to be a bit informative, like \tau^2 and \zeta, since we have only 10 ``observations'' for the population distributions.
 
 
 
@@ -273,9 +277,12 @@ For each of the four data sources (i.e. the three climate simulation classes and
 \end{enumerate}
 There are then 16 combinations of the factors to be made. For each combination, the hierarchial model described in section \ref{hier} is fit to the decadal, historical, and control runs; the univariate model in section \ref{univariate} is fit to the observation product since this data source does not have replicates.
 
-The next six figures shows posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
+Figures \ref{ksi} through \ref{theta} show posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
 
-The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can seem some departure from the observations. The numbers shown above the lines are the thresholds: $0.95$ quantile for the climate simulations and $0.85$ for the observations. The quantity itself is not too important since different thresholds may produce similar return levels. Figure \ref{sigma} shows the logarithm of the mean scale parameter, $\log(\sigma)$ for the observations and $\log(\alpha/\beta)$ for the simulations.
+The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can seem some departure from the observations. The numbers shown above the lines are indicators for whether the posterior from the observations is similar to the posterior of the replicates---in the sense of Bhattacharyya distance described in section \ref{bhatta}---for a particular simulation class.
+
+% TODO: talk about the choice of thresholds earlier in this section (perhaps even in another section?)
+Thresholds are chosen to be the $0.95$ quantile for the climate simulations and $0.85$ for the observations. The quantity itself is not too important since different thresholds may produce similar return levels. Figure \ref{sigma} shows the logarithm of the mean scale parameter, $\log(\sigma)$ for the observations and $\log(\alpha/\beta)$ for the simulations.
 
 Figures \ref{20rl} and \ref{50rl} give the $20$- and $50$-year return levels, respectively. In these figures, we have the same $x$-axes for the columns in total precipiation and for the columns under average maximum temperature. Some intervals are difficult to see given the scale, but we can still inspect how the return levels from the observations differ from those of the climate siulations. For winter precipitation, we see that the climate simulations underestimate the return level in california, but does much better when over the whole of the United States.
 
@@ -309,6 +316,7 @@ Recall that these results are based on the anomalies, the difference between the
 \caption{probability of exceedance}
 \label{sigma}
 \end{figure}
+% TODO: more details
 
 \begin{figure}
 \begin{center}
@@ -330,7 +338,7 @@ Recall that these results are based on the anomalies, the difference between the
 \begin{center}
 \includegraphics[scale=0.72]{figs/tail.pdf}
 \end{center}
-\caption{Mean and 95\% h.p.d. for the upper tail (i.e. the generalized Pareto) of the ensemble average. Similar to Figures \ref{20rl} and \ref{50rl}, the left two columns have the same $x$-axes and the right two columns have the same $x$-axes.}
+\caption{Mean and 95\% h.p.d. for the upper tail (i.e. the generalized Pareto) of the ensemble average. As in Figures \ref{20rl} and \ref{50rl}, the left two columns have the same $x$-axes and the right two columns have the same $x$-axes.}
 \label{tail}
 \end{figure}
 
