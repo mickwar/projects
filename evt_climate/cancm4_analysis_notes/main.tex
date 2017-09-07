@@ -277,21 +277,7 @@ For each of the four data sources (i.e. the three climate simulation classes and
 \end{enumerate}
 There are then 16 combinations of the factors to be made. For each combination, the hierarchial model described in section \ref{hier} is fit to the decadal, historical, and control runs; the univariate model in section \ref{univariate} is fit to the observation product since this data source does not have replicates.
 
-Figures \ref{ksi} through \ref{theta} show posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
-
-The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can seem some departure from the observations. The numbers shown above the lines are indicators for whether the posterior from the observations is similar to the posterior of the replicates---in the sense of Bhattacharyya distance described in section \ref{bhatta}---for a particular simulation class.
-
-% TODO: talk about the choice of thresholds earlier in this section (perhaps even in another section?)
-Thresholds are chosen to be the $0.95$ quantile for the climate simulations and $0.85$ for the observations. The quantity itself is not too important since different thresholds may produce similar return levels. Figure \ref{sigma} shows the logarithm of the mean scale parameter, $\log(\sigma)$ for the observations and $\log(\alpha/\beta)$ for the simulations.
-
-Figures \ref{20rl} and \ref{50rl} give the $20$- and $50$-year return levels, respectively. In these figures, we have the same $x$-axes for the columns in total precipiation and for the columns under average maximum temperature. Some intervals are difficult to see given the scale, but we can still inspect how the return levels from the observations differ from those of the climate siulations. For winter precipitation, we see that the climate simulations underestimate the return level in california, but does much better when over the whole of the United States.
-
-Figure \ref{tail} shows posterior predictive samples (based on the mean parameters for the hierarchical model) drawn from the generalized Pareto distribution, conditioned on the random variables being greater than the given threshold. There is significant overlap of the simulations with the observations, but this alone does not suggest accuracy of the simulations. Thus, the aforementinoed return levels are necessary when determining similarities and differences.
-
-The posterior mean and 95\% highest posterior density intervals for the extremal index are shown in Figure \ref{theta}. The climate simulations seem to be consistent with the observations for the temperature, but not so for precipiation where they tend to overestimate $\theta$. Though, in terms of limiting mean cluster size, there is not a great difference between $1/0.5=2$ and $1/0.8=1.25$.
-
-Recall that these results are based on the anomalies, the difference between the daily values and their average. Predictions based on the hierarchical and univariate models proposed in section \ref{thresh} can only be of practical use if the average is also given. This may be simple to calculate for the climate simulations, but more care would be needed for projecting the average of the observations. We have not considered this in our analysis.
-% TODO: These are based on aggregates over a large region, and so do not inform us about what the extremes might be at a particular location.
+Thresholds are chosen to be the $0.95$ quantile for the climate simulations and $0.85$ for the observations. The quantity itself is not too important since different thresholds may produce similar return levels.
 
 \begin{figure}
 \begin{center}
@@ -313,10 +299,9 @@ Recall that these results are based on the anomalies, the difference between the
 \begin{center}
 \includegraphics[scale=0.72]{figs/zeta.pdf}
 \end{center}
-\caption{probability of exceedance}
-\label{sigma}
+\caption{The probability of exceeding the threshold. These parameters are closely tied to the threshold, a user-specified quantity. Since we chose thresholds as the $0.95$ quantile for the climate simulations and the $0.85$ quantile for the observations, we do not expect there to be much overlap between these posteriors.}
+\label{zeta}
 \end{figure}
-% TODO: more details
 
 \begin{figure}
 \begin{center}
@@ -351,13 +336,25 @@ Recall that these results are based on the anomalies, the difference between the
 \end{figure}
 
 
+Figures \ref{ksi} through \ref{theta} show posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
 
-% \section{Discussion}
-% \label{discussion}
-% 
-% We have proposed a hierarchical threshold model to account for replicates of climate simulations. The model was applied to a variety of factor combinations and compared to a univariate threshold model for observations. This can provide a quick comparison between the simulations and the observations, but a more complete model may incorporate all factors together perhaps in a hierarchical fashion.
-% 
-% Our results show that the CanCM4 climate model differs from the observations in some areas, but not all.
+The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can seem some departure from the observations. The numbers shown above the lines are indicators for whether the posterior from the observations is similar to the posterior of the replicates---in the sense of Bhattacharyya distance described in section \ref{bhatta}---for a particular simulation class. Perhaps an unexpected result is that, except for summer precipitation, there is evidence that total precipitation is bounded above (due to $\ksi<0$). This is contrary to some findings that the shape parameter for precipitation is positive. [ADD REFS: This was mentioned a lot at SAMSI, so there should be some reference to it, right?]
+
+Figure \ref{sigma} shows the logarithm of the mean scale parameter, $\log(\sigma)$ for the observations and $\log(\alpha/\beta)$ for the simulations, and the posteriors for $\zeta$, the probability of exceeding the threshold, are given in Figure \ref{zeta}.
+
+Figures \ref{20rl} and \ref{50rl} give the $20$- and $50$-year return levels, respectively. In these figures, we have the same $x$-axes for the columns in total precipiation and for the columns under average maximum temperature. Some intervals are difficult to see given the scale, but we can still inspect how the return levels from the observations differ from those of the climate siulations. There is evidence of similarity between the data sources for maximum temperature (except for the 1962--1971 decade in the United States). The simulations struggle to find agreement with the observations when considering precipitation, only having two domains where the observations are similar to at least two of the climate sources (1990 USA Winter and 1962 USA Summer).
+
+Figure \ref{tail} shows posterior predictive samples (based on the mean parameters for the hierarchical model) drawn from the generalized Pareto distribution, conditioned on the random variables being greater than the given threshold. With respect to the 95\% posterior intervals, there is significant overlap of the simulations with the observations, but this is not the case with Bhattacharyya distance. This is because nearly all replicates were very close to their mean, having a distance of roughly $0.02$, while the observations were different enough to have a distance of about $0.2$ from the mean process. Despite all this, we saw in Figures \ref{20rl} and \ref{50rl} that there is still some similarity between the important return level quantities, which account for $\zeta$ and $\theta$.
+
+The posterior mean and 95\% highest posterior density intervals for the extremal index are shown in Figure \ref{theta}. The climate simulations seem to be consistent with the observations for the temperature, but not so for precipiation where they tend to overestimate $\theta$. The Bhattacharyya distance was no computed for these parameters.
+
+\section{Discussion}
+\label{discussion}
+
+We have proposed a hierarchical threshold model to handle replicates of climate simulations. The model was applied to a variety of factor combinations and compared to a univariate threshold model for observations. A handful of similarities and differences were found to exist between simulations and the observation product.
+
+We have accounted for trends in the time-series by subtracting out the mean of dynamic linear models, thus yielding anomalies. This poses issues of interpretability and practicality. Our extreme value analysis are in terms of the anomalies and this may not be terribly useful when making comparisons. Should we be interested in the precipitation or temperature extremes in real terms, we must add back the (possibly unknown) mean. However, with a sufficient model on the mean, it would not be unreasonable to use our analysis for projecting extremes in the future.
+
 
 
 
