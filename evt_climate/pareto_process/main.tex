@@ -1,0 +1,66 @@
+\documentclass[12pt]{article}
+
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage[margin=1.00in]{geometry}
+\usepackage[font=scriptsize]{caption}
+\usepackage{dsfont}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{bm}
+\newcommand{\m}[1]{\mathbf{\bm{#1}}}
+\newcommand{\R}{I\hspace{-4.4pt}R}
+\newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
+\newcommand{\ind}{\mathds{1}}
+
+\usepackage{enumitem}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+
+\textbf{Definition.} (Constructive approach) A stochastic process $W$ in $C_+(S)$ with constant $\omega_0>0$ is a simple Pareto process if $W(s) = Y V(s)$, for all $s\in S$, for some $Y$ and $V=\{V(s)\}_{s\in S}$ satisfying:
+\begin{enumerate}[label=\alph*)]
+\item $V\in C_+(S)$ is a stochastic process satisfying $\sup_{s\in S} V(s) = \omega_0$ almost surely, $E[V(s)]>0$ for all $s \in S$,
+\item $Y$ is a standard Pareto random variable, $P(Y > y) = y^{-1}, y>1$,
+\item $Y$ and $V$ are independent.
+\end{enumerate}
+
+See Ferreira and de Haan (2014) for other variants of the definition.
+\bigskip
+
+\textbf{Coefficient of asymptotic dependence.} For random variables $X_1$ and $X_2$ having common marginal distribution $F$, let
+\[ \chi_{12} = \lim_{z\rightarrow z_+}P(X_1>z|X_2>z) \]
+where $z_+$ is the (possibly infinite) right end-point.
+\bigskip
+
+For $s_1,s_2\in S$ and $x > \omega_0$, then for $i=1,2$,
+\begin{align*}
+P(W(s_i)>x) &= P(Y V(s_i) > x) \\
+ &= P\left(Y > \frac{x}{V(s_i)}\right) \\
+ &= E_{Y,V(s_i)}\left[\ind\left(Y > \frac{x}{V(s_i)}\right)\right] \\
+ &= E_{V(s_i)}\left\{E_{Y|V(s_i)}\left[\ind\left(Y > \frac{x}{V(s_i)}\right) \middle| V(s_i) \right]\right\} \\
+ &= E_{V(s_i)}\left\{P\left(Y > \frac{x}{V(s_i)} \middle| V(s_i) \right)\right\} \\
+ &= E_{V(s_i)}\left\{\frac{V(s_i)}{x}\right\} = \frac{E[V(s_i)]}{x}
+\end{align*}
+and 
+\begin{align*}
+P(W(s_1)>x, W(s_2)>x) &= P(Y V(s_1) > x, Y V(s_2) > x) \\
+ &= P\left(Y > \frac{x}{V(s_1)}, Y > \frac{x}{V(s_2)}\right) \\
+ &= P\left(Y > \frac{x}{V(s_1)}\vee\frac{x}{V(s_2)}\right) \\
+ &= P\left(Y > x \left(\frac{1}{V(s_1)}\vee\frac{1}{V(s_2)}\right)\right) \\
+ &= P\left(Y > x \left(\frac{1}{V(s_1)\wedge V(s_2)}\right)\right) \\
+ &= \frac{E[V(s_1)\wedge V(s_2)]}{x}
+\end{align*}
+by using arguments similar in the first set of equations. Then for a simple Pareto process at points $s_1,s_2\in S$, we have
+\begin{align*}
+\chi_{12}^W &= \lim_{x\rightarrow \infty} P(W(s_1) > x | W(s_2) > x) \\
+ &= \lim_{x\rightarrow \infty} \frac{xE[V(s_1)\wedge V(s_2)]}{xE[V(s_2)]} \\
+ &= \frac{E[V(s_1)\wedge V(s_2)]}{E[V(s_2)]}
+\end{align*}
+This is from Ferreira and de Haan (2014), but with some clarity (for the dummies of the universe) as to how they got to the expectations.
+
+\end{document}
