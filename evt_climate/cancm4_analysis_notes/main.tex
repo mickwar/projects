@@ -1,11 +1,12 @@
 \documentclass[12pt]{article}
 
 \usepackage{natbib}
+
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{bm}
 \usepackage{dsfont}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=1.00in]{geometry}
 \usepackage[font=scriptsize]{caption}
 \usepackage{dsfont}
 \usepackage{amsmath}
@@ -34,20 +35,22 @@
 \bigskip
 
 %\begin{large}
-\noindent \textbf{Mickey Warner}
+\noindent Mickey Warner, Bruno Sanso
 %end{large}
 
 
-\section{Abstract}
-\label{abstract}
-We fit a Bayesian hierarchical threshold exceedance model to CanCM4 climate simulation replicates (i.e. simulations having different input settings). Three simulation classes are analyzed: decadal, historical, and pre-industrial control. These are compared against an observation product to which a standard univariate threshold exceedance model is fit. Comparisons are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities. We find that in some domains, the simulations are in agreement with the observations, but in others can be quite different.
+\bigskip
+\bigskip
+\begin{quote}
+\textbf{Abstract.} Our goal is to explore similarities and differences in extreme behavior between climate simulations and an observation product. We fit a Bayesian hierarchical threshold exceedance model to CanCM4 climate simulation replicates (i.e. simulations having different input settings). Three simulation classes are analyzed: decadal, historical, and pre-industrial control. These are compared against an observation product to which a standard univariate threshold exceedance model is fit. Comparisons are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities. We find that in some domains, the simulations are in agreement with the observations, but in others can be quite different.
+\end{quote}
 
 \section{Introduction}
 \label{intro}
 
-The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs.
+The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). We further restrict our attention to analyzing two seasons---summer and winter---and two regions---California and the U.S.
 
-The decadal simulations provide climate estimates for ten years into the future, after conditioning on weather conditions at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on climate states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years into the future. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
+Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs. The decadal simulations provide climate estimates for ten years into the future, after conditioning on the state of the ocean at the time. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on ocean states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years. The purpose of the control runs is to provide some measure of internal variability of the climate system. Decadal and historical simulations are run at $R=10$ different input settings. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
 
 An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid (about $1/8^\circ$ degree spacing). To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
@@ -59,7 +62,7 @@ The main focus of this paper is to compare the extreme values of the observation
 
 
 
-\section{Data pre-processing}
+\section{Data processing}
 \label{process}
 
 \subsection{Aggregation}
@@ -71,13 +74,13 @@ The main focus of this paper is to compare the extreme values of the observation
 \includegraphics[scale=0.26]{figs/cal_mod_box2.pdf}
 \includegraphics[scale=0.26]{figs/cal_mod_box3.pdf}
 \end{center}
-\caption{Left: CanCM4 simulation locations. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations; the lighter gray points mean less weight is applied to the climate simulations and the darker gray means more weight. The data shown are from a single day in January.}
+\caption{Left: CanCM4 simulation grid cells. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations; the lighter gray points mean less weight is applied to the climate simulations and the darker gray means more weight. The data shown are from a single day in January.}
 \label{weight}
 \end{figure}
 
 In this subsection, we describe how the simulations and observations were made to be comparable. Figure \ref{weight} shows the spatial locations of each data source. The plots show only California, but the climate simulations were over the entire globe and the observation product over the United States.
 
-We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell. Then we count the number of locations from the observation product that are contained with each cell. The number of locations within the cells are used to weight the climate simulations (the right-most plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weight average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields time-series on daily time scales.
+We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate grid cell locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell. Then we count the number of locations from the observation product that are contained within each cell. The number of locations within the cells are used to weight the climate simulations (the right-most plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weight average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields time-series on daily time scales.
 
 \subsection{De-trending}
 \label{anomaly}
