@@ -18,6 +18,8 @@
 
 \usepackage{enumitem}
 
+\allowdisplaybreaks
+
 \setlength\parindent{0pt}
 
 \begin{document}
@@ -62,5 +64,43 @@ by using arguments similar in the first set of equations. Then for a simple Pare
  &= \frac{E[V(s_1)\wedge V(s_2)]}{E[V(s_2)]}
 \end{align*}
 This is from Ferreira and de Haan (2014), but with some clarity (for the dummies of the universe) as to how they got to the expectations.
+\bigskip
+
+NOTE: This has some issues since the marginals of $W(s_1)$ and $W(s_2)$ need not be the same. Unless conditioning on them both being above a certain value (i.e. 1 or $\omega_0$), they have different marginals (except the degenerate case when $W(s_1)=W(s_2)$ a.s. where they are both standard paretos. We did not explicitly account for this conditioning in the above calculation.
+\bigskip
+
+\textbf{Better $\chi$}. From before, we can find the distribution function for $W_i\equiv W(s_i)$, as
+\[ F_{W_i}(w) = 1 - \frac{E(V_i)}{w} \]
+where $V_i\equiv V(s_i)$. Using this fact, we can standardize $W_i$ to be uniform and compute $\chi$ in this way
+\begin{align*}
+\chi_{12}^W &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
+&= \lim_{u\rightarrow 1} P\left(1-\frac{E(V_1)}{W_1} > u \middle| 1-\frac{E(V_2)}{W_2} > u\right) \\
+&= \lim_{u\rightarrow 1} P\left(W_1 > \frac{E(V_1)}{1-u} \middle| W_2 > \frac{E(V_2)}{1-u}\right) \\
+&= \lim_{u\rightarrow 1} \frac{P\left(W_1 > \frac{E(V_1)}{1-u}, W_2 > \frac{E(V_2)}{1-u}\right)}{P\left(W_2 > \frac{E(V_2)}{1-u}\right)} \\
+&= \lim_{u\rightarrow 1} \frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u}\right)}{1-u} \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{E(V_1)}{(1-u)V_1}, Y > \frac{E(V_2)}{(1-u)V_2}\right) \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{E(V_1)}{(1-u)V_1} \vee \frac{E(V_2)}{(1-u)V_2}\right) \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{1}{1-u}\left(\frac{E(V_1)}{V_1} \vee \frac{E(V_2)}{V_2}\right)\right) \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}(1-u) E\left[\left(\frac{E(V_1)}{V_1} \vee \frac{E(V_2)}{V_2}\right)^{-1}\right] \\
+&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \\
+\end{align*}
+which is nice and symmetric. Concerns: Are we correctly using the fact that $Y$ is standard Pareto? If we don't explicitly state that $x>1$:
+\[ P(Y > x) = \min(1, 1/x) \]
+
+Another concern goes back to solving the distribution function for $W_i$. Since $V_i$ is a random variable, we required conditioning on it using iterated expectations to get the desired result. However, it is possible that $P(V_i == 0) > 0$, and so dividing by $V_i$ may pose an issue. This may be circumvented perhaps by conditioning on $V_i > 0$, but how would this affect the calculation?
+\bigskip
+
+For $x>0$,
+\begin{align*}
+P(W_i > x) &= P(YV_i > x)  \\
+ &= P(YV_i > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &= P(0 > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &= 0\times P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &= P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &\overset{?}{=} P(V_i>0)\times \frac{E(V_i)}{x}
+\end{align*}
+
+It is certainly possible in practice to observe a $V_i=0$. For the joint distribution we may need to condition on $V_1 \wedge V_2 > 0$.
+
 
 \end{document}
