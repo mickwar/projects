@@ -73,7 +73,7 @@ NOTE: This has some issues since the marginals of $W(s_1)$ and $W(s_2)$ need not
 \[ F_{W_i}(w) = 1 - \frac{E(V_i)}{w} \]
 where $V_i\equiv V(s_i)$. Using this fact, we can standardize $W_i$ to be uniform and compute $\chi$ in this way
 \begin{align*}
-\chi_{12}^W &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
+\chi_1 &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
 &= \lim_{u\rightarrow 1} P\left(1-\frac{E(V_1)}{W_1} > u \middle| 1-\frac{E(V_2)}{W_2} > u\right) \\
 &= \lim_{u\rightarrow 1} P\left(W_1 > \frac{E(V_1)}{1-u} \middle| W_2 > \frac{E(V_2)}{1-u}\right) \\
 &= \lim_{u\rightarrow 1} \frac{P\left(W_1 > \frac{E(V_1)}{1-u}, W_2 > \frac{E(V_2)}{1-u}\right)}{P\left(W_2 > \frac{E(V_2)}{1-u}\right)} \\
@@ -95,6 +95,8 @@ For $x>0$,
 P(W_i > x) &= P(YV_i > x)  \\
  &= P(YV_i > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= P(0 > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &= P(Y>x/V_i|V_i=0) P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
+ &= P(Y>\infty) P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= 0\times P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &\overset{?}{=} P(V_i>0)\times \frac{E(V_i)}{x}
@@ -102,5 +104,46 @@ P(W_i > x) &= P(YV_i > x)  \\
 
 It is certainly possible in practice to observe a $V_i=0$. For the joint distribution we may need to condition on $V_1 \wedge V_2 > 0$.
 
+\begin{align*}
+\chi_2 &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
+&= \lim_{u\rightarrow 1} P\left(1-\frac{E(V_1)}{W_1} > u \middle| 1-\frac{E(V_2)}{W_2} > u\right) \\
+&= \lim_{u\rightarrow 1} P\left(W_1 > \frac{E(V_1)}{1-u} \middle| W_2 > \frac{E(V_2)}{1-u}\right) \\
+&= \lim_{u\rightarrow 1} \frac{P\left(W_1 > \frac{E(V_1)}{1-u}, W_2 > \frac{E(V_2)}{1-u}\right)}{P\left(W_2 > \frac{E(V_2)}{1-u}\right)} \\
+&= \lim_{u\rightarrow 1} \frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u}\right)}{1-u} \\
+&= \lim_{u\rightarrow 1}\Bigg[ \frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u} \middle| V_1 \wedge V_2 = 0\right)P\left(V_1\wedge V_2 = 0\right)}{1-u} \\
+&~~~~~+ \frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u} \middle| V_1 \wedge V_2 > 0\right)P\left(V_1\wedge V_2 > 0\right)}{1-u} \Bigg] \\
+&= \lim_{u\rightarrow 1}\Bigg[ \frac{0\times P\left(V_1\wedge V_2 = 0\right)}{1-u} \\
+&~~~~~+ \frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u} \middle| V_1 \wedge V_2 > 0\right)P\left(V_1\wedge V_2 > 0\right)}{1-u} \Bigg] \\
+&= \lim_{u\rightarrow 1}\frac{P\left(YV_1 > \frac{E(V_1)}{1-u}, YV_2 > \frac{E(V_2)}{1-u} \middle| V_1 \wedge V_2 > 0\right)P\left(V_1\wedge V_2 > 0\right)}{1-u}  \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{E(V_1)}{(1-u)V_1}, Y > \frac{E(V_2)}{(1-u)V_2}\middle| V_1 \wedge V_2 > 0 \right) P\left(V_1 \wedge V_2 > 0 \right) \\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{E(V_1)}{(1-u)V_1} \vee \frac{E(V_2)}{(1-u)V_2}\middle| V_1 \wedge V_2 > 0 \right)  P\left(V_1 \wedge V_2 > 0 \right)\\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}P\left(Y > \frac{1}{1-u}\left(\frac{E(V_1)}{V_1} \vee \frac{E(V_2)}{V_2}\right)\middle| V_1 \wedge V_2 > 0 \right)  P\left(V_1 \wedge V_2 > 0 \right)\\
+&= \lim_{u\rightarrow 1} \frac{1}{1-u}(1-u) E\left[\left(\frac{E(V_1)}{V_1} \vee \frac{E(V_2)}{V_2}\right)^{-1}\middle| V_1 \wedge V_2 > 0 \right]  P\left(V_1 \wedge V_2 > 0 \right)\\
+&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\middle| V_1 \wedge V_2 > 0 \right)  P\left(V_1 \wedge V_2 > 0 \right)\\
+\end{align*}
+
+(Note the expectations within the larger expectation (i.e. $E(V_1)$ and $E(V_2)$) are not condition on $V_1 \wedge V_2 > 0$.) When conditioning $V_1 \wedge V_2 > 0$, there was no difference when computing estimates for $\chi_1$ and $\chi_2$. This is perhaps due to the following.
+\bigskip
+
+Suppose we have samples $X_1,\ldots,X_n$ having p.d.f. $f(x) = p\delta_0(x) + (1-p)g(x)$ where $g(x)$ is defined on $(0, \infty)$. Then
+
+\begin{align*}
+E(X) &= \int_0^\infty x p \delta_0(x) dx + \int_0^\infty x (1-p) g(x) dx \\
+&= 0 + (1-p)E_g(X) \\
+&= P(X > 0)E_g(X) 
+\end{align*}
+
+We could compute the sample mean in two ways:
+\[ \bar{X}_1 = \frac{1}{n}\sum_{i=1}^n x_i \]
+and
+\[ \bar{X}_2 = \left[\frac{1}{n}\sum_{i=1}^n \ind(x_i > 0)\right] \left[\frac{1}{|A|}\sum_{i\in A} x_i\right] \]
+where $A=\{x : x > 0\}$ and $|A|$ is the size of $A$. The two multiplicands in $\bar{X}_2$ are estimates for $P(X>0)$ and $E_g(X)$, respectively. Of course, $\bar{X}_1$ and $\bar{X}_2$ are equal, they just use the data differently:
+\begin{align*}
+\bar{X}_2 &= \left[\frac{1}{n}\sum_{i=1}^n \ind(x_i > 0)\right] \left[\frac{1}{|A|}\sum_{i\in A} x_i\right]  \\
+&= \left[\frac{1}{|A|}\sum_{i=1}^n \ind(x_i > 0)\right] \left[\frac{1}{n}\sum_{i\in A} x_i\right]  \\
+&= \left[\frac{1}{|A|}\sum_{i=1}^n \ind(x_i > 0)\right] \left[\frac{1}{n}\sum_{i=1}^n x_i\right]  \\
+&= \left[1\right] \times \left[\bar{X}_1\right] = \bar{X}_1
+\end{align*}
+I suspect we have a similar situation with $\chi_1$ and $\chi_2$.
 
 \end{document}
