@@ -94,13 +94,15 @@ For $x>0$,
 \begin{align*}
 P(W_i > x) &= P(YV_i > x)  \\
  &= P(YV_i > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
- &= P(0 > x | V_i = 0)P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= P(Y>x/V_i|V_i=0) P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= P(Y>\infty) P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= 0\times P(V_i = 0) + P(YV_i > x | V_i > 0)P(V_i > 0)  \\
  &= P(YV_i > x | V_i > 0)P(V_i > 0)  \\
- &\overset{?}{=} P(V_i>0)\times \frac{E(V_i)}{x}
+ &\overset{?}{=} P(V_i>0)\times \frac{E(V_i|V_i>0)}{x}
 \end{align*}
+
+Proposition:
+\[ \frac{E(V_i)}{x} = P(V_i > 0)\times \frac{E(V_i|V_i>0)}{x} \]
 
 It is certainly possible in practice to observe a $V_i=0$. For the joint distribution we may need to condition on $V_1 \wedge V_2 > 0$.
 
@@ -144,6 +146,41 @@ where $A=\{x : x > 0\}$ and $|A|$ is the size of $A$. The two multiplicands in $
 &= \left[\frac{1}{|A|}\sum_{i=1}^n \ind(x_i > 0)\right] \left[\frac{1}{n}\sum_{i=1}^n x_i\right]  \\
 &= \left[1\right] \times \left[\bar{X}_1\right] = \bar{X}_1
 \end{align*}
-I suspect we have a similar situation with $\chi_1$ and $\chi_2$.
+I suspect we have a similar situation with $\chi_1$ and $\chi_2$. That is, I believe $\chi_1=\chi_2$.
+\bigskip
+
+\section*{Modeling $V$ in the bivarate case}
+
+The primary result we use is Theorem 3.2 from \cite{ferreira2014generalized}. Let $C(S)$ be the space of continuous real functions on $S$, equipped with the supremum norm, where $S$ is a compact subset of $\R^d$. Let $X$ be from $C(S)$. Then the conditions of their Theorem 3.1 imply
+\[ \lim_{t\rightarrow\infty} P\left(T_t X \in A \middle| \sup_{s\in S} T_t X(s) > 1\right) = P(W \in A) \]
+with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto process, and
+\[ T_t X = \left(1 + \xi \frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
+We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have observations at only two fixed locations $s_1,s_2\in S$. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
+\bigskip
+
+We further assume that the parameters $\xi$ and $\sigma$ are indexed by $s\in S$, so that our transformation is
+\[ T_t X(s) = \left(1 + \xi(s) \frac{X(s) - u_t(s)}{\sigma_t(s)}\right)_+^{1/\xi(s)}. \]
+The first stage of our analysis involves estimating $\xi(s)$ and $\sigma(s)$ marginally, which is accomplished by selecting a high threshold $u(s)$ and fitting the generalized Pareto distribution to the excesses $X(s)-u(s)$. The posterior means for $\xi(s)$ and $\sigma(s)$ are then used for the transformation from $X(s)$ to $W(s)$.
+\bigskip
+
+Every observation of $X(s)$, say $X_1(s),\ldots,X_{n(s)}(s)$ is transformed with
+\[ W_i(s) = T_t X_i(s) = \left(1 + \hat{\xi}(s) \frac{X_i(s) - u_t(s)}{\hat{\sigma}(s)}\right)_+^{1/\hat{\xi}(s)},~~~~~i=1,\ldots,n(s) \]
+forming the vector $\m{W}(s)=(W_1(s),\ldots,W_{n(s)}(s))^\top$. After performing this transformation, two components are combined to form a joint vector $(W(s_1), W(s_2))$ having realizations $\m{W}_{12}=(\m{W}(s_1), \m{W}(s_2))$, an $n(s)\times 2$ matrix. Note that when we perform the bivariate analysis, we guarantee that $n(s)=n(s_1)=n(s_2)$.
+\bigskip
+
+By Theorem 3.2, $\m{W}_{12}$ has rows that are realizations of a simple Pareto process. By the constructive definition of a simple Pareto process, we can write $\m{W}_{12}$ as
+\[ \m{W}_{12} = \left(\begin{array}{rr} Y_1V_1(s_1) & Y_1V_1(s_2) \\ Y_2V_2(s_1) & Y_2V_2(s_2) \\ \multicolumn{2}{c}{\vdots} \\ Y_nV_n(s_1) & Y_nV_n(s_2) \end{array}\right) \]
+where $Y_i$ is a standard Pareto, $V_i(s_j)\geq 0$ ($j=1,2$), and $V_i(s_1) \vee V_i(s_2) = 1$, for $i=1,\ldots,n=n(s)$. This is easily obtained by
+\[ Y_i = W_i(s_1) \vee W_i(s_2),~~~\mathrm{and}~~~ V_i(s_j) = W_i(s_j) / Y_i ~~~ (j=1,2),~~~~~\mathrm{for~}i=1,\ldots,n. \]
+The points $(V_i(s_1), V_i(s_2)$ fall along the curve of the non-negative unit sphere with supremum norm $\{(v_1, v_2):||(v_1,v_2)||_\infty=1, v_1\geq0,v_2\geq0\}$ which is thus one dimensional. An alternative representation is to specify $(V_i(s_1), V_i(s_2)$ in terms of a scaled angle
+\[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
+We scale $\phi_i$ to be in $[0,1]$ so we can model the angle using a mixture of beta distributions and (possibly) point masses at zero and one. The theorem holds when $\sup_{s\in S}T_t X(s) > 1$ which is equivalent to $Y_i > 1$. Therefore, we need only those $\phi_i$ for which $Y_i>1$, ignoring the rest. Beyond this point we assume that $\phi_i$ have been relabeled to include only the appropriate angles which are indexed $i=1,\ldots,k\leq n$.
+
+\subsection*{Univariate model}
+
+\subsection*{Hierarchical model}
+
+\bibliography{refs}
+\bibliographystyle{asa}
 
 \end{document}
