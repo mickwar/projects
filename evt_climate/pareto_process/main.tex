@@ -178,6 +178,19 @@ We scale $\phi_i$ to be in $[0,1]$ so we can model the angle using a mixture of 
 
 \subsection*{Univariate model}
 
+We propose the likelihood
+\[ f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) = \prod_{i=1}^k\left[p_1 \delta_0(\phi_i) + p_2 \delta_1(\phi_i) + \sum_{j=1}^m p_{j+2} \delta_{(0,1)}(\phi_i)\times g(\phi_i|\alpha_j, \beta_j) \right] \]
+with $\delta_A(y)$ is equal to one if $y\in A$ and zero otherwise, fixed $m\geq 1$, and $g$ is the density of a beta distribution. Also written,
+\begin{align*}
+f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \prod_{i=1}^k\left[p_1^{\ind(\phi_i=0)}p_2^{\ind(\phi_i=1)}\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right] \\
+ &= p_1^{\sum_{i=1}^k\ind(\phi_i=0)}p_2^{\sum_{i=1}^k\ind(\phi_i=1)}\prod_{i=1}^k\left[\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right]
+\end{align*}
+Log-likelihood:
+\begin{align*}
+\log f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \log(p_1)\sum_{i=1}^k\ind(\phi_i=0)+\log(p_2)\sum_{i=1}^k\ind(\phi_i=1)+ \\
+ & ~~~~~ ~~~~~ \sum_{i=1}^k\log\left[\ind(0<\phi_i<1)\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right) \right]
+\end{align*}
+
 \subsection*{Hierarchical model}
 
 \bibliography{refs}
