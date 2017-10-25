@@ -1,3 +1,76 @@
+### Obtain posterior parameters for a normal dlm
+dlm_get_vals = function(dat, delta, m0, C0, n0, d0){
+    y = dat$y
+    F.vec = dat$F
+    G.mat = dat$G
+    n = length(y)
+    p = length(m0)
+
+    Rt = array(0, c(n+1, p, p))
+    qt = double(n+1)
+    At = matrix(0, n+1, p)
+    ft = double(n+1)
+    et = double(n+1)
+    mt = matrix(0, n+1, p)
+    nt = double(n+1)
+    dt = double(n+1)
+    st = double(n+1)
+    Ct = array(0, c(n+1, p, p))
+
+    mt[1,] = m0
+    Ct[1,,] = C0
+    nt[1] = n0
+    dt[1] = d0
+    st[1] = dt[1] / nt[1]
+
+    for (i in 2:(n+1)){
+#       Rt[i,,] = G.mat %*% Ct[i-1,,] %*% t(G.mat) + (1-delta)/delta*Ct[i-1,,]
+        Rt[i,,] = 1/delta * G.mat %*% Ct[i-1,,] %*% t(G.mat)
+        qt[i] = t(F.vec) %*% Rt[i,,] %*% F.vec + st[i-1]
+        At[i,] = (Rt[i,,] %*% F.vec)/qt[i]   
+        ft[i] = t(F.vec) %*% G.mat %*% mt[i-1,]
+        et[i] = y[i-1] - ft[i]
+        mt[i,] = G.mat %*% mt[i-1,] + At[i,] * et[i]
+        nt[i] = nt[i-1] + 1
+        dt[i] = dt[i-1] + st[i-1]*(et[i]^2) / qt[i]
+        st[i] = st[i-1] + st[i-1] / nt[i]*( (et[i]^2) / qt[i] - 1)
+        Ct[i,,] = (st[i] / st[i-1])*(Rt[i,,] - At[i,] %*% t(At[i,]) * qt[i])
+        }
+
+    
+    return (list("Rt"=Rt[-1,,], "qt"=qt[-1], "At"=At[-1,],
+        "ft"=ft[-1], "et"=et[-1], "mt"=mt[-1,], "nt"=nt[-1],
+        "dt"=dt[-1], "st"=st[-1], "Ct"=Ct[-1,,], "delta"=delta,
+        "m0"=m0, "C0"=C0, "n0"=n0, "d0"=d0))
+    }
+
+### Smoothing a dlm (conditioning on the last value and going backward)
+dlm_smooth = function(dat, params){
+    y = dat$y
+    F.vec = dat$F
+    G.mat = dat$G
+    G.inv = solve(G.mat)
+    n = length(y)
+    p = length(F.vec)
+    delta = params$delta
+    out.at = matrix(0, n, p)
+    out.Rt = array(0, c(n, p, p))
+    out.at[n,] = params$mt[n,]
+    out.Rt[n,,] = params$Ct[n,,]
+    out.ft = double(n)
+    out.qt = double(n)
+    out.ft[n] = t(F.vec) %*% out.at[n,]
+    out.ft[n] = t(F.vec) %*% out.at[n,]
+    for (i in (n-1):1){
+        out.at[i,] = (1-delta)*params$mt[i,] + delta*(G.inv %*% out.at[i+1,])
+        out.Rt[i,,] = (1-delta)*params$Ct[i,,] + delta^2*(G.inv %*% out.Rt[i+1,,] %*% t(G.inv))
+        out.ft[i] = t(F.vec) %*% out.at[i,]
+        out.qt[i] = t(F.vec) %*% out.Rt[i,,] %*% F.vec + params$st[n]
+        }
+    return (list("at.s"=out.at, "Rt.s"=out.Rt, "ft.s"=out.ft, "qt.s"=out.qt))
+    }
+
+
 ### Return the index of a vector of dates (ts) which contain months
 subset_data = function(ts, months){
     # Make things easier to work with in grep
@@ -139,25 +212,22 @@ clim_anomaly_calc = function(dat, date_begin, date_end){
     return (list("dat" = dat, "anomaly_shift" = anomaly_shift))
     }
 
-### Deal with those leap years and get things all on the same time scale
-clim_same_time = function(data_name, dat, date_begin, date_end, m)
-    if (substr(output$model, 1, 7) == "control"){
-        season.ind = subset_data(dat[,1], output$months)
+clim_same_time = function(model, dat, date_begin, date_end, months){
+    ### Deal with those leap years and get things all on the same time scale
+    if (substr(model, 1, 7) == "control"){
+        season.ind = subset_data(dat[,1], months)
         dat[,1] = paste0(as.numeric(substr(dat[,1], 1, 4)) +
             as.numeric(substr(date_begin, 1, 4)) - 1, substr(dat[,1], 5, 10))
         dec.ind = c(min(grep(date_begin, dat[,1])), max(grep(date_end, dat[,1])))
         season.ind = season.ind[season.ind >= dec.ind[1] & season.ind <= dec.ind[2]]
-        dat = dat[season.ind,]
     } else {
-        season.ind = subset_data(dat[,1], output$months)
+        season.ind = subset_data(dat[,1], months)
         ly.ind = grep("-02-29", dat[,1])
         season.ind = season.ind[!(season.ind %in% ly.ind)]
         dec.ind = c(min(grep(date_begin, dat[,1])), max(grep(date_end, dat[,1])))
         season.ind = season.ind[season.ind >= dec.ind[1] & season.ind <= dec.ind[2]]
-        dat = dat[season.ind,]
         }
-    if (length(output$anomaly_shift) > 0)
-        output$anomaly_shift = output$anomaly_shift[season.ind,]
+    return (season.ind)
     }
 
 
@@ -180,5 +250,15 @@ hier_excess = function(data_name, data_dir, region, variable,
     ### Compute the anomalies using a DLM
     if (output$anomaly){
         output$anomaly_type = "dlm"
-        clim_anomaly_calc(dat, date_begin, date_end)    # makes changes to dat, need to make assignments
+        tmp = clim_anomaly_calc(dat, date_begin, date_end)
+        dat = tmp$dat
+        output$anomaly_shift = tmp$anomaly_shift
         }
+
+    ### Get appropriate time index
+    ind = clim_same_time(output$model, dat, output$date_begin,
+        output$date_end, output$months)
+
+    output$time.dates = as.Date(dat[ind,1])
+    output$varmat = as.matrix(dat[ind,-1])
+    output$anomaly_shift = output$anomaly_shift[ind,]

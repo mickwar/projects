@@ -164,7 +164,9 @@ The first stage of our analysis involves estimating $\xi(s)$ and $\sigma(s)$ mar
 \bigskip
 
 Every observation of $X(s)$, say $X_1(s),\ldots,X_{n(s)}(s)$ is transformed with
-\[ W_i(s) = T_t X_i(s) = \left(1 + \hat{\xi}(s) \frac{X_i(s) - u_t(s)}{\hat{\sigma}(s)}\right)_+^{1/\hat{\xi}(s)},~~~~~i=1,\ldots,n(s) \]
+\begin{align}
+W_i(s) = T_t X_i(s) = \left(1 + \hat{\xi}(s) \frac{X_i(s) - u_t(s)}{\hat{\sigma}(s)}\right)_+^{1/\hat{\xi}(s)},~~~~~i=1,\ldots,n(s) \label{transform}
+\end{align}
 forming the vector $\m{W}(s)=(W_1(s),\ldots,W_{n(s)}(s))^\top$. After performing this transformation, two components are combined to form a joint vector $(W(s_1), W(s_2))$ having realizations $\m{W}_{12}=(\m{W}(s_1), \m{W}(s_2))$, an $n(s)\times 2$ matrix. Note that when we perform the bivariate analysis, we guarantee that $n(s)=n(s_1)=n(s_2)$.
 \bigskip
 
@@ -192,6 +194,32 @@ Log-likelihood:
 \end{align*}
 
 \subsection*{Hierarchical model}
+
+\subsection*{Asymptotic dependence}
+
+We calculated a measure of asymptotic dependence from the simple Pareto process as
+\begin{align*}
+\chi_1 &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
+&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right),
+\end{align*}
+but we are really interested in the level of dependence between the original variables $X_1$ and $X_2$. Is $\chi_1$ measuring what we want? Is it different than
+\begin{align*}
+\chi_3 &= \lim_{u\rightarrow 1} P(F_{X_1}(X_1) > u | F_{X_2}(X_2) > u)?
+\end{align*}
+Let's explore this a bit. From (\ref{transform}), then
+\begin{align}
+X_i(s) = u_t(s) + \frac{\hat{\sigma}(s)}{\hat{\xi}(s)}\left(W_i(s)^{\hat{\xi}(s)}-1\right)
+\end{align}
+when $W_i(s)>0$, and
+\begin{align}
+P(X_i(s) \leq y) = E(V_i)\left(1+\frac{\hat{\xi}(s)}{\hat{\sigma}(s)}\left(y - u_t(s)\right)\right)^{-1/\hat{\xi}(s)}.
+\end{align}
+So, we have
+\begin{align*}
+\chi_3 &= \lim_{z\rightarrow 1} P(F_{X_1}(X_1) > z | F_{X_2}(X_2) > z) \\
+ &= \lim_{z\rightarrow 1} P(F_{X_1}(X_1) > z | F_{X_2}(X_2) > z) \\
+\end{align*}
+$E(V_i)\left(1+\frac{\hat{\xi}(s)}{\hat{\sigma}(s)}\left(X_1 - u_t(s)\right)\right)^{-1/\hat{\xi}(s)}>z$
 
 \bibliography{refs}
 \bibliographystyle{asa}
