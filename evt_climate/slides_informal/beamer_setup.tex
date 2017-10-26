@@ -1,0 +1,111 @@
+\let\Tiny=\tiny
+
+
+\usepackage{graphicx}
+\usepackage{float}
+% \usepackage{enumitem}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{dsfont}
+\geometry{vmargin=0.5in}
+
+
+%%% Do not overwrite a defined color (#1) if already defined,
+%%% otherwise set the color to rgb(#2)
+\makeatletter
+\newcommand{\colorprovide}[2]{%
+    \@ifundefinedcolor{#1}{\definecolor{#1}{rgb}{#2}}{}}
+\makeatother
+
+%colors
+\colorprovide{colorheader}{0.00, 0.40, 1.00}
+\colorprovide{colortitle}{0.00, 0.24, 0.60}
+\colorprovide{colorfootertext}{0.00, 0.45, 0.80}
+\colorprovide{colorfooter}{0.00, 0.00, 0.00}
+
+\setbeamercolor{local structure}{fg=colortitle}
+
+\setbeamercolor{footlinecolor}{bg=colorfooter,fg=colorfootertext}
+
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}{%
+    \hbox{%
+    \vspace{0.5in}%
+    \begin{beamercolorbox}[ht=2mm, rightskip=.5cm]{footlinecolor}%
+    \hfill\insertframenumber/\inserttotalframenumber
+    \end{beamercolorbox}}}
+
+
+%\bibpunct{(}{)}{;}{a}{}{,}
+
+%commands
+\newcommand{\citei}[1]{\phantom{\cite{#1}}\vspace{-14pt}}
+
+\newcommand{\ind}{\mathds{1}}
+\newcommand{\m}[1]{\mathbf{\bm{#1}}}
+\newcommand{\R}{I\hspace{-4.4pt}R}
+
+\renewcommand{\frametitle}[1]{\vspace{0.14cm}\hspace{-0.70cm}\textcolor{colortitle}{%
+    \textbf{\large{#1}}}\vspace{0.15cm}\newline}
+
+
+\newcommand{\startappendix}{%
+    \setbeamertemplate{footline}{%
+        \hbox{%
+        \vspace{0.5in}%
+        \begin{beamercolorbox}[ht=2mm, rightskip=.5cm]{footlinecolor}%
+        \hfill A\the\value{framenumberappendix}\phantom{/\inserttotalframenumber}
+        \end{beamercolorbox}}}
+    \newcounter{framenumberappendix}
+    \setcounter{framenumberappendix}{0}
+    }
+
+
+%slide colors
+\pagecolor{colorheader!60}
+
+% title page slide
+\renewcommand{\titlepage}[4]{%
+    {
+    \setbeamertemplate{footline}{%
+        \hbox{%
+        \vspace{0.5in}%
+        \begin{beamercolorbox}[ht=2mm, rightskip=.5cm]{footlinecolor}%
+        \phantom{/}
+        \end{beamercolorbox}}}
+    \begin{frame}
+    %\begin{center}
+    \ \\ [-0.5in]
+    \vfill
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+    \bigskip
+
+
+    %\end{center}
+    \begin{Large}
+    #1
+    \end{Large}
+    %\begin{center}
+    \vfill
+
+    #2
+    \vfill
+
+    #3
+    \smallskip
+
+    #4
+
+    \bigskip
+    \bigskip
+    \vfill
+    \ \\ [-0.5in]
+    %\end{center}
+    \end{frame}
+    }
+    \addtocounter{framenumber}{-1}
+    }

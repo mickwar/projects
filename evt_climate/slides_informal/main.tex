@@ -1,0 +1,248 @@
+\documentclass[mathserif, 11pt, t]{beamer}
+\section*{Results}
+
+\input{beamer_setup.tex}
+
+\newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
+
+\begin{document}
+
+
+\titlepage{Comparison of extreme values of different climate model simulations and observations}{Mickey Warner}{\ }{30 Oct 2017}
+
+
+
+\begin{frame}{Introduction}
+
+CanCM4 simulation classes (with $R=10$ replicates each):
+\begin{enumerate}
+\item Decadal
+\item Historical
+\item Control
+\end{enumerate}
+\bigskip
+
+Observations over U.S. interpolated from weather stations
+\bigskip
+
+Factors:
+\begin{enumerate}
+\item Variable --- Total Precipitation (\texttt{pr}) or Average Maximum Temperature (\texttt{tasmax})
+\item Season --- Winter or Summer
+\item Decade --- 1962--1971 or 1990--1999
+\item Region --- California or USA
+\end{enumerate}
+
+\end{frame}
+
+
+
+\begin{frame}{Locations}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.18]{figs/cal_mod_box1.pdf}
+\includegraphics[scale=0.18]{figs/cal_mod_box2.pdf}
+\includegraphics[scale=0.18]{figs/cal_mod_box3.pdf}
+\end{center}
+\caption{Left: CanCM4 simulation grid cells. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations.}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}{Extremes}
+
+For r.v. X and large threshold $u$, the exceedance $Y=X-u$, for $X>u$, approximately follows the generalized Pareto distribution (GPD), which has density
+
+\[ f_Y(y) = \frac{1}{\sigma}\left(1+\xi\frac{y}{\sigma}\right)_+^{-1/\xi-1} \]
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.22]{figs/tail.pdf}
+\end{center}
+\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}{Data processing}
+
+1. Weighted sums (pr) or averages (tasmax) give a time-series for each factor combination and data source
+
+Using the GPD is not justified without independent random variables.
+
+We try to get iid r.v.s by first obtaining the anomalies and then declustering
+
+2. Anomalies are obtained by fitting a DLM to each time-series
+
+3. Decluster by estimating the extremal index with interexceedance times, then perform runs declustering
+
+Three key ideas. Why? Getting (closer to) iid rvs, another option is to use to time-varying parameters instead of the dlm, but our time period is too short since we expect extremes to change very slowly over time, if at all, and within a decade should not change by much
+
+\end{frame}
+
+
+% \begin{frame}{Hierarchical model for threshold exceedance}
+% \noindent For the $j$th observation in replicate $i$, we assume
+% \[ X_{ij} \overset{ind}\sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i. \]
+% \noindent For fixed $u$ and each $i$, define the following sets:
+% \[ A_i = \{j:x_{ij}\leq u\},~~~ A_i^c = \{j: x_{ij}>u\} \]
+% where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$.
+% \bigskip
+% 
+% \noindent Finally, we define our exceedances as
+% \[ y_{ij} = 0\cdot \ind_{(j \in A_i)} + (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]
+% \end{frame}
+% 
+% \begin{frame}{Likelihood}
+% \noindent The likelihood is given by
+% \begin{eqnarray*}
+% L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &=& \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma_i,\xi_i,\zeta_i) \\
+% &=& \prod_{i=1}^R\left[\prod_{A_i} F_{X_i}(u) \times \prod_{A_i^c} f_{X_i}(y_{ij}+u)\right] \\
+% &\approx& \prod_{i=1}^R\left[\prod_{A_i} F_{X_i}(u) \times \prod_{A_i^c} [1-F_{X_i}(u)]g(y_{ij}|\sigma_i,\xi_i)\right] \\
+% &=& \prod_{i=1}^R\left[\prod_{A_i} (1-\zeta_i)\times \prod_{A_i^c} \frac{\zeta_i}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \\
+% \end{eqnarray*}
+% 
+% \end{frame}
+
+
+\begin{frame}{Likelihood}
+
+Replicate $i$, observation $j$, exceedances $Y_{ij} = X_{ij} - u$, and keep only those $Y_i > 0$. These have likelihood
+\[ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) = \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j=1}^{k_i}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \]
+where $n_i$ is number of $X_{ij}$'s and $k_i$ is number of $Y_{ij}$'s, and $\zeta_i$ is the probability of exceeding the threshold (which is chosen, so $\zeta_i$ is essentially determined by human)
+
+\end{frame}
+
+
+\begin{frame}{Priors}
+\noindent These priors complete the hierarchical model formulation. Greek letters are random variables while English letters are fixed.
+\begin{eqnarray*}
+\sigma_i|\alpha, \beta &\sim& Gamma(\alpha, \beta) \\
+\xi_i|\xi, \tau^2  &\sim& Normal(\xi, \tau^2) \\
+\zeta_i|\mu, \eta &\sim& Beta(\mu\eta, (1-\mu)\eta) \\
+%\theta_i|\theta_\mu, \theta_\tau &\sim& Beta(\theta_\mu\theta_\tau, (1-\theta_\mu)\theta_\tau) \\
+ \\
+\alpha_\sigma \sim Gamma(a_\alpha, b_\alpha)&  &\beta_\sigma \sim Gamma(a_\beta, b_\beta) \\
+\xi \sim Normal(m, s^2)&  &\tau^2 \sim Gamma(a_\tau, b_\tau) \\
+\mu \sim Beta(a_\mu, b_\mu)&  &\eta \sim Gamma(a_\eta, b_\eta) \\
+%\theta_\mu \sim Beta(a_{\theta_\mu}, b_{\theta_\mu})&  &\theta_\tau \sim Gamma(a_{\theta_\tau}, b_{\theta_\tau})
+\end{eqnarray*}
+
+\end{frame}
+
+
+\begin{frame}{Bhattacharyya distance}
+
+\end{frame}
+
+
+
+\begin{frame}{Bivariate analysis, simple Pareto processes}
+
+\end{frame}
+
+
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale=0.34]{figs/shape.pdf}
+\end{center}
+\end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_california_winter_pr_hier_zeta.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_california_winter_pr_hier_returnlevel.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_ksi.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_sigma.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_zeta.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_returnlevel.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_ksi.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_sigma.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_zeta.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_returnlevel.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_ksi.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_sigma.pdf}
+% \end{center}
+% \end{frame}
+% 
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_zeta.pdf}
+% \end{center}
+% \end{frame}
+% 
+% \begin{frame}
+% \begin{center}
+% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_returnlevel.pdf}
+% \end{center}
+% \end{frame}
+
+\end{document}

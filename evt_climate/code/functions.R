@@ -262,3 +262,27 @@ hier_excess = function(data_name, data_dir, region, variable,
     output$time.dates = as.Date(dat[ind,1])
     output$varmat = as.matrix(dat[ind,-1])
     output$anomaly_shift = output$anomaly_shift[ind,]
+
+
+
+# Put these next few sections into their own functions, for more general use other
+# than attaching them too closely to the climate simulations
+
+    ### Extremal index and declustering (retain index of exceedances for bivariate declustering)
+
+
+    ### MCMC (hierarchical model)
+
+
+    ### Compute 20- and 50- year return levels
+
+
+    ### Compute within replicate Bhattacharyya distance (bootstrap this maybe?)
+
+
+
+
+
+    ### Output (make sure things are all good for bivariate/multivariate analysis)
+
+    }
