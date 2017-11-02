@@ -230,6 +230,320 @@ clim_same_time = function(model, dat, date_begin, date_end, months){
     return (season.ind)
     }
 
+wrapper_theta = function(x){
+    tmp = theta_hier(y = x$varmat, u = x$threshold[1], likelihood = "ferro",
+        nburn = x$nburn, nmcmc = x$nmcmc)
+
+    out = NULL
+
+    out$y = rep(list(NULL), x$R)
+    for (j in 1:x$R)
+        out$y[[j]] = tmp$y[[j]] - x$threshold[j]
+
+    out$n_c = sapply(tmp$y, length)
+    out$n_u = as.vector(tmp$N)
+    out$n = rep(NROW(x$varmat), x$R)
+    out$ymax = sapply(out$y, max)
+
+    out$T_C = tmp$T_C
+    out$theta = tmp$mcmc
+    out$theta.mean = colMeans(tmp$mcmc)
+    out$theta.ints = apply(tmp$mcmc, 2, hpd_mult, force_uni = TRUE)
+
+    return (out)
+    }
+
+wrapper_mcmc = function(x){
+
+    uq = x$uq
+    nburn = x$nburn
+    nmcmc = x$nmcmc
+    nReps = x$R
+    out = NULL
+
+    ### Priors
+       ksi.mean = 0
+         ksi.sd = 0.33
+     tau2.alpha = 1
+      tau2.beta = .1
+    sig.alpha.a = 1
+    sig.alpha.b = .1
+     sig.beta.a = 1
+     sig.beta.b = .1
+      zeta.mu.a = (1 - uq)*10
+      zeta.mu.b = uq*10
+     zeta.eta.a = 1
+     zeta.eta.b = .1
+
+
+    ### Parameters
+    par.vec.ksi.sig = matrix(0, nburn + nmcmc, 2*nReps)
+    par.vec.zeta = matrix(0, nburn + nmcmc, nReps)
+    par.ksi = double(nburn + nmcmc)
+    par.tau2 = double(nburn + nmcmc)
+    par.alpha.beta = matrix(0, nburn + nmcmc, 2)
+    par.zeta.eta = matrix(0, nburn + nmcmc, 2)
+
+    # Initial values
+    par.vec.ksi.sig[1,] = c(rep(0, nReps), rep(1, nReps))
+    par.vec.zeta[1,] = rep(1-uq, nReps)
+    par.ksi[1] = 0
+    par.tau2[1] = 1
+    par.alpha.beta[1,] = c(1, 1)
+    par.zeta.eta[1,] = c(1-uq, 1)
+
+    # Acceptances for walks
+    accept.vec.ksi.sig = double(nburn + nmcmc)
+    accept.vec.zeta = double(nburn + nmcmc)
+    accept.alpha.beta = double(nburn + nmcmc)
+    accept.zeta.eta = double(nburn + nmcmc)
+
+    accept.tau2 = double(nburn + nmcmc)
+
+    # Candidate sigmas
+    cov.vec.ksi.sig = diag(0.01, 2*nReps)
+    cov.vec.zeta = diag(0.01, nReps)
+    cov.alpha.beta = diag(0.01, 2)
+    cov.zeta.eta = diag(0.01, 2)
+
+    cov.tau2 = 0.01
+
+    chol.vKS = chol(cov.vec.ksi.sig)
+    chol.vZ = chol(cov.vec.zeta)
+    chol.AB = chol(cov.alpha.beta)
+    chol.ZE = chol(cov.zeta.eta)
+
+    chol.T = chol(cov.tau2)
+
+    calc.like = function(y, n_c, ymax, ksi, sig){
+        if (missing(n_c))
+            n_c = length(y)
+        if (missing(ymax))
+            ymax = max(y)
+
+        if (ksi < 0 && ymax >= -sig/ksi)
+            return (-Inf)
+        if (sig < 0)
+            return (-Inf)
+
+        if (ksi != 0){
+            out = -n_c*log(sig) - (1/ksi + 1) * sum(log(1 + ksi * y / sig))
+        } else {
+            out = -n_c*log(sig) - sum(y) / sig
+            }
+        return (out)
+        }
+
+    
+    curr.like.ksi.sig = double(nReps)
+    for (i in 1:nReps){
+        curr.like.ksi.sig[i] = calc.like(y = x$y[[i]], n_c = x$n_c[i],
+            ymax = x$ymax[i], ksi = par.vec.ksi.sig[1, i],
+            sig = par.vec.ksi.sig[1, nReps + i])
+        }
+    curr.prior.ksi = dnorm(par.vec.ksi.sig[1, 1:nReps], par.ksi[1], sqrt(par.tau2[1]), log = TRUE)
+    curr.prior.sig = dgamma(par.vec.ksi.sig[1, nReps + 1:nReps],
+        par.alpha.beta[1, 1], par.alpha.beta[1, 2], log = TRUE)
+
+    curr.like.zeta = (x$n-x$n_u)*log(1-par.vec.zeta[1,]) + x$n_u*log(par.vec.zeta[1,])
+    curr.prior.zeta = dbeta(par.vec.zeta[1,], par.zeta.eta[1, 1]*par.zeta.eta[1, 2],
+        (1-par.zeta.eta[1, 1])*par.zeta.eta[1, 2], log = TRUE)
+
+    cand.like = double(nReps)
+
+    trailing = function(x, digits = 4)
+        formatC(x, digits=digits, format="f")
+    nice_time = function(seconds){
+        # floor() or round() would work as well
+        seconds = ceiling(seconds)
+        days = seconds %/% (60*60*24)
+        seconds = seconds %% (60*60*24)
+        hours = seconds %/% (60*60)
+        seconds = seconds %% (60*60)
+        minutes = seconds %/% (60)
+        seconds = seconds %% (60)
+        out = ""
+        if (days > 0)
+            out = paste0(out, days, "d ", hours, "h ", minutes, "m ", seconds, "s")
+        if (days == 0 && hours > 0)
+            out = paste0(out, hours, "h ", minutes, "m ", seconds, "s")
+        if (days == 0 && hours == 0 && minutes > 0)
+            out = paste0(out, minutes, "m ", seconds, "s")
+        if (days == 0 && hours == 0 && minutes == 0)
+            out = paste0(out, seconds, "s")
+        return (out)
+        }
+    display = 1000
+    begin_time = as.numeric(Sys.time())
+    for (i in 2:(nburn + nmcmc)){
+        if (floor(i/display) == i/display && display > 0){
+            curr_time = as.numeric(Sys.time()) - begin_time
+            cat("\r   ", i, " / ", nburn+nmcmc, " -- ",
+                trailing(100*i/(nburn+nmcmc), 2),"% -- Remaining: ",
+                nice_time(curr_time*(nmcmc+nburn-i)/(i-1)), "            ", sep = "")
+            }
+
+        par.vec.ksi.sig[i,] = par.vec.ksi.sig[i-1,]
+        par.vec.zeta[i,] = par.vec.zeta[i-1,]
+        par.ksi[i] = par.ksi[i-1]
+        par.tau2[i] = par.tau2[i-1]
+        par.alpha.beta[i,] = par.alpha.beta[i-1,]
+        par.zeta.eta[i,] = par.zeta.eta[i-1,]
+
+        # Update (ksi_i, sig_i)
+        cand = rnorm(2*nReps) %*% chol.vKS + par.vec.ksi.sig[i,]
+        ind = which(cand[1:nReps] < 0)
+        if ((length(ind) == 0) || (x$ymax < -cand[nReps + 1:nReps] / cand[1:nReps])[ind]){
+            for (j in 1:nReps)
+                cand.like[j] = calc.like(y = x$y[[j]], ksi = cand[j], sig = cand[j + nReps])
+            cand.prior.ksi = dnorm(cand[1:nReps], par.ksi[i], sqrt(par.tau2[i]), log = TRUE)
+            cand.prior.sig = dgamma(cand[nReps + 1:nReps], par.alpha.beta[i, 1],
+                par.alpha.beta[i, 2], log = TRUE)
+
+            if (log(runif(1)) < (sum(cand.like + cand.prior.ksi + cand.prior.sig) - 
+                sum(curr.like.ksi.sig + curr.prior.ksi + curr.prior.sig))){
+                curr.like.ksi.sig = cand.like
+                curr.prior.ksi = cand.prior.ksi
+                curr.prior.sig = cand.prior.sig
+                accept.vec.ksi.sig[i] = 1
+                par.vec.ksi.sig[i,] = cand
+                }
+            }
+
+        # Update zeta_i
+        cand = rnorm(nReps) %*% chol.vZ + par.vec.zeta[i,]
+        if (all(cand > 0 & cand < 1)){
+            cand.like = (x$n-x$n_u)*log(1-cand) + x$n_u*log(cand)
+            cand.prior = dbeta(cand, par.zeta.eta[i, 1]*par.zeta.eta[i, 2],
+                (1-par.zeta.eta[i, 1])*par.zeta.eta[i, 2], log = TRUE)
+            if (log(runif(1)) < (sum(cand.like + cand.prior) -
+                sum(curr.like.zeta + curr.prior.zeta))){
+                curr.like.zeta = cand.like
+                curr.prior.zeta = cand.prior
+                accept.vec.zeta[i] = 1
+                par.vec.zeta[i,] = cand
+                }
+            }
+
+        # Update ksi
+        m.star = (par.tau2[i] * ksi.mean + ksi.sd^2*sum(par.vec.ksi.sig[i, 1:nReps])) /
+            (par.tau2[i] + ksi.sd^2 * nReps)
+        s.star = sqrt((par.tau2[i] * ksi.sd^2) / (par.tau2[i] + ksi.sd^2 * nReps))
+        par.ksi[i] = rnorm(1, m.star, s.star)
+
+        curr.prior.ksi = dnorm(par.vec.ksi.sig[i, 1:nReps],
+            par.ksi[i], sqrt(par.tau2[i]), log = TRUE)
+
+        # Update tau2 (variance, Ga prior) on log-scale
+        cand = rnorm(1) * chol.T + log(par.tau2[i])
+        if (is.finite(cand)){
+            cand.prior.ksi = dnorm(par.vec.ksi.sig[i, 1:nReps],
+                par.ksi[i], sqrt(exp(cand)), log = TRUE)
+            if (log(runif(1)) <
+                (sum(cand.prior.ksi) + dgamma(exp(cand), tau2.alpha, tau2.beta, log = TRUE) + cand) -
+                (sum(curr.prior.ksi) + dgamma(par.tau2[i], tau2.alpha, tau2.beta, log = TRUE) + 
+                    log(par.tau2[i]))){
+                accept.tau2[i] = 1
+                curr.prior.ksi = cand.prior.ksi
+                par.tau2[i] = exp(cand)
+                }
+            }
+
+        # Update (alpha, beta)
+        cand = rnorm(2) %*% chol.AB + par.alpha.beta[i,]
+        if (all(cand > 0)){
+            cand.prior = dgamma(par.vec.ksi.sig[i, nReps + 1:nReps], cand[1], cand[2], log = TRUE)
+            if (log(runif(1)) <
+                (sum(cand.prior) +
+                    dgamma(cand[1], sig.alpha.a, sig.alpha.b, log = TRUE) +
+                    dgamma(cand[2], sig.beta.a, sig.beta.b, log = TRUE)) -
+                (sum(curr.prior.sig) +
+                    dgamma(par.alpha.beta[i, 1], sig.alpha.a, sig.alpha.b, log = TRUE) +
+                    dgamma(par.alpha.beta[i, 2], sig.beta.a, sig.beta.b, log = TRUE))){
+                curr.prior.sig = cand.prior
+                accept.alpha.beta[i] = 1
+                par.alpha.beta[i,] = cand
+                }
+            }
+
+        # Update (zeta, eta)
+        cand = rnorm(2) %*% chol.ZE + par.zeta.eta[i,]
+        if (all(cand > 0) && cand[1] < 1){
+            cand.prior = dbeta(par.vec.zeta[i,], cand[1]*cand[2], (1-cand[1])*cand[2], log = TRUE)
+            if (log(runif(1)) <
+                (sum(cand.prior) +
+                    dbeta(cand[1], zeta.mu.a, zeta.mu.b, log = TRUE) +
+                    dgamma(cand[2], zeta.eta.a, zeta.eta.b, log = TRUE)) -
+                (sum(curr.prior.zeta) +
+                    dbeta(par.zeta.eta[i, 1], zeta.mu.a, zeta.mu.b, log = TRUE) +
+                    dgamma(par.zeta.eta[i, 2], zeta.eta.a, zeta.eta.b, log = TRUE))){
+                curr.prior.zeta = cand.prior
+                accept.zeta.eta[i] = 1
+                par.zeta.eta[i,] = cand
+                }
+            }
+
+        # Change proposal variances
+        if ((floor(i/window) == i/window) && (i <= nburn)){
+            cov.vec.ksi.sig = autotune(mean(accept.vec.ksi.sig[(i-window+1):i]),
+                target = 0.234, k = window/50) *
+                (cov.vec.ksi.sig + window * var(par.vec.ksi.sig[(i-window+1):i,]) / i)
+            cov.vec.zeta = autotune(mean(accept.vec.zeta[(i-window+1):i]),
+                target = 0.234, k = window/50) *
+                (cov.vec.zeta + window * var(par.vec.zeta[(i-window+1):i,]) / i)
+            cov.alpha.beta = autotune(mean(accept.alpha.beta[(i-window+1):i]),
+                target = 0.234, k = window/50) *
+                (cov.alpha.beta + window * var(par.alpha.beta[(i-window+1):i,]) / i)
+            cov.zeta.eta = autotune(mean(accept.zeta.eta[(i-window+1):i]),
+                target = 0.234, k = window/50) *
+                (cov.zeta.eta + window * var(par.zeta.eta[(i-window+1):i,]) / i)
+
+            cov.tau2 = autotune(mean(accept.tau2[(i-window+1):i]),
+                target = 0.234, k = window/50) *
+                (cov.tau2 + window * var(par.tau2[(i-window+1):i]) / i)
+
+            chol.vKS = chol(cov.vec.ksi.sig)
+            chol.vZ = chol(cov.vec.zeta)
+            chol.AB = chol(cov.alpha.beta)
+            chol.ZE = chol(cov.zeta.eta)
+
+            chol.T = chol(cov.tau2)
+            }
+        if (i == (nburn + nmcmc) && display > 0){
+            curr_time = as.numeric(Sys.time()) - begin_time
+            cat("\r   ", i, " / ", nburn+nmcmc, " -- ",
+                trailing(100, 2),"% -- Elapsed: ",
+                nice_time(curr_time), "            \n", sep = "")
+            }
+        }
+
+    par.vec.ksi.sig = tail(par.vec.ksi.sig, nmcmc)
+    par.vec.zeta = tail(par.vec.zeta, nmcmc)
+    par.ksi = tail(par.ksi, nmcmc)
+    par.tau2 = tail(par.tau2, nmcmc)
+    par.alpha.beta = tail(par.alpha.beta, nmcmc)
+    par.zeta.eta = tail(par.zeta.eta, nmcmc)
+
+    accept.vec.ksi.sig = tail(accept.vec.ksi.sig, nmcmc)
+    accept.vec.zeta = tail(accept.vec.zeta, nmcmc)
+    accept.alpha.beta = tail(accept.alpha.beta, nmcmc)
+    accept.zeta.eta = tail(accept.zeta.eta, nmcmc)
+
+    accept.tau2 = tail(accept.tau2, nmcmc)
+
+    colnames(par.vec.ksi.sig) = c(paste0("ksi", 1:nReps), paste0("sig", 1:nReps))
+    colnames(par.vec.zeta) = paste0("zeta", 1:nReps)
+    colnames(par.alpha.beta) = c("alpha", "beta")
+    colnames(par.zeta.eta) = c("zeta", "eta")
+    
+    params = cbind(par.vec.ksi.sig, par.vec.zeta, "ksi_mean" = par.ksi,
+        "tau2" = par.tau2, par.alpha.beta, par.zeta.eta)
+    accept = c("vec.ksi.sig" = mean(accept.vec.ksi.sig), "vec.zeta" = mean(accept.vec.zeta),
+        "tau2" = mean(accept.tau2), "alpha.beta" = mean(accept.alpha.beta),
+        "zeta.eta" = mean(accept.zeta.eta))
+
+    return (list("params" = params, "accept" = accept))
+    }
 
 hier_excess = function(data_name, data_dir, region, variable,
     season = c("year", "summer", "winter"), date_begin, date_end,
@@ -253,6 +567,7 @@ hier_excess = function(data_name, data_dir, region, variable,
         tmp = clim_anomaly_calc(dat, date_begin, date_end)
         dat = tmp$dat
         output$anomaly_shift = tmp$anomaly_shift
+        rm(tmp)
         }
 
     ### Get appropriate time index
@@ -263,24 +578,46 @@ hier_excess = function(data_name, data_dir, region, variable,
     output$varmat = as.matrix(dat[ind,-1])
     output$anomaly_shift = output$anomaly_shift[ind,]
 
+    ### Threshold
+    # Number of full years from date_begin to date_end
+    output$R = NCOL(output$varmat)
+    output$nyears = length(output$time.dates) / output$days.in.months
 
-
-# Put these next few sections into their own functions, for more general use other
-# than attaching them too closely to the climate simulations
+    if (missing(threshold)){
+        output$uq = uq
+        if (min_uq){
+            threshold = min(apply(output$varmat, 2, quantile, output$uq))
+            output$threshold = rep(threshold, output$R)
+        } else {
+            if (length(output$uq) == 1)
+                output$uq = rep(output$uq, output$R)
+            output$threshold = diag(apply(output$varmat, 2, quantile, output$uq))
+            }
+    } else {
+        output$uq = NULL
+        output$threshold = threshold
+        if (length(output$threshold) == 1)
+            output$threshold = rep(output$threshold, output$R)
+        }
 
     ### Extremal index and declustering (retain index of exceedances for bivariate declustering)
+    output$nburn = nburn
+    output$nmcmc = nmcmc
 
+    tmp = wrapper_theta(output)
+    output = c(output, tmp)
+    rm(tmp)
 
     ### MCMC (hierarchical model)
+    tmp = wrapper_mcmc(output)
+    output = c(output, tmp)
+    rm(tmp)
 
 
     ### Compute 20- and 50- year return levels
 
 
     ### Compute within replicate Bhattacharyya distance (bootstrap this maybe?)
-
-
-
 
 
     ### Output (make sure things are all good for bivariate/multivariate analysis)
