@@ -1,4 +1,5 @@
 library(mwBASE)
+library(MASS)
 rgpd = function(n, mu, ksi, sigma){
     if (length(ksi) == 1)
         ksi = rep(ksi, n)
@@ -71,12 +72,13 @@ cols = c("blue", "green", "red", "gray50")
 # tab.T_C = sapply(x, function(y) mean(y$T_C))
 
 
-wrapper = function(x, obs.ind, sim.ind, zero, one, parts, nburn = 10000, nmcmc = 10000){
+wrapper = function(x, obs.ind, sim.ind, cols, zero, one, parts, nburn = 10000, nmcmc = 10000){
 
     R = ncol(x[[sim.ind]]$varmat)
+    p = length(cols)
     n = nrow(x[[obs.ind]]$varmat)
 
-    new.xy = matrix(0, n, R+1)
+    new.xy = matrix(0, n, p+1)
 
     ex = x[[obs.ind]]$varmat[,1] - x[[obs.ind]]$threshold
     ksi = mean(x[[obs.ind]]$params[,1])
@@ -85,14 +87,15 @@ wrapper = function(x, obs.ind, sim.ind, zero, one, parts, nburn = 10000, nmcmc =
     new.xy[, 1] = (1 + ksi * ex / sig)^(1/ksi)
     new.xy[is.na(new.xy[,1]),1] = 0
 
-    for (i in 1:R){
+    for (j in 1:length(cols)){
+        i = cols[j]
 
         ex = x[[sim.ind]]$varmat[,i] - x[[sim.ind]]$threshold[i]
         ksi = mean(x[[sim.ind]]$params[,i])
         sig = mean(x[[sim.ind]]$params[,i + R])
 
-        new.xy[, i+1] = (1 + ksi * ex / sig)^(1/ksi)
-        new.xy[is.na(new.xy[,i+1]),i+1] = 0
+        new.xy[, j+1] = (1 + ksi * ex / sig)^(1/ksi)
+        new.xy[is.na(new.xy[,j+1]),j+1] = 0
 
         }
 
@@ -102,27 +105,28 @@ wrapper = function(x, obs.ind, sim.ind, zero, one, parts, nburn = 10000, nmcmc =
 
     # ind = setdiff(ex.ind, zero.ind)
 
-    de.ind = rep(list(NULL), R)
-    ind = rep(list(NULL), R)
-    v = rep(list(NULL), R)
-    cone = rep(list(NULL), R)
-    phi = rep(list(NULL), R)
-    phi.s = rep(list(NULL), R)
+    de.ind = rep(list(NULL), p)
+    ind = rep(list(NULL), p)
+    v = rep(list(NULL), p)
+    cone = rep(list(NULL), p)
+    phi = rep(list(NULL), p)
+    phi.s = rep(list(NULL), p)
 
-    for (i in 1:R){
+    for (j in 1:length(cols)){
+        i = cols[j]
 
         # Declustered indices for each margin, joined
         tmp.ind1 = which((x[[obs.ind]]$varmat - x[[obs.ind]]$threshold) %in% x[[obs.ind]]$y)
         tmp.ind2 = which((x[[sim.ind]]$varmat[,i] - x[[sim.ind]]$threshold) %in% x[[sim.ind]]$y[[i]])
-        ind[[i]] = sort(unique(c(tmp.ind1, tmp.ind2)))
+        ind[[j]] = sort(unique(c(tmp.ind1, tmp.ind2)))
 
         # All exceedances
 #       ind[[i]] = which(new.xy[,1] > 1 | new.xy[,i+1] > 1)
 
-        v[[i]] = apply(new.xy[ind[[i]], c(1, i+1)], 1, max)
-        cone[[i]] = new.xy[ind[[i]], c(1, i+1)] / v[[i]]
-        phi[[i]] = atan(new.xy[ind[[i]], i+1] / new.xy[ind[[i]], 1])
-        phi.s[[i]] = phi[[i]] * 2 / pi
+        v[[j]] = apply(new.xy[ind[[j]], c(1, j+1)], 1, max)
+        cone[[j]] = new.xy[ind[[j]], c(1, j+1)] / v[[j]]
+        phi[[j]] = atan(new.xy[ind[[j]], j+1] / new.xy[ind[[j]], 1])
+        phi.s[[j]] = phi[[j]] * 2 / pi
         }
 
     phi.s = unlist(phi.s)
@@ -200,6 +204,8 @@ wrapper = function(x, obs.ind, sim.ind, zero, one, parts, nburn = 10000, nmcmc =
             # Add the Jacobian for the sampler (in this case, everything is log'd)
             out = out + sum(params)
 
+            out = ifelse(is.na(out), -Inf, out)
+
             return (out)
             }
         return (f)
@@ -212,15 +218,39 @@ wrapper = function(x, obs.ind, sim.ind, zero, one, parts, nburn = 10000, nmcmc =
     if (missing(parts))
         parts = 2
 
-    calc.post = make.post(zero, one, parts)
-    nparam = zero + one + 3*parts - 1
-    if (nparam == 2*parts){
-        mcmc = mcmc_sampler(phi.s, calc.post, nparam = nparam, nburn = nburn, nmcmc = nmcmc,
-            chain_init = rep(0, 2*parts))
-    } else {
-        mcmc = mcmc_sampler(phi.s, calc.post, nparam = nparam, nburn = nburn, nmcmc = nmcmc,
-            chain_init = c(rep(0, 2*parts),
-                rep(log(1/(zero + one + parts)), zero + one + parts - 1)))
+    flag = 1
+    while (flag){
+        calc.post = make.post(zero, one, parts)
+        nparam = zero + one + 3*parts - 1
+        if (nparam != 2*parts){
+            mcmc = try(mcmc_sampler(phi.s, calc.post, nparam = nparam, nburn = nburn, nmcmc = nmcmc,
+                chain_init = c(rep(0, 2*parts), rep(log(1/(zero + one + parts)),
+                zero + one + parts - 1))), silent = TRUE)
+            }
+        if (nparam == 2*parts){
+            mcmc = mcmc_sampler(phi.s, calc.post, nparam = nparam, nburn = nburn, nmcmc = nmcmc,
+                chain_init = rep(0, 2*parts))
+            }
+        if (class(mcmc) == "try-error"){
+            parts = max(parts - 1, 1)
+            cat("\nMCMC chain broke. Reducing number of beta components to", parts)
+        } else {
+            flag = 0
+            if (parts > 1){
+                for (j in 1:parts){
+                    a = mean(mcmc$params[,2*j-1])
+                    b = mean(mcmc$params[,2*j])
+                    # The 1e-4 is arbitrary, perhaps can have it based on the data?
+                    if ( a*b / ( (a+b)^2 * (a+b+1) ) < 1e-4 ){
+                        flag = 1
+                        }
+                    }
+                if (flag){
+                    parts = max(parts - 1, 1)
+                    cat("A beta component had two low of variance. Reducing number of beta components to", parts)
+                    }
+                }
+            }
         }
 
     mcmc$params = exp(mcmc$params)
@@ -293,8 +323,14 @@ get.preds2 = function(x, n){
     return (out)
     }
 
-calc.chi.pred = function(x, n){
-
+calc.chi = function(cone){
+    ind = (cone[,1] > 0 & cone[,2] > 0)
+    z1 = cone[ind, 1] / mean(cone[, 1])
+    z2 = cone[ind, 2] / mean(cone[, 2])
+    z = cbind(z1, z2)
+    m1 = apply(z, 1, min)
+    chi = mean(m1) * mean(ind)
+    return (chi)
     }
 
 
@@ -315,7 +351,9 @@ height = 9
 # comp = c(1, 3)
 # n = nrow(x[[comp[1]]]$varmat)
 
-pproc = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
+u = seq(0.8, 0.999, length = 30)
+out = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
+#out = matrix(0, length(ind.control) + length(ind.decadal) + length(ind.historical), 11)
 
 B5 = list(ind.control, ind.decadal, ind.historical)
 for (A1 in 1:2){
@@ -330,37 +368,96 @@ for (A1 in 1:2){
                     rr.obs = Reduce(intersect, list(B1, B2, B3, B4, ind.obs))
                     rr.sim = Reduce(intersect, list(B1, B2, B3, B4, B5[[A5]]))
 
-#                   if (rr.sim == 2)
-#                       next
+                    out[[rr.sim]]$u = u     # range of u for chi.u and chi.bar.u
+                    out[[rr.sim]]$dat.chi = double(11)  # chi from data
+                    out[[rr.sim]]$dat.chi.u = matrix(0, length(u), 11)
+                    out[[rr.sim]]$dat.chi.bar.u = matrix(0, length(u), 11)
+                    out[[rr.sim]]$pp.chi = double(11)   # chi from pareto process
+                    out[[rr.sim]]$pp.chi.u = matrix(0, length(u), 11)
+                    out[[rr.sim]]$pp.chi.bar.u = matrix(0, length(u), 11)
 
-                    pproc[[rr.sim]] = wrapper(x, rr.obs, rr.sim, parts = 2,
-                        nburn = nburn, nmcmc = nmcmc)
+                    for (i in 1:11){
+                        cols = i
+                        if (i == 11) cols = 1:10
 
-#                   pred = get.preds2(pproc[[rr.sim]], 10)
-                    pred = get.preds(pproc[[rr.sim]])
-                    pred.cone = angle.2.cone(pred * pi/2)
+                        tmp = wrapper(x, rr.obs, rr.sim, cols = cols, parts = 2,
+                            nburn = nburn, nmcmc = nmcmc)
 
-                    pproc[[rr.sim]]$pred = pred
+                        pred = get.preds(tmp)
+                        pred.cone = angle.2.cone(pred * pi/2)
 
-                    ind = (pred.cone[,1] > 0 & pred.cone[,2] > 0)
-                    z1 = pred.cone[ind, 1] / mean(pred.cone[, 1])
-                    z2 = pred.cone[ind, 2] / mean(pred.cone[, 2])
-                    z = cbind(z1, z2)
-                    m1 = apply(z, 1, min)
-                    pproc[[rr.sim]]$chi = mean(m1) * mean(ind)
+#                       par(mfrow = c(1, 1))
+#                       hist(tmp$phi.s, breaks = 20, col = 'gray')
+#                       lines(density(pred), col = 'blue', lwd = 2)
 
-                    hist(pproc[[rr.sim]]$phi.s, breaks = 50, col = 'black', border = 'gray50',
-                        freq = FALSE, ylab = "", xlab = expression(phi), main = "Angle",
-                        cex.lab = 1.5, cex.main = 2)
-                    hist(pred, col = rgb(34/255, 139/255, 34/255, 0.5), breaks = 50, freq = FALSE,
-                        border = 'lightgreen', add = TRUE)
-                    abline(v = pproc[[rr.sim]]$chi)
+                        out[[rr.sim]]$pp.chi[i] = calc.chi(pred.cone)
+                        out[[rr.sim]]$dat.chi[i] = calc.chi(do.call(rbind, tmp$cone))
+
+                        pred.v = 1/runif(nrow(pred.cone))
+                        pred.y = pred.v * pred.cone
+
+                        z1 = rank(pred.y[,1]) / nrow(pred.y)
+                        z2 = rank(pred.y[,2]) / nrow(pred.y)
+
+                        for (j in 1:length(u)){
+                            ind1 = (z1 <= u[j])
+                            ind2 = (z2 <= u[j])
+                            out[[rr.sim]]$pp.chi.u[j,i]= 2 - log(mean(ind1 & ind2)) / log(mean(ind2))
+
+                            ind1 = (z1 > u[j])
+                            ind2 = (z2 > u[j])
+                            out[[rr.sim]]$pp.chi.bar.u[j,i] = 2 * log(mean(ind1)) / log(mean(ind1 & ind2)) - 1
+                            }
+
+                        pred.y = do.call(c, tmp$v) * do.call(rbind, tmp$cone)
+
+                        z1 = rank(pred.y[,1]) / nrow(pred.y)
+                        z2 = rank(pred.y[,2]) / nrow(pred.y)
+
+                        for (j in 1:length(u)){
+                            ind1 = (z1 <= u[j])
+                            ind2 = (z2 <= u[j])
+                            out[[rr.sim]]$dat.chi.u[j,i]= 2 - log(mean(ind1 & ind2)) / log(mean(ind2))
+
+                            ind1 = (z1 > u[j])
+                            ind2 = (z2 > u[j])
+                            out[[rr.sim]]$dat.chi.bar.u[j,i] = 2 * log(mean(ind1)) / log(mean(ind1 & ind2)) - 1
+                            }
+
+                        par(mfrow = c(2, 2))
+                        matplot(u, out[[rr.sim]]$dat.chi.u[,1:i], lty = 1, type = 'l',
+                            ylab = "chi.u", col = c(rainbow(10), "black"), lwd = c(rep(1.5, 10), 2))
+                        points(rep(1, i), out[[rr.sim]]$dat.chi[1:i], pch = 1,
+                            col = c(rainbow(10), "black"), cex = c(rep(1, 10), 1.5))
+
+                        matplot(u, out[[rr.sim]]$pp.chi.u[,1:i], lty = 1, type = 'l',
+                            ylab = "chi.u", col = c(rainbow(10), "black"), lwd = c(rep(1.5, 10), 2))
+                        points(rep(1.001, i), out[[rr.sim]]$pp.chi[1:i], pch = 15,
+                            col = c(rainbow(10), "black"), cex = c(rep(1, 10), 1.5))
+
+                        matplot(u, out[[rr.sim]]$dat.chi.bar.u[,1:i], lty = 1, type = 'l',
+                            ylab = "chi.bar", col = c(rainbow(10), "black"),
+                            lwd = c(rep(1.5, 10), 2))
+                        matplot(u, out[[rr.sim]]$pp.chi.bar.u[,1:i], lty = 1, type = 'l',
+                            ylab = "chi.bar", col = c(rainbow(10), "black"),
+                            lwd = c(rep(1.5, 10), 2))
+
+                        }
+
+#                   hist(tmp$phi.s, breaks = 50, col = 'black', border = 'gray50',
+#                       freq = FALSE, ylab = "", xlab = expression(phi), main = "Angle",
+#                       cex.lab = 1.5, cex.main = 2)
+#                   hist(pred, col = rgb(34/255, 139/255, 34/255, 0.5), breaks = 50, freq = FALSE,
+#                       border = 'lightgreen', add = TRUE)
+#                   abline(v = chi)
 
                     }
                 }
             }
         }
     }
+
+save(out, file = "./biv_pred2.RData")
 
 u = seq(0.8, 0.995, length = 20)
 chi.u = matrix(0, length(u), 50)
@@ -421,10 +518,14 @@ sapply(pproc, function(x) x$chi)
 
 
 
+pdf("./figs/2017_09_08/chi.pdf", height = height, width = width)
 par(mfrow = c(4, 4), mar = c(0,0,0,0), oma = c(6,10,10,6))
 pnum = 0
-xlim = range(sapply(pproc, function(x) log(x$chi / (1 - x$chi))))
+#xlim = range(sapply(out, function(x) log(x$pp.chi[11] / (1 - x$pp.chi[11]))))
+xlim = range(sapply(out, function(x) c(x$dat.chi, x$pp.chi)))
+#xlim = c(0, 1)
 ylim = c(0.5, 3.5)
+cols = c("blue", "green", "red", "gray50")
 B5 = list(ind.control, ind.decadal, ind.historical)
 for (A1 in 1:2){
     B1 = list(ind.cal, ind.usa)[[A1]]
@@ -438,16 +539,36 @@ for (A1 in 1:2){
                 pnum = pnum + 1
                 for (A5 in 1:3){
                     rr = Reduce(intersect, list(B1, B2, B3, B4, B5[[A5]]))
-                    points(log(pproc[[rr]]$chi / (1 - pproc[[rr]]$chi)), A5, pch = 15, col = cols[A5])
+#                   points(log(out[[rr]]$pp.chi[11] / (1 - out[[rr]]$pp.chi[11])), A5,
+#                       pch = 15, col = cols[A5])
+#                   points(out[[rr]]$pp.chi[11],
+#                       A5, pch = 15, col = cols[A5], cex = 1.5)
+#                   points(out[[rr]]$pp.chi, rep(A5, 11), pch = 15,
+#                       col = cols[A5], cex = c(rep(1, 10), 1.5))
+                    points(out[[rr]]$pp.chi[1:10], rep(A5, 10), pch = 16,
+                        col = col_fade(cols[A5], 0.5), cex = 1)
+                    points(out[[rr]]$pp.chi[11], A5, pch = 4,
+                        col = col_mult(cols[A5], "gray50"), cex = 2.5, lwd = 2.5)
+
+#                   points(out[[rr]]$dat.chi[1:10], rep(A5-0.2, 10), pch = 16,
+#                       col = cols[A5], cex = 1)
+#                   points(out[[rr]]$dat.chi[11], A5-0.2, pch = 4,
+#                       col = col_mult(cols[A5], "gray50"), cex = 2.0, lwd = 2)
                     }
 
                 if ((pnum <= 4) && (pnum %% 2 == 1))
                     axis(3, lwd = -1, lwd.ticks = 1)
                 if ((pnum >= 13) && (pnum %% 2 == 0))
                     axis(1, lwd = -1, lwd.ticks = 1)
-                if (pnum %% 4 == 0)
-                    axis(side = 4, labels = lab.shortmod[-4], at = 1:3, las = 1,
-                        lwd = -1, lwd.ticks = 1)
+                if (pnum %% 4 == 0){
+                    axis(side = 4, labels = lab.shortmod[-4],
+                        at = 1:3, las = 1, lwd = -1, lwd.ticks = 1)
+#                   axis(side = 4, labels = paste("PP", lab.shortmod[-4]),
+#                       at = 1:3, las = 1, lwd = -1, lwd.ticks = 1)
+
+#                   axis(side = 4, labels = paste("DAT", lab.shortmod[-4]),
+#                       at = 1:3 - 0.2, las = 1, lwd = -1, lwd.ticks = 1)
+                    }
                 box()
 
                 # Put in thicker lines in the middle
@@ -472,458 +593,10 @@ mtext(lab.year, side = 2, outer = TRUE, at = rev(c(0.125, 0.375, 0.625, 0.875)),
     line = 5, las = 1, cex = cex, adj = 0)
 mtext(expression(chi), outer = TRUE, side = 3, at = -0.120, line = 4, cex = 2.5, adj = 0)
 #par(mfrow = c(1,1), mar = c(5.1, 4.1, 4.1, 2.1), oma = c(0,0,0,0))
+dev.off()
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## par(mfrow = c(3,4))
-## for (i in 1:10){
-##     comp = c(17, 33)
-## #   comp = c(1, 3)
-## #   comp = c(17, 3)
-##     out = wrapper(x, comp, rep.num = i, zero = 1, one = 1, parts = 2,
-##         nburn = nburn, nmcmc = nmcmc)
-## 
-##     pred = get.preds(out)
-##     pred.cone = angle.2.cone(pred * pi/2)
-## 
-##     cone = out$cone
-##     v = out$v
-##     phi.s = out$phi.s
-##     new.xy = out$xy
-##     ex.ind = which(new.xy[,1] > 1 | new.xy[,2] > 1)
-## 
-##     hist(phi.s, breaks = 50, col = 'black', border = 'gray50', freq = FALSE, ylab = "",
-##         xlab = expression(phi), main = "Angle", cex.lab = 1.5, cex.main = 2)
-##     hist(pred, col = rgb(34/255, 139/255, 34/255, 0.5), breaks = 50, freq = FALSE,
-##         border = 'lightgreen', add = TRUE)
-## 
-##     cat(i, out$zero, out$one, "\n")
-##     }
-## 
-## # v = apply(new.xy[ind,], 1, max)
-## # cone = new.xy[ind,] / v
-## # phi.s = atan(new.xy[ind,2] / new.xy[ind,1]) * 2/pi
-## 
-## pred = get.preds(out)
-## pred.cone = angle.2.cone(pred * pi/2)
-## cone = out$cone
-## v = out$v
-## phi.s = out$phi.s
-## new.xy = out$xy
-## 
-## get.clusters = function(ex.times, runs){
-##     cluster = rep(list(NULL), length(ex.times))
-##     flag = 1
-##     for (i in 1:(length(ex.times)-1)){
-##         if (abs(ex.times[i] - ex.times[i+1]) <= runs){
-##             cluster[[flag]] = c(cluster[[flag]], ex.times[i])
-##         } else {
-##             cluster[[flag]] = c(cluster[[flag]], ex.times[i])
-##             flag = flag + 1
-##             }
-##         }
-##     if (tail(diff(ex.times), 1) <= runs){
-##         cluster[[flag]] = c(cluster[[flag]], tail(ex.times, 1))
-##     } else {
-##         cluster[[flag+1]] = tail(ex.times, 1)
-##         }
-##     cluster = cluster[!sapply(cluster, is.null)]
-##     return (cluster)
-##     }
-## 
-## ex.times = which(new.xy[,1] > 1 | new.xy[,2] > 1)
-## 
-## plot(0, type = 'n', xlim = range(f(new.xy[,1])), ylim = range(f(new.xy[,-1])))
-## for (i in 2:(R+1))
-##     points(f(new.xy[,c(1, i)]), pch = 16, col = rainbow(R)[i])
-## 
-## cluster = get.clusters(ex.times, runs = 1)
-## 
-## 
-## f = function(x) x^(1/3)
-## f = function(x) log(abs(x))
-## 
-## pdf("~/multi_clusters.pdf", width = width, height = height)
-## par(mfrow = c(1,1))
-## plot(f(new.xy[ex.times,]), pch = 16, col = 'gray50', xlab = "cube root of obs",
-##     ylab = "cube root of sims", main = "some clusters connected with lines")
-## flag.ind = sapply(cluster, head, 1)
-## for (i in 1:10){
-##     if (length(cluster[[i]]) > 1){
-##         for (j in 1:(length(cluster[[i]])-1)){
-##             segments(x0 = f(new.xy[cluster[[i]][j], 1]), x1 = f(new.xy[cluster[[i]][j+1], 1]),
-##                      y0 = f(new.xy[cluster[[i]][j], 2]), y1 = f(new.xy[cluster[[i]][j+1], 2]),
-##                 col = i %% 4 + 1, lty = i %% 5 + 1, lwd = 2)
-##             }
-##         }
-##     }
-## lines(f(c(0, 1, 1)), f(c(1, 1, 0)), col = 'black', lwd = 2)
-## dev.off()
-## 
-## 
-## 
-## pdf("~/four_betas.pdf", width = width, height = height)
-## hist(unlist(phi.s), breaks = 50, col = 'black', border = 'gray50', freq = FALSE, ylab = "",
-##     xlab = expression(phi), main = "Angle", cex.lab = 1.5, cex.main = 2)
-## hist(pred, col = rgb(34/255, 139/255, 34/255, 0.5), breaks = 50, freq = FALSE,
-##     border = 'lightgreen', add = TRUE)
-## for (i in 1:4){
-##     g = function(x)
-##         dbeta(x, mean(out$params[,2*i-1]), mean(out$params[,2*i]))*mean(out$params[,8+i])
-##     curve(g(x), add =TRUE, col = rainbow(4)[i], lwd = 3)
-##     }
-## legend("topright", col = rainbow(4), legend = 1:4, lwd = 3, lty = 1, box.lty = 0)
-## dev.off()
-## 
-## 0.15 - 0.05*0.15
-## 0.05 - 0.05*0.15
-## 0.05*0.15
-## 
-## 
-## colMeans(out$params)
-## colMeans(out$params[,9:12])
-## 
-## 
-## nu = length(ex.times)
-## 
-## 1 - (0.85 * 0.95)
-## nu / n
-## 
-## (nu / n)
-## 
-## h = sample(c(0, 1), n, replace = TRUE, prob = c(0.85*0.95, 1 - (0.85 * 0.95)))
-## mean(diff(which(h == 1)) == 1)
-## 
-## B = 50000
-## boot.cluster = matrix(0, B, max(sapply(cluster, length)))
-## for (i in 1:B){
-##     h = sample(c(0, 1), n, replace = TRUE, prob = c(0.85*0.95, 1 - (0.85 * 0.95)))
-##     tmp = get.clusters(which(h == 1), runs = 1)
-##     tmp = sapply(tmp, length)
-##     for (j in 1:NCOL(boot.cluster)){
-##         boot.cluster[i, j] = mean(tmp >= j)
-##         }
-##     }
-## 
-## apply(boot.cluster, 2, mean)
-## apply(boot.cluster, 2, quantile, c(0.025, 0.975))
-## 
-## for (j in 1:NCOL(boot.cluster)){
-##     plot(density(boot.cluster[,j]), xlim = c(0, 1))
-##     abline(v = mean(sapply(cluster, length) >= j), col = 'blue', lwd = 3)
-##     readline()
-##     }
-## 
-## mean(sapply(cluster, length) >= 2)
-## 
-## 1-0.85*0.95
-## 
-## 
-## tmp.ind1 = which((x[[50]]$varmat - x[[50]]$threshold) %in% x[[50]]$y)
-## tmp.ind2 = which((x[[2]]$varmat[,1] - x[[2]]$threshold) %in% x[[2]]$y[[1]])
-## tmp.ind = sort(unique(c(tmp.ind1, tmp.ind2)))
-## par(mfrow = c(1,1))
-## plot(f(new.xy[ex.times,]), pch = 16, col = 'gray50', xlab = "cube root of obs",
-##     ylab = "cube root of sims", main = "some clusters connected with lines")
-## flag.ind = sapply(cluster, head, 1)
-## for (i in 1:length(cluster)){
-##     if (length(cluster[[i]]) > 1){
-##         for (j in 1:(length(cluster[[i]])-1)){
-##             segments(x0 = f(new.xy[cluster[[i]][j], 1]), x1 = f(new.xy[cluster[[i]][j+1], 1]),
-##                      y0 = f(new.xy[cluster[[i]][j], 2]), y1 = f(new.xy[cluster[[i]][j+1], 2]),
-##                 col = i %% 4 + 1, lty = i %% 5 + 1, lwd = 2)
-##             }
-##         }
-##     }
-## lines(f(c(0, 1, 1)), f(c(1, 1, 0)), col = 'black', lwd = 2)
-## points(f(new.xy[tmp.ind,]), col = col_fade("dodgerblue", 0.5), cex = 1.2, pch = 15)
-## 
-## sapply(get.clusters(tmp.ind, 1), length)
-## 
-## intersect(tmp.ind1, tmp.ind2)
-## union(tmp.ind1, tmp.ind2)
-## 
-## x[[50]]$varmat[tmp.ind]
-## 
-## x[[50]]$varmat[299]
-## 
-## which.min(abs(x[[50]]$varmat - 59.45))
-## 
-## x[[50]]$y + x[[50]]$threshold
-## x[[50]]$varmat
-## 
-## # flag.ind = NULL
-## # lty.count = 1
-## # col.count = 2
-## # flag = c(0, 0)
-## # for (i in 1:(length(ex.times)-1)){
-## #     if (ex.times[i] == ex.times[i+1]-1){
-## #         segments(x0 = f(new.xy[ex.times[i], 1]), x1 = f(new.xy[ex.times[i+1], 1]),
-## #                  y0 = f(new.xy[ex.times[i], 2]), y1 = f(new.xy[ex.times[i+1], 2]),
-## #             col = col.count %% 4 + 1, lty = lty.count %% 5 + 1, lwd = 2)
-## #         if (flag[1] == 0){
-## #             flag.ind = c(flag.ind, i)
-## #             flag[1] = 1
-## #             flag[2] = flag[2] + 1
-## #             }
-## #     } else {
-## #         lty.count = lty.count + 1
-## #         col.count = col.count + 1
-## #         flag[1] = 0
-## #         }
-## #     }
-## points(f(new.xy[flag.ind,]), pch = 15, col = 'dodgerblue', cex = 1.5)
-## lines(f(c(0, 1, 1)), f(c(1, 1, 0)), col = 'black', lwd = 2)
-## 
-## 
-## c.max = sapply(cluster, function(x) x[(which.max(new.xy[x,])-1) %% length(x) + 1])
-## plot(f(new.xy[ex.times,]), pch = 15, col = 'dodgerblue', cex = 1.5)
-## points(f(new.xy[c.max,]), pch = 15, col = 'firebrick', cex = 1.0)
-## lines(f(c(0, 1, 1)), f(c(1, 1, 0)), col = 'black', lwd = 2)
-## 
-## 
-## plot(new.xy[c.max,c(2,1)])
-## 
-## 
-## 
-## flag[2]                 # Number of exceedances occurring in groups
-## sum(diff(ex.times) > 1) # Number of exceedances occurring alone
-## flag[2] + sum(diff(ex.times) > 1) # Total Number of cluster exceedance
-## 
-## 
-## 
-## par(mfrow = c(1,1))
-## pdf("~/anglebeta4.pdf", width = width, height = height)
-## hist(unlist(phi.s), breaks = 50, col = 'black', border = 'gray50', freq = FALSE, ylab = "",
-##     xlab = expression(phi), main = "Angle", cex.lab = 1.5, cex.main = 2)
-## hist(pred, col = rgb(34/255, 139/255, 34/255, 0.5), breaks = 50, freq = FALSE,
-##     border = 'lightgreen', add = TRUE)
-## title(main = bquote(chi ~ "=" ~ .(round(h1, 3))), line = 0)
-## dev.off()
-## 
-## ind = (pred.cone[,1] > 0 & pred.cone[,2])
-## 
-## z1 = pred.cone[ind, 1] / mean(pred.cone[, 1])
-## z2 = pred.cone[ind, 2] / mean(pred.cone[, 2])
-## 
-## z = cbind(z1, z2)
-## m1 = apply(z, 1, min)
-## (h1 = mean(m1) * mean(ind))
-## 
-## 
-## ps = unlist(phi.s)
-## 
-## 
-## ucone = NULL
-## for (i in 1:R)
-##     ucone = rbind(ucone, cone[[i]])
-## 
-## ind = (ucone[,1] > 0 & ucone[,2])
-## 
-## z1 = ucone[ind, 1] / mean(ucone[, 1])
-## z2 = ucone[ind, 2] / mean(ucone[, 2])
-## 
-## z = cbind(z1, z2)
-## m1 = apply(z, 1, min)
-## (h1 = mean(m1) * mean(ind))
-## 
-## 
-## 
-## plot(pred.cone[sample(nmcmc, 10000, replace = TRUE),], bty = 'n',
-##     col = rgb(34/255,139/255,34/255,0.01), pch = 15, xlab = "x", ylab = "y",
-##     main = "Cone", cex.lab = 1.5, cex.main = 2)
-## points(cbind(cone[[1]][cone[[1]][,1]<1,1], cone[[1]][cone[[1]][,1]<1,2]*0.99), pch = 15)
-## points(cbind(cone[[1]][cone[[1]][,2]<1,1]*0.99, cone[[1]][cone[[1]][,2]<1,2]), pch = 15)
-## 
-## par(mfrow = c(3,4))
-## for (i in 1:12)
-##     plot_hpd(out$params[,i])
-## 
-## 
-## z = cbind(pred.cone[,1] / mean(pred.cone[,1]),
-##     pred.cone[,2] / mean(pred.cone[,2]))
-## h = mean(apply(z, 1, min))
-## 
-## 
-## pred.v = 1/runif(nmcmc)
-## 
-## mean(apply(pred.cone, 1, min)) / mean(pred.cone[,2])
-## mean(apply(pred.cone, 1, min)) / mean(pred.cone[,1])
-## 
-## mean(apply(cone, 1, min)) / mean(cone[,2])
-## mean(apply(cone, 1, min)) / mean(cone[,1])
-## 
-## hist(v, col = 'green', border = 'white', breaks = 50, freq = FALSE)
-## for (i in 1:1000)
-##     hist(1/runif(length(v)), col = rgb(30/255, 144/255, 255/255, 0.01), breaks = 50, freq = FALSE, border = rgb(1,1,1,0), add = TRUE)
-## hist(v, col = 'black', border = 'white', breaks = 50, freq = FALSE, add = TRUE)
-## curve(1/x^2, add = TRUE, col = 'blue', lwd = 3)
-## 
-## 
-## 
-## u = exp(0:8)
-## chi.12 = matrix(0, 1000, length(u))
-## chi.21 = matrix(0, nrow(chi.12), length(u))
-## chi.s1 = matrix(0, nrow(chi.12), length(u))
-## chi.s2 = double(nrow(chi.12))
-## par(mfrow = c(1, 1))
-## plot(log(u), rep(0, length(u)), ylim = c(0, 1), type = 'n')
-## for (j in 1:nrow(chi.12)){
-##     pred.v = 1/runif(nmcmc)
-##     pred = get.preds(out)
-## #   pred = rbeta(nmcmc, 1/100, 1/100)
-## #   pred = rbeta(nmcmc, 10, 10)
-##     pred.cone = angle.2.cone(pred * pi/2)
-##     pred.xy = pred.cone * pred.v
-## 
-##     ind = (pred.cone[,1] > 0 & pred.cone[,2])
-## 
-##     z1 = pred.cone[ind, 1] / mean(pred.cone[, 1])
-##     z2 = pred.cone[ind, 2] / mean(pred.cone[, 2])
-## 
-##     z = cbind(z1, z2)
-##     m1 = apply(z, 1, min)
-##     h1 = mean(m1) * mean(ind)
-## 
-##     
-## 
-## #   z1 = pred.cone[, 1] / mean(pred.cone[, 1])
-## #   z2 = pred.cone[, 2] / mean(pred.cone[, 2])
-## #   z = cbind(z1, z2)
-## #   m2 = apply(z, 1, min)
-## #   h2 = mean(m2)
-## 
-##     for (i in 1:length(u)){
-##         chi.12[j,i] = mean(pred.xy[,1] > u[i] & pred.xy[,2] > u[i]) / mean(pred.xy[,2] > u[i])
-##         chi.21[j,i] = mean(pred.xy[,1] > u[i] & pred.xy[,2] > u[i]) / mean(pred.xy[,1] > u[i])
-##         chi.s1[j,i] = mean(pred.xy[,1] > u[i] & pred.xy[,2] > u[i])
-##         }
-## 
-##     chi.12[j,] = ifelse(is.na(chi.12[j,]), 0, chi.12[j,])
-##     chi.21[j,] = ifelse(is.na(chi.21[j,]), 0, chi.21[j,])
-##     chi.s2[j] = mean(apply(pred.cone, 1, min))
-## 
-## #   mean(pred.xy[,1] > u[i] & pred.xy[,2] > u[i]) / mean(pred.xy[,2] > u[i])
-## #   mean(apply(pred.cone, 1, min)) / mean(pred.cone[,2])
-## 
-## #   mean(pred.xy[,1] > u[i] & pred.xy[,2] > u[i]) / mean(pred.xy[,1] > u[i])
-## #   mean(apply(pred.cone, 1, min)) / mean(pred.cone[,1])
-## 
-##     points(log(u), chi.12[j,], pch = 16, col = rgb(1,0,0,0.1))
-##     points(log(u)+0.1, chi.21[j,], pch = 16, col = rgb(0,0,1,0.1))
-##     points(log(u)+0.2, chi.s1[j,], pch = 16, col = rgb(1,0,1,0.1))
-##     abline(h = mean(chi.s2[1:j]), col = rgb(0,1,0,0.1))
-##     abline(h = h1, col = rgb(0,1,1,0.1))
-## #   abline(h = h2, col = rgb(1,1,0,0.1))
-## #   readline()
-##     }
-## 
-## chi.mm = (chi.12 + chi.21) / 2
-## 
-## par(mfrow = c(1, 1))
-## plot(log(u), rep(0, length(u)), ylim = c(0, 1), type = 'n')
-## for (j in 1:nrow(chi.12)){
-##     points(log(u), chi.12[j,], pch = 16, col = rgb(1,0,0,0.1))
-##     points(log(u)+0.1, chi.21[j,], pch = 16, col = rgb(0,0,1,0.1))
-##     }
-## lines(log(u), apply(chi.12, 2, mean), col = 'firebrick', lwd = 2)
-## lines(log(u)+0.1, apply(chi.21, 2, mean), col = 'dodgerblue', lwd = 2)
-## lines(log(u), apply(chi.mm, 2, mean), col = 'forestgreen', lwd = 2)
-## 
-## apply(chi.mm, 2, mean)
-## 
-## 
-## 
-## # Bootstrap the chi?
-## B = 1000
-## chi.12 = double(B)
-## chi.21 = double(B)
-## chi = double(B)
-## tmp.mins = apply(pred.cone, 1, min)
-## tmp.1 = pred.cone[,1]
-## tmp.2 = pred.cone[,2]
-## for (i in 1:B){
-##     b.samp = sample(nmcmc, nmcmc, replace = TRUE)
-##     chi.12[i] = mean(tmp.mins[b.samp]) / mean(tmp.2[b.samp])
-##     chi.21[i] = mean(tmp.mins[b.samp]) / mean(tmp.1[b.samp])
-##     chi[i] = mean(c(chi.12[i], chi.21[i]))
-##     }
-## 
-## hist(chi, col = rgb(1,0,0,0.5), border = rgb(1,1,1,0.5), freq = FALSE,
-##     xlim = range(chi.12, chi.21, chi))
-## hist(chi.21, col = rgb(0,0,1,0.5), border = rgb(1,1,1,0.5), add = TRUE, freq = FALSE)
-## hist(chi.12, col = rgb(0,1,0,0.5), border = rgb(1,1,1,0.5), add = TRUE, freq = FALSE)
-## # abline(v = mean(tmp.mins) / mean(tmp.2), col = 'forestgreen', lwd = 3)
-## # abline(v = mean(tmp.mins) / mean(tmp.1), col = 'royalblue4', lwd = 3)
-## # abline(v = (mean(tmp.mins)/mean(tmp.2) + mean(tmp.mins)/mean(tmp.1))/2, col = 'firebrick', lwd = 3)
-## 
-## var(chi.12)
-## var(chi.21)
-## var(chi)
-## 
-## sd(chi.12)
-## sd(chi.21)
-## sd(chi)
-## 
-## 
-## 
-## 
-## preds2 = get.preds2(out, 1000)
-## chi1 = apply(preds2, 1,
-##     function(v){
-##         cone = angle.2.cone(v * pi/2)
-##         ind = (cone[,1] > 0 & cone[,2] > 0)
-##         z1 = cone[ind, 1] / mean(cone[, 1])
-##         z2 = cone[ind, 2] / mean(cone[, 2])
-## 
-##         if (sum(ind) == 0)
-##             return (0)
-## 
-##         z = cbind(z1, z2)
-##         m1 = apply(z, 1, min)
-##         return (mean(m1) * mean(ind))
-##         })
-## chi2 = apply(preds2, 2,
-##     function(v){
-##         cone = angle.2.cone(v * pi/2)
-##         ind = (cone[,1] > 0 & cone[,2])
-##         z1 = cone[ind, 1] / mean(cone[, 1])
-##         z2 = cone[ind, 2] / mean(cone[, 2])
-## 
-##         z = cbind(z1, z2)
-##         m1 = apply(z, 1, min)
-##         (h1 = mean(m1) * mean(ind))
-##         })
-## 
-## mean(chi1 == 0)
-## mean(chi2 == 0)
-## 
-## plot(density(chi1))
-## lines(density(chi2))
+par(mfrow = c(1,1), oma = c(0, 0, 0, 0), mar = c(5.1, 4.1, 4.1, 2.1))
+matplot(u, out[[41]]$pp.chi.u, lty = 1, type = 'l', ylim = c(0, 1))
