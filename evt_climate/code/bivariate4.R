@@ -34,8 +34,9 @@ logsum = function(x, log = TRUE){
         }
     }
 
+DIR = "~/files/gdrive/climate_data/2017_09_08/"
 
-DIR = "./RData/2017_09_08/"
+#DIR = "./RData/2017_09_08/"
 OUT_DIR = "./figs/2017_09_08/"
 files = list.files(DIR)
 ind.control = grep("control", files)
@@ -591,8 +592,10 @@ for (i in 1:length(out_samps)){
     }
 
 
+load("~/files/gdrive/climate_data/biv_chi4.RData")
 
-pdf("./figs/2017_09_08/chi4.pdf", height = height, width = width)
+
+pdf("~/chi4.pdf", height = height, width = width)
 par(mfrow = c(4, 4), mar = c(0,0,0,0), oma = c(6,10,10,6))
 pnum = 0
 #xlim = range(sapply(out, function(x) log(x$pp.chi[11] / (1 - x$pp.chi[11]))))
