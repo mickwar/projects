@@ -409,7 +409,7 @@ mcmc = list(nburn = 1000,
 # Prior
 prior = list(aa0 = 1,
     ab0 = 0.1,
-    kmax = 200,
+    kmax = 400,
     a0 = 1,
     b0 = 1)
 #prior = list(alpha = 0.1,
@@ -431,10 +431,24 @@ height = 9
 # comp = c(1, 3)
 # n = nrow(x[[comp[1]]]$varmat)
 
+load("~/files/gdrive/climate_data/biv_chi4.RData")
+load("~/files/gdrive/climate_data/biv_pred4.RData")
+
 u = seq(0.8, 0.999, length = 30)
-out = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
-out_samps = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
+# out = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
+# out_samps = rep(list(NULL), length(ind.control) + length(ind.decadal) + length(ind.historical))
 #out = matrix(0, length(ind.control) + length(ind.decadal) + length(ind.historical), 11)
+
+par(mfrow = c(4,4))
+for (j in 1:3){
+    for (i in 1:16){
+        hh = 16*(j-1)+i
+        hist(out_samps[[hh]]$dat.phi[[11]], freq = FALSE, main = hh)
+        lines(out_samps[[hh]]$grid,
+            out_samps[[hh]]$fun[,11], col = 'blue')
+        }
+    readline()
+    }
 
 B5 = list(ind.control, ind.decadal, ind.historical)
 for (A1 in 1:2){
@@ -449,21 +463,27 @@ for (A1 in 1:2){
                     rr.obs = Reduce(intersect, list(B1, B2, B3, B4, ind.obs))
                     rr.sim = Reduce(intersect, list(B1, B2, B3, B4, B5[[A5]]))
 
-                    out[[rr.sim]]$u = u     # range of u for chi.u and chi.bar.u
-                    out[[rr.sim]]$dat.chi = double(11)  # chi from data
-                    out[[rr.sim]]$dat.chi.u = matrix(0, length(u), 11)
-                    out[[rr.sim]]$dat.chi.bar.u = matrix(0, length(u), 11)
-                    out[[rr.sim]]$pp.chi = double(11)   # chi from pareto process
-                    out[[rr.sim]]$pp.chi.u = matrix(0, length(u), 11)
-                    out[[rr.sim]]$pp.chi.bar.u = matrix(0, length(u), 11)
+                    if (!(rr.sim %in% c(21, 29, 30, 45)))
+                        next
 
-                    out_samps[[rr.sim]]$grid = seq(0, 1, length = 1000) # BDPdenity default
-                    out_samps[[rr.sim]]$fun = matrix(0, 1000, 11)
-                    out_samps[[rr.sim]]$probs = matrix(0, 3, 11)
-                    out_samps[[rr.sim]]$dat.phi = rep(list(NULL), 11)
+                    cat(rr.sim)
+
+#                   out[[rr.sim]]$u = u     # range of u for chi.u and chi.bar.u
+#                   out[[rr.sim]]$dat.chi = double(11)  # chi from data
+#                   out[[rr.sim]]$dat.chi.u = matrix(0, length(u), 11)
+#                   out[[rr.sim]]$dat.chi.bar.u = matrix(0, length(u), 11)
+#                   out[[rr.sim]]$pp.chi = double(11)   # chi from pareto process
+#                   out[[rr.sim]]$pp.chi.u = matrix(0, length(u), 11)
+#                   out[[rr.sim]]$pp.chi.bar.u = matrix(0, length(u), 11)
+
+#                   out_samps[[rr.sim]]$grid = seq(0, 1, length = 1000) # BDPdenity default
+#                   out_samps[[rr.sim]]$fun = matrix(0, 1000, 11)
+#                   out_samps[[rr.sim]]$probs = matrix(0, 3, 11)
+#                   rownames(out_samps[[rr.sim]]$probs) = c("zero", "one", "inside")
+#                   out_samps[[rr.sim]]$dat.phi = rep(list(NULL), 11)
                     
 
-                    for (i in 1:11){
+                    for (i in 11){
                         cat(paste0("\n", lab.shortmod[A5]), lab.reg[A1], lab.year[A2], lab.var[A3],
                             lab.sea[A4], "Rep =", i, "\n")
                         cols = i
@@ -498,7 +518,7 @@ for (A1 in 1:2){
                         out_samps[[rr.sim]]$fun[,i] = fit$fun
                         out_samps[[rr.sim]]$probs[1,i] = mean(ind.rm.0)
                         out_samps[[rr.sim]]$probs[2,i] = mean(ind.rm.1)
-                        out_samps[[rr.sim]]$probs[3,i] = mean(ind.rm)
+                        out_samps[[rr.sim]]$probs[3,i] = 1-mean(ind.rm)
                         out_samps[[rr.sim]]$dat.phi[[i]] = phi
 
 
@@ -573,6 +593,25 @@ for (A1 in 1:2){
             }
         }
     }
+
+for (i in 1:48){
+    out_samps[[i]]$probs = matrix(0, 3, 11)
+    rownames(out_samps[[i]]$probs) = c("zero", "one", "inside")
+    for (j in 1:11){
+        phi = out_samps[[i]]$dat.phi[[j]]
+    
+        ind.rm.0 = (phi <= 0.005)
+        ind.rm.1 = (phi >= 0.995)
+        ind.rm = (ind.rm.0 | ind.rm.1)
+
+        out_samps[[i]]$probs[1,j] = mean(ind.rm.0)
+        out_samps[[i]]$probs[2,j] = mean(ind.rm.1)
+        out_samps[[i]]$probs[3,j] = 1-mean(ind.rm)
+        }
+    }
+
+
+
 
 save(out, file = "./biv_chi4.RData")
 save(out_samps, file = "./biv_pred4.RData")
