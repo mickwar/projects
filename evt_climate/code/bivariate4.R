@@ -409,7 +409,7 @@ mcmc = list(nburn = 1000,
 # Prior
 prior = list(aa0 = 1,
     ab0 = 0.1,
-    kmax = 400,
+    kmax = 300,
     a0 = 1,
     b0 = 1)
 #prior = list(alpha = 0.1,
@@ -516,9 +516,9 @@ for (A1 in 1:2){
 
 
                         out_samps[[rr.sim]]$fun[,i] = fit$fun
-                        out_samps[[rr.sim]]$probs[1,i] = mean(ind.rm.0)
-                        out_samps[[rr.sim]]$probs[2,i] = mean(ind.rm.1)
-                        out_samps[[rr.sim]]$probs[3,i] = 1-mean(ind.rm)
+#                       out_samps[[rr.sim]]$probs[1,i] = mean(ind.rm.0)
+#                       out_samps[[rr.sim]]$probs[2,i] = mean(ind.rm.1)
+#                       out_samps[[rr.sim]]$probs[3,i] = 1-mean(ind.rm)
                         out_samps[[rr.sim]]$dat.phi[[i]] = phi
 
 
@@ -710,6 +710,16 @@ mtext(lab.year, side = 2, outer = TRUE, at = rev(c(0.125, 0.375, 0.625, 0.875)),
 mtext(expression(chi), outer = TRUE, side = 3, at = -0.120, line = 4, cex = 2.5, adj = 0)
 #par(mfrow = c(1,1), mar = c(5.1, 4.1, 4.1, 2.1), oma = c(0,0,0,0))
 dev.off()
+
+
+
+
+
+
+
+
+
+
 
 
 library(DPpackage)
