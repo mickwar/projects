@@ -1,0 +1,11 @@
+\section{Conclusions}
+\label{conclusions}
+
+We have proposed a hierarchical threshold model to handle replicates of climate simulations. The model was applied to a variety of factor combinations and compared to a univariate threshold model for observations. A handful of similarities and differences were found to exist between simulations and the observation product.
+
+We have accounted for trends in the time-series by subtracting out the mean of dynamic linear models, thus yielding anomalies. This poses issues of interpretability and practicality. Our extreme value analysis are in terms of the anomalies and this may not be terribly useful when making comparisons. Should we be interested in the precipitation or temperature extremes in real terms, we must add back the (possibly unknown) mean. However, with a sufficient model on the mean, it would not be unreasonable to use our analysis for projecting extremes in the future.
+
+Some improvement on our use of the Bhattacharyya distance can be made. In this paper we decided that the observations were ``similar'' enough to the climate simulations if the Bhattacharyya distance fell within the distances from the replicates to their mean. A better approach may be to compute a bootstrap sample of the distances and then calculate the proportion of times this exceeds the distance from the observations. 
+
+The next step is to perform a bivariate analysis, with a vision toward the multivariate setting. This bivarate analysis is complicated due to there being replicates in the climate simulations as well as a large variety of factor combinations at which to make the comparisons.
+

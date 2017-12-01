@@ -1,0 +1,155 @@
+\section{Marginal analysis}
+
+\subsection{Threshold exceedance model}
+\label{thresh}
+
+\subsubsection{Univariate}
+\label{univariate}
+
+Under some mild assumptions, for random variable $X$ and for large enough $u$, the distribution of $X-u$ (the exceedance), conditional on $X>u$ is approximately
+\begin{align}
+P(X-u\leq y|X>u) \approx H(y) = 1 - \left(1+\frac{\xi y}{\sigma}\right)^{-1/\xi} \label{gpapprox}
+\end{align}
+defined on $\{y:y>0~\mathrm{and}~(1+\xi y/\sigma) >0\}$. $H(y)$ is the distribution function for a generalized Pareto random variable with shape paremeter $\xi\in\R$ and scale $\sigma>0$.
+
+Let $X_1,\ldots,X_n$ be a sequence of i.i.d. random variables and $u$ be a high threshold. Define $Y_i=X_i-u$ for $X_i>u$ be the $k$ exceedances. The likelihood of $(\xi,\sigma)$ is derived from (\ref{gpapprox}) as
+\begin{align}
+L(y_1,\ldots,y_k;\sigma,\xi)=\sigma^{-k}\sum_{i=1}^k\left(1+\frac{\xi y_i}{\sigma}\right)_+^{-1/\xi-1} \label{gplike}
+\end{align}
+where $z_+=\max(z,0)$. This provides the basis for an extreme value analysis. For example, after declustering, the cluster maxima (which are roughly independent) may be fit using likelihood (\ref{gplike}).
+
+\subsubsection{Hierarchical model}
+\label{hier}
+
+Suppose we have $R$ replicates or computer simulations, each with $n_i$ observations, for $i=1,\ldots,R$. Let $X_{ij}$ denote the $j$th observation in replicate $i$. We assume
+\[ X_{ij} \sim F_i,~~~~~i=1,\ldots,R,~~~~~j=1,\ldots,n_i \]
+and all $X_{ij}$ are mutually conditionally independent. For a fixed $u$ and each $i$, define the following sets:
+\[ A_i = \{j:x_{ij}\leq u\},~~~ A_i^c = \{j: x_{ij}>u\} \]
+where $|A_i|=n_i-k_i$ and $|A_i^c|=k_i$ with $k_i$ being the number of exceedances in replicate $i$. We define our exceedances as
+\[ y_{ij} = (x_{ij}-u)\cdot \ind_{(j \in A_i^c)} \]
+so that all observations not exceeding $u$ are marked as $0$. Let $\m{y}_i=(y_{i,1},\ldots,y_{i,n_i})^\top$ and $\m{y}=(\m{y}_1^\top,\ldots,\m{y}_R^\top)^\top$.
+
+The likelihood is given by
+\begin{align}
+L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma_i,\xi_i,\zeta_i) \nonumber \\
+&\approx \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
+\end{align}
+
+Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances. This justifies the use of cluster maxima for $\m{y}_i$.
+
+We complete the hierarchical model formulation by specifying the following priors:
+\begin{align}
+\xi_i|\xi, \tau^2  &\sim Normal(\xi, \tau^2) \nonumber \\
+\sigma_i|\alpha, \beta &\sim Gamma(\alpha, \beta) \nonumber \\
+\zeta_i|\zeta, \eta &\sim Beta(\zeta\eta, (1-\zeta)\eta) \nonumber \\
+ \label{priors} \\
+\xi &\sim Normal(m, s^2)&  &\tau^2 \sim InvGamma(a_\tau, b_\tau) \nonumber \\
+\alpha &\sim Gamma(a_\alpha, b_\alpha)&  &\beta \sim Gamma(a_\beta, b_\beta) \nonumber \\
+\zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
+\end{align}
+By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC.
+% TODO: talk about the hyperparameters, latin letters. Some are intending to be a bit informative, like \tau^2 and \zeta, since we have only 10 ``observations'' for the population distributions.
+
+
+\subsection{Extremal Index}
+\label{index}
+
+% Sloppy, may not be technically correct with regard to theta.
+The threshold exceedance model described in section \ref{thresh} relies on an assumption of independence which is unrealistic for a time-series. When there is dependence between the random variables, the extremes are related according to the so-called extremal index \citep{leadbetter1983extremes}, denoted by $\theta\in[0,1]$, which arises in the following way, as summarized in \cite{ferro2003inference}. For $\{X_n\}_{n\geq 1}$ a strictly stationary sequence of random variables with marginal distribution $F$, the sequence has extremal index $\theta$ if for each $\tau>0$ there is a sequence $\{u_n\}_{n\geq 1}$ such that,
+\begin{align}
+\lim_{n\rightarrow\infty} n(1-F(u_n)) &\rightarrow \tau \mathrm{~and~} \nonumber \\
+\lim_{n\rightarrow\infty} P(\max(X_1,\ldots,X_n)\leq u_n) &\rightarrow \exp(-\theta\tau). \nonumber
+\end{align}
+The extremal index describes the behavior of exceedances in the limit and can be loosely interpreted as
+\[ \theta = (\mathrm{limiting~mean~cluster~size})^{-1}. \]
+As an example, suppose $\theta=0.5$, then we would expect exceedances of a large threshold to occur in pairs; for $\theta=0.33$, in groups of 3.
+
+\cite{ferro2003inference} show that the extremal index arises in the limiting distribution of the times between exceedances of a threshold. If $T_\theta$ is the random variable for interexceedance times in the limit, then $T_\theta$ is distributed according to the mixture
+\begin{align}
+(1-\theta)\epsilon_0 + \theta \mu_\theta
+\end{align}
+where $\epsilon_0$ is the degenerate probability distribution at $0$ and $\mu_\theta$ is an exponential distribution with mean $\theta^{-1}$. This means that the role of $\theta$ is two-fold: it is both the proportion of non-zero interexceedance times and the inverse mean of non-zero interexceedance times. This poses a challenge when estimating $\theta$ since is it impossible to observe an interexceedance time of zero in practice.
+
+We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
+
+\subsubsection{Estimation}
+
+Suppose we have observations $X_1,\ldots,X_n$. For a threshold $u$, the $N$ exceedances $Y_i=X_i-u$ given $X_i>u$ occur at times $1\leq j_1<\cdots< j_N\leq n$. The observed interexceedance times are given by $T_i=j_{i+1}-j_i$ for $i=1,\ldots,N-1$. \cite{ferro2003inference} provide the following log-likelihood
+\begin{align}
+l(\theta, p; \m{T}) =&~ m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \log(1-p^\theta)\} \nonumber \\
+ &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
+\end{align}
+where $p$ is the probability of not exceeding the threshold. We require that this likelihood be used in a hierarchical model.
+
+Suppose we have $R$ replicates from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,
+\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right), \]
+having mean $\theta\nu /(\theta\nu + (1-\theta)\nu) = \theta$. Under model (\ref{ferro}), we place a similar prior on the $p_i$,
+\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \]
+
+The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume
+\begin{align*}
+\theta &\sim Beta(a_\theta, b_\theta) \\
+\nu &\sim Gamma(a_\nu, b_\nu) \\
+p &\sim Beta(a_p, b_p) \\
+\tau &\sim Gamma(a_\tau, b_\tau) 
+\end{align*}
+with the hyperparameters chosen to be
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{rlcl}
+$\theta$: & $a_\theta = 1          $ &~~& $b_\theta = 1/2             $ \\
+$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\
+$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\
+$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\
+\end{tabular}
+\end{center}
+%\end{table}
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro})
+
+By assuming conditional indepedence between the simulations, we can construct the following log-likelihood
+\begin{align}
+L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)}) \label{hiertheta}
+\end{align}
+where $\m{T}^{(i)}$ is the vector of interexceedance times for replicate $i$ having length $N_i$. In the univariate setting for the observation product, only model (\ref{ferro}) is needed.
+
+\cite{suveges2007likelihood} proposed on an alternative likelihood for estimating the extremal index which dealt with some of the issues noted in \cite{ferro2003inference}. This likelihood was extended in \cite{suveges2010model}. Though there are advantages to the alternative likelihood, we prefer to use that given in (\ref{ferro}). In a separate simulation study, both likelihoods performed very similarly, with some preference to model (\ref{ferro}), within the hierarchical setting.
+
+\subsubsection{Declustering}
+
+Declustering is done as given in \cite{ferro2003inference}. Each replicate is declustered separately. Let $\hat{\theta_i}$ be the posterior mean of the extremal index of each replicate. Calculate $C_i=\lfloor \hat{\theta_i} N_i \rfloor + 1$, the estimated number of independent clusters. Let $T_{C_i}$ be the $C_i$th largest interexceedance time in $\m{T}^{(i)}$. In the case of ties, decrement $C_i$ by one until $T_{C_i+1}$ is strictly greater than $T_{C_i}$. Clusters are formed by grouping the exceedances that are separated in time by no more than $T_{C_i}$. In other words, two exceedances are in the same cluster if their interexceedance time is less than or equal to $T_{C_i}$.
+
+The $C_i$ clusters that will be formed using the above scheme are assumed to be independent. For each cluster we compute the cluster maximum, this being the ultimate quantity used in our inference.
+
+\subsection{Return levels}
+\label{return}
+
+A most useful quantity in an extreme value analysis is the return level. Generally, for a distribution $G$, the return level $x_m$ is the solution to
+\begin{align}
+G(x_m) = 1-\frac{1}{m}
+\end{align}
+and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
+% TODO: needs more intuition
+
+When working with the generalized Pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
+\begin{align}
+x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{rl}
+\end{align}
+where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. We can obtain a distribution for $x_m$ using MCMC samples for $(\xi, \sigma, \zeta)$. Posterior samples for $\theta$ are obtained separately from $(\xi, \sigma, \zeta)$, and so we choose to use the posterior mean for $\theta$ when computing return levels. The intention here is avoid possible complications due to the fact we do not have samples of the joint vector $(\xi, \sigma, \zeta, \theta)$.
+
+
+\subsection{Bhattacharyya distance}
+\label{bhatta}
+
+Since our focus is on comparing the climate model simulations with the observations, we must to assess differences between a variety of posterior distributions. A naive approach may be to simply determine whether posterior intervals overlap. Though we make use of visuals in our comparison, we desire a more quantitative approach. Here, we make use of Bhattacharyya distance.
+
+\cite{bhattacharyya1943measure} proposed a means for measuring the degree of similarity between two probability distributions. For two continuous random variables on support $\mathcal{X}$ with densities $p$ and $q$, the Bhattacharyya coefficient is defined as
+\begin{align}
+BC(p,q)=\int_\mathcal{X} \sqrt{p(x)q(x)} dx \label{bhattacoef}
+\end{align}
+and the Bhattacharyya distance is 
+\begin{align}
+D_B(p,q)=-\log BC(p,q).
+\end{align}
+We use kernel density estimation to calculate $p$ and $q$ along a grid of the support and then approximate the integral in (\ref{bhattacoef}). If the support is different for the two random variables (as will typically be the case when comparing random variables whose parameters determine the support such as the generalized Pareto), we will integrate over the intersection of the supports.
+
+Our approach is to compute distances from the replicates to their mean and determine whether the observations could have reasonably come from the climate model. Taking the shape parameter as an example, from the hierarchical model in \ref{hier} we have posterior samples for $\xi_1^c,\ldots,\xi_R^c$ for, say, some decadal simulations. We also have posterior samples for the mean $\xi^c$. Using the kernel density estimation mentioned earlier, we obtain $R$ Monte Carlo estimates $D_B(\xi_i^c, \xi^c)$, for $i=1,\ldots,R$. From the univariate model \ref{univariate} we have the shape parameter $\xi^o$ for the observation product. Finally, we calculate $D_B(\xi^o, \xi^c)$ and ask whether this quantity falls within the range of $D_B(\xi_i^c, \xi^c)$. When this occurs, we say $\xi^o$ is ``similar'' to the $\xi_i^c$ since the observation differs from the mean climate model in a similar way as the replicates differ from the mean.
