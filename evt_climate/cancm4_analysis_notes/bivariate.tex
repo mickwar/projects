@@ -1,12 +1,14 @@
 \section{Bivariate analysis}
 
+The marginal analysis described in section \ref{margin} may reveal comparable extreme behavior among  some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
+
 \subsection{Simple Pareto processes}
 
 The primary result we use is Theorem 3.2 from \cite{ferreira2014generalized}. Let $C(S)$ be the space of continuous real functions on $S$, equipped with the supremum norm, where $S$ is a compact subset of $\R^d$. Let $X$ be from $C(S)$. Then the conditions of their Theorem 3.1 imply
 \[ \lim_{t\rightarrow\infty} P\left(T_t X \in A \middle| \sup_{s\in S} T_t X(s) > 1\right) = P(W \in A) \]
 with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto process, and
 \[ T_t X = \left(1 + \xi \frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
-We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have observations at only two fixed locations $s_1,s_2\in S$. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
+We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
 
 We further assume that the parameters $\xi$ and $\sigma$ are indexed by $s\in S$, so that our transformation is
 \[ T_t X(s) = \left(1 + \xi(s) \frac{X(s) - u_t(s)}{\sigma_t(s)}\right)_+^{1/\xi(s)}. \]
@@ -26,18 +28,22 @@ The points $(V_i(s_1), V_i(s_2))$ fall along the curve of the non-negative unit 
 \[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
 We scale $\phi_i$ to be in $[0,1]$ so we can model the angle using a mixture of beta distributions and (possibly) point masses at zero and one. The theorem holds when $\sup_{s\in S}T_t X(s) > 1$ which is equivalent to $Y_i > 1$. Therefore, we need only those $\phi_i$ for which $Y_i>1$, ignoring the rest. Beyond this point we assume that $\phi_i$ have been relabeled to include only the appropriate angles which are indexed $i=1,\ldots,k\leq n$.
 
-We propose the likelihood
-\[ f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) = \prod_{i=1}^k\left[p_1 \delta_0(\phi_i) + p_2 \delta_1(\phi_i) + \sum_{j=1}^m p_{j+2} \delta_{(0,1)}(\phi_i)\times g(\phi_i|\alpha_j, \beta_j) \right] \]
-with $\delta_A(y)$ is equal to one if $y\in A$ and zero otherwise, fixed $m\geq 1$, and $g$ is the density of a beta distribution. Also written,
-\begin{align*}
-f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \prod_{i=1}^k\left[p_1^{\ind(\phi_i=0)}p_2^{\ind(\phi_i=1)}\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right] \\
- &= p_1^{\sum_{i=1}^k\ind(\phi_i=0)}p_2^{\sum_{i=1}^k\ind(\phi_i=1)}\prod_{i=1}^k\left[\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right]
-\end{align*}
-Log-likelihood:
-\begin{align*}
-\log f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \log(p_1)\sum_{i=1}^k\ind(\phi_i=0)+\log(p_2)\sum_{i=1}^k\ind(\phi_i=1)+ \\
- & ~~~~~ ~~~~~ \sum_{i=1}^k\log\left[\ind(0<\phi_i<1)\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right) \right]
-\end{align*}
+Under this framework, our experience is that the distribution of $\phi_i$ is not easily modeled with standard distributions, including a mixture of a few beta distributions. We use Bernstein polynomial Dirichlet process prior to model the density of $\phi_i$. This has the advantage of capturing a large variety of shapes on the unit interval.
+
+$\phi_i$'s that are in $[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model, which has difficult modeling point masses.
+
+% We propose the likelihood
+% \[ f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) = \prod_{i=1}^k\left[p_1 \delta_0(\phi_i) + p_2 \delta_1(\phi_i) + \sum_{j=1}^m p_{j+2} \delta_{(0,1)}(\phi_i)\times g(\phi_i|\alpha_j, \beta_j) \right] \]
+% with $\delta_A(y)$ is equal to one if $y\in A$ and zero otherwise, fixed $m\geq 1$, and $g$ is the density of a beta distribution. Also written,
+% \begin{align*}
+% f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \prod_{i=1}^k\left[p_1^{\ind(\phi_i=0)}p_2^{\ind(\phi_i=1)}\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right] \\
+%  &= p_1^{\sum_{i=1}^k\ind(\phi_i=0)}p_2^{\sum_{i=1}^k\ind(\phi_i=1)}\prod_{i=1}^k\left[\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right]
+% \end{align*}
+% Log-likelihood:
+% \begin{align*}
+% \log f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \log(p_1)\sum_{i=1}^k\ind(\phi_i=0)+\log(p_2)\sum_{i=1}^k\ind(\phi_i=1)+ \\
+%  & ~~~~~ ~~~~~ \sum_{i=1}^k\log\left[\ind(0<\phi_i<1)\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right) \right]
+% \end{align*}
 
 \subsection{Asymptotic dependence}
 
@@ -48,4 +54,6 @@ where $V_i\equiv V(s_i)$ and $w>1$. Using this fact, we can standardize $W_i$ to
 \chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
 &= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \\
 \end{align*}
+
+The major downside to the simple Pareto process is that we do not allow for asymptotic independence ($\chi=0$) unless $P(V_1 \wedge V_2
 
