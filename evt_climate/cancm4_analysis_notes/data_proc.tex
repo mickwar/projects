@@ -4,6 +4,10 @@
 \subsection{Aggregation}
 \label{aggregate}
 
+% We next describe how the simulations and observations were made to be comparable. Figure \ref{weight} shows the spatial locations of each data source for California.
+
+We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate grid cell locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell (see Figure \ref{weight}). Then we count the number of locations from the observation product that are contained within each cell. The number of locations within the cells are used to weight the climate simulations (the right plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weighted average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields daily time-series.
+
 \begin{figure}
 \begin{center}
 \includegraphics[scale=0.26]{figs/cal_mod_box1.pdf}
@@ -14,12 +18,12 @@
 \label{weight}
 \end{figure}
 
-In this subsection, we describe how the simulations and observations were made to be comparable. Figure \ref{weight} shows the spatial locations of each data source. The plots show only California, but the climate simulations were over the entire globe and the observation product over the United States.
 
-We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate grid cell locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell. Then we count the number of locations from the observation product that are contained within each cell. The number of locations within the cells are used to weight the climate simulations (the right-most plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weight average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields time-series on daily time scales.
 
 \subsection{De-trending}
 \label{anomaly}
+
+Climate data are often non-stationary series characterized by complicated trends and cycles. As such, these present problems when studying extremes. Since we are interested in the behavior of the extremes, each time-series is ``de-trended'' prior to parameter estimation. This is accomplished through the use of dynamic linear models (DLMs). We will review some basic concepts for DLMs, see \cite{prado2010time} chapter 4 for more details.
 
 \begin{figure}
 \begin{center}
@@ -29,7 +33,6 @@ We will analyze precipitation and temperature over both California and the Unite
 \label{dlm_fig}
 \end{figure}
 
-Climate data are often non-stationary series characterized by complicated trends and cycles. As such, these present problems when studying extremes. Since we are interested in the behavior of the extremes, each time-series is ``de-trended'' prior to parameter estimation. This is accomplished through the use of dynamic linear models (DLMs). We will review some basic concepts for DLMs, see \cite{prado2010time} chapter 4 for more details.
 
 A normal DLM is specified by the quadruple $\{\m{F}_t, v_t, \m{G}_t, \m{W}_t\}$ which determine how a univariate time series $y_1,\ldots,y_T$ is modeled over time. We assume
 \begin{align}

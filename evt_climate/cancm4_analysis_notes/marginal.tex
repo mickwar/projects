@@ -1,7 +1,7 @@
 \section{Marginal analysis}
 \label{margin}
 
-In this section we describe our method for analyzing each of our four data sources.
+In this section we describe our method for analyzing each of our four data sources (the three climate simulation types and the observations). For each source we have four factors having two levels each. This provides us with $4\times 4^2=64$ total data sets to which we apply the models and methods of this section.
 
 \subsection{Threshold exceedance model}
 \label{thresh}
@@ -50,7 +50,7 @@ We complete the hierarchical model formulation by specifying the following prior
 \alpha &\sim Gamma(a_\alpha, b_\alpha)&  &\beta \sim Gamma(a_\beta, b_\beta) \nonumber \\
 \zeta &\sim Beta(a_\zeta, b_\zeta)&  &\eta \sim Gamma(a_\eta, b_\eta) \nonumber
 \end{align}
-By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC.
+By combining (\ref{biglike}) and (\ref{priors}) we obtain the full posterior distribution. Samples are obtained via MCMC. The inverse gamma is parametrized to have mean $b/(a-1)$ and the gammas have mean $a/b$.
 % TODO: talk about the hyperparameters, latin letters. Some are intending to be a bit informative, like \tau^2 and \zeta, since we have only 10 ``observations'' for the population distributions.
 
 
