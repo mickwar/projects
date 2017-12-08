@@ -15,11 +15,11 @@ P(X-u\leq y|X>u) \approx H(y) = 1 - \left(1+\frac{\xi y}{\sigma}\right)^{-1/\xi}
 \end{align}
 defined on $\{y:y>0~\mathrm{and}~(1+\xi y/\sigma) >0\}$. $H(y)$ is the distribution function for a generalized Pareto random variable with shape paremeter $\xi\in\R$ and scale $\sigma>0$.
 
-Let $X_1,\ldots,X_n$ be a sequence of i.i.d. random variables and $u$ be a high threshold. Define $Y_i=X_i-u$ for $X_i>u$ be the $k$ exceedances. The likelihood of $(\xi,\sigma)$ is derived from (\ref{gpapprox}) as
+Let $X_1,\ldots,X_n$ be a sequence of i.i.d. random variables and $u$ be a high threshold. Define $Y_i=X_i-u$ for $X_i>u$ be the $k$ exceedances. Re-ordering the exceedances so $i=1\ldots,k$, the likelihood of $(\xi,\sigma)$ is derived from (\ref{gpapprox}) as
 \begin{align}
 L(y_1,\ldots,y_k;\sigma,\xi)=\sigma^{-k}\sum_{i=1}^k\left(1+\frac{\xi y_i}{\sigma}\right)_+^{-1/\xi-1} \label{gplike}
 \end{align}
-where $z_+=\max(z,0)$. This provides the basis for an extreme value analysis. For example, after declustering, the cluster maxima (which are roughly independent) may be fit using likelihood (\ref{gplike}).
+where $z_+=\max(z,0)$.
 
 \subsubsection{Hierarchical model}
 \label{hier}
@@ -38,7 +38,7 @@ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma
 &\approx \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
 \end{align}
 
-Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances. This justifies the use of cluster maxima for $\m{y}_i$.
+Note that the parameters describing the tail of $F_i$ (i.e. $\xi_i,\sigma_i$) depend only on those observations which exceed $u$. The parameter $\zeta_i=P(X_{ij}>u)$, which is necessary for calculating return levels (section \ref{return}), is based only on the number of exceedances.
 
 We complete the hierarchical model formulation by specifying the following priors:
 \begin{align}
@@ -73,7 +73,7 @@ As an example, suppose $\theta=0.5$, then we would expect exceedances of a large
 \end{align}
 where $\epsilon_0$ is the degenerate probability distribution at $0$ and $\mu_\theta$ is an exponential distribution with mean $\theta^{-1}$. This means that the role of $\theta$ is two-fold: it is both the proportion of non-zero interexceedance times and the inverse mean of non-zero interexceedance times. This poses a challenge when estimating $\theta$ since is it impossible to observe an interexceedance time of zero in practice.
 
-We next describe the hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
+We next describe a hierarchical model used to esimate $\theta$. This is distinct from the threshold exceedance model and is used only in getting a single estimate for $\theta$, which is used to decluster the exceedances and to calculate return levels.
 
 \subsubsection{Estimation}
 
@@ -143,7 +143,7 @@ where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u
 \subsection{Bhattacharyya distance}
 \label{bhatta}
 
-Since our focus is on comparing the climate model simulations with the observations, we must to assess differences between a variety of posterior distributions. A naive approach may be to simply determine whether posterior intervals overlap. Though we make use of visuals in our comparison, we desire a more quantitative approach. Here, we make use of Bhattacharyya distance.
+Since our focus is on comparing different climate summaries, we must assess differences between a variety of posterior distributions. A naive approach may be to simply determine whether posterior intervals overlap. Though we make use of visuals in our comparison, we desire a more quantitative approach. Here, we make use of Bhattacharyya distance.
 
 \cite{bhattacharyya1943measure} proposed a means for measuring the degree of similarity between two probability distributions. For two continuous random variables on support $\mathcal{X}$ with densities $p$ and $q$, the Bhattacharyya coefficient is defined as
 \begin{align}
