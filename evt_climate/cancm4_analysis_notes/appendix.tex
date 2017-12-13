@@ -1,3 +1,4 @@
+\appendix
 \section{Appendix}
 
 \subsection{Likelihood for hierarchical model}
@@ -9,6 +10,19 @@ L(\m{y}; \m{\sigma}, \m{\xi}, \m{\zeta}) &= \prod_{i=1}^R f_{Y_i}(\m{y}_i|\sigma
 &= \prod_{i=1}^R\left[\prod_{j\in A_i} (1-\zeta_i)\times \prod_{j\in A_i^c} \frac{\zeta_i}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right]~~~~~(\zeta_i=1-F_{X_i}(u)) \nonumber \\
 &= \prod_{i=1}^R\left[(1-\zeta_i)^{n_i-k_i}\zeta_i^{k_i}\prod_{j\in A_i^c}\frac{1}{\sigma_i}\left(1+\xi_i\frac{y_{ij}}{\sigma_i}\right)_+^{-1/\xi_i-1}\right] \label{biglike}
 \end{align}
+
+\subsection{Definition of a simple Pareto process}
+\label{def_spp}
+
+The constructive definition of a simple Pareto process is as follows (from Theorem 2.1 of \cite{ferreira2014generalized}):
+
+Let $C^+(S)$ be the space of non-negative real continuous functions on S, with S some compact subset of $\R^d$4. Let $W$ be a stochastic process in $C^+(S)$ and $\omega_0$ a positive constant. When $W$ satisfies:
+\begin{enumerate}[(a)]
+\item $V\in C^+(S)$ is a stochastic process satisfying $\sup_{s\in S} V(s)=\omega_0$ almost surely, and $E[V(s)] > 0$ for all $s\in S$.
+\item $Y$ is a standard Pareto random variable, $P(Y\leq y)=1-1/y$, $y>1$,
+\item $Y$ and $V$ are independent.
+\end{enumerate}
+then $W$ is called a simple Pareto process.
 
 \subsection{Measure of asymptotic dependence for simple Pareto process}
 
