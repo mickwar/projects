@@ -1,60 +1,53 @@
 \section{Bivariate analysis}
 \label{bivariate}
 
-The marginal analysis described in section \ref{margin} may reveal comparable extreme behavior among  some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
+The marginal analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
 
 \subsection{Simple Pareto processes}
+\label{simp_par}
 
 The primary result we use is Theorem 3.2 from \cite{ferreira2014generalized}. Let $C(S)$ be the space of continuous real functions on $S$, equipped with the supremum norm, where $S$ is a compact subset of $\R^d$. Let $X$ be from $C(S)$. Then the conditions of their Theorem 3.1 imply
 \[ \lim_{t\rightarrow\infty} P\left(T_t X \in A \middle| \sup_{s\in S} T_t X(s) > 1\right) = P(W \in A) \]
-with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto process, and
+with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto process (see Appendix \ref{def_spp}), and
 \[ T_t X = \left(1 + \xi \frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
-We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
+This theorem provides us with the means of transforming our data to a Pareto process, which we will in turn use to describe asymptotic tail dependence.
+
+We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$ for each bivariate comparison. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
 
 We further assume that the parameters $\xi$ and $\sigma$ are indexed by $s\in S$, so that our transformation is
 \[ T_t X(s) = \left(1 + \xi(s) \frac{X(s) - u_t(s)}{\sigma_t(s)}\right)_+^{1/\xi(s)}. \]
-The first stage of our analysis involves estimating $\xi(s)$ and $\sigma(s)$ marginally, which is accomplished by selecting a high threshold $u(s)$ and fitting the generalized Pareto distribution to the excesses $X(s)-u(s)$. The posterior means for $\xi(s)$ and $\sigma(s)$ are then used for the transformation from $X(s)$ to $W(s)$.
+The first stage of our analysis involves estimating $\xi(s)$ and $\sigma(s)$ marginally, which is accomplished by selecting a high threshold $u(s)$ and fitting the generalized Pareto distribution to the excesses $X(s)-u(s)$. The posterior means $\hat{\xi}(s)$ and $\hat{\sigma}(s)$ are then used for the transformation from $X(s)$ to $W(s)$.
 
 Every observation of $X(s)$, say $X_1(s),\ldots,X_{n(s)}(s)$ is transformed with
 \begin{align}
 W_i(s) = T_t X_i(s) = \left(1 + \hat{\xi}(s) \frac{X_i(s) - u_t(s)}{\hat{\sigma}(s)}\right)_+^{1/\hat{\xi}(s)},~~~~~i=1,\ldots,n(s) \label{transform}
 \end{align}
-forming the vector $\m{W}(s)=(W_1(s),\ldots,W_{n(s)}(s))^\top$. After performing this transformation, two components are combined to form a joint vector $(W(s_1), W(s_2))$ having realizations $\m{W}_{12}=(\m{W}(s_1), \m{W}(s_2))$, an $n(s)\times 2$ matrix. Note that when we perform the bivariate analysis, we guarantee that $n(s)=n(s_1)=n(s_2)$.
+forming the vector $\m{W}(s)=(W_1(s),\ldots,W_{n(s)}(s))^\top$. After performing this transformation, two components are combined to form a joint vector $(W(s_1), W(s_2))$ having realizations $\m{W}_{12}=(\m{W}(s_1), \m{W}(s_2))$, an $n(s)\times 2$ matrix. Note that when we perform the bivariate analysis, we guarantee that $n(s_1)=n(s_2)=n(s)$.
 
-By Theorem 3.2, $\m{W}_{12}$ has rows that are realizations of a simple Pareto process. By the constructive definition of a simple Pareto process, we can write $\m{W}_{12}$ as
+By Theorem 3.2, $\m{W}_{12}$ has rows that are realizations of a simple Pareto process. By the constructive definition of a simple Pareto process (Appendix \ref{def_spp}), we can write $\m{W}_{12}$ as
 \[ \m{W}_{12} = \left(\begin{array}{rr} Y_1V_1(s_1) & Y_1V_1(s_2) \\ Y_2V_2(s_1) & Y_2V_2(s_2) \\ \multicolumn{2}{c}{\vdots} \\ Y_nV_n(s_1) & Y_nV_n(s_2) \end{array}\right) \]
-where $Y_i$ is a standard Pareto, $V_i(s_j)\geq 0$ ($j=1,2$), and $V_i(s_1) \vee V_i(s_2) = 1$, for $i=1,\ldots,n=n(s)$. This is easily obtained by
+where $Y_i$ is a standard Pareto random variable, $V_i(s_j)\geq 0$ ($j=1,2$), and $V_i(s_1) \vee V_i(s_2) = 1$, for $i=1,\ldots,n=n(s)$. This is easily obtained by
 \[ Y_i = W_i(s_1) \vee W_i(s_2),~~~\mathrm{and}~~~ V_i(s_j) = W_i(s_j) / Y_i ~~~ (j=1,2),~~~~~\mathrm{for~}i=1,\ldots,n. \]
 The points $(V_i(s_1), V_i(s_2))$ fall along the curve of the non-negative unit sphere with supremum norm $\{(v_1, v_2):||(v_1,v_2)||_\infty=1, v_1\geq0,v_2\geq0\}$ which is thus one dimensional. An alternative representation is to specify $(V_i(s_1), V_i(s_2))$ in terms of a scaled angle
 \[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
-We scale $\phi_i$ to be in $[0,1]$ so we can model the angle using a mixture of beta distributions and (possibly) point masses at zero and one. The theorem holds when $\sup_{s\in S}T_t X(s) > 1$ which is equivalent to $Y_i > 1$. Therefore, we need only those $\phi_i$ for which $Y_i>1$, ignoring the rest. Beyond this point we assume that $\phi_i$ have been relabeled to include only the appropriate angles which are indexed $i=1,\ldots,k\leq n$.
+We scale $\phi_i$ to be in $[0,1]$ so we can model the density of the angles using a Bernstein-Dirichlet prior (BDP) \citep{petrone1999bayesian}. Since we will be fitting models to many sets of $\phi_i$'s, we desire a model that is flexible at capturing a large variety of possible distributions. The BDP is fit using the \texttt{R} package \texttt{DPpackage}.
 
-Under this framework, our experience is that the distribution of $\phi_i$ is not easily modeled with standard distributions, including a mixture of a few beta distributions. We use Bernstein polynomial Dirichlet process prior to model the density of $\phi_i$. This has the advantage of capturing a large variety of shapes on the unit interval.
+Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\phi_i$ for which $Y_i>1$. This corresponds to only using the angles that are associated with a threshold exceedance. Also, because the BDP has difficulty when too much mass is on the edges, we make the following adjustment. The $\phi_i\in[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model.
 
-$\phi_i$'s that are in $[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model, which has difficult modeling point masses.
 
-% We propose the likelihood
-% \[ f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) = \prod_{i=1}^k\left[p_1 \delta_0(\phi_i) + p_2 \delta_1(\phi_i) + \sum_{j=1}^m p_{j+2} \delta_{(0,1)}(\phi_i)\times g(\phi_i|\alpha_j, \beta_j) \right] \]
-% with $\delta_A(y)$ is equal to one if $y\in A$ and zero otherwise, fixed $m\geq 1$, and $g$ is the density of a beta distribution. Also written,
-% \begin{align*}
-% f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \prod_{i=1}^k\left[p_1^{\ind(\phi_i=0)}p_2^{\ind(\phi_i=1)}\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right] \\
-%  &= p_1^{\sum_{i=1}^k\ind(\phi_i=0)}p_2^{\sum_{i=1}^k\ind(\phi_i=1)}\prod_{i=1}^k\left[\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right)^{\ind(0<\phi_i<1)} \right]
-% \end{align*}
-% Log-likelihood:
-% \begin{align*}
-% \log f(\m{\phi}|\m{\alpha},\m{\beta},\m{p}) &= \log(p_1)\sum_{i=1}^k\ind(\phi_i=0)+\log(p_2)\sum_{i=1}^k\ind(\phi_i=1)+ \\
-%  & ~~~~~ ~~~~~ \sum_{i=1}^k\log\left[\ind(0<\phi_i<1)\left(\sum_{j=1}^m p_{j+2}g(\phi_i|\alpha_j, \beta_j)\right) \right]
-% \end{align*}
 
-\subsection{Asymptotic dependence}
+\subsection{Asymptotic tail dependence}
 
-The distribution function for $W_i\equiv W(s_i)$ is
+We wish to characterize the strength of tail dependence for climate simulation and observation pairs. This is typically done with the following statistic. Suppose $X$ and $Y$ share a common marginal distribution. Then
+\[ \chi = \lim_{z\rightarrow z^*} P(X>z| Y>z), \]
+where $z^*$ is the (possibly infinite) right end-point, informs us of the distribution of extremes for one variable $X$ given that another variable $Y$ is very large. When $\chi>0$, $X$ and $Y$ are said to be asymptotically dependent. They are asymptotically independent when $\chi=0$.
+
+Under the simple Pareto process from section \ref{simp_par}, the distribution function for $W_i\equiv W(s_i)$ is
 \[ F_{W_i}(w) = 1 - \frac{E(V_i)}{w} \]
 where $V_i\equiv V(s_i)$ and $w>1$. Using this fact, we can standardize $W_i$ to be uniform and compute $\chi$ in this way
 \begin{align*}
 \chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
 &= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \\
 \end{align*}
-
-The major downside to the simple Pareto process is that we do not allow for asymptotic independence ($\chi=0$) unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
+The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
 
