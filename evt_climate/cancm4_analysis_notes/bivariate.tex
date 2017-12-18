@@ -32,7 +32,7 @@ The points $(V_i(s_1), V_i(s_2))$ fall along the curve of the non-negative unit 
 \[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
 We scale $\phi_i$ to be in $[0,1]$ so we can model the density of the angles using a Bernstein-Dirichlet prior (BDP) \citep{petrone1999bayesian}. Since we will be fitting models to many sets of $\phi_i$'s, we desire a model that is flexible at capturing a large variety of possible distributions. The BDP is fit using the \texttt{R} package \texttt{DPpackage}.
 
-Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\phi_i$ for which $Y_i>1$. This corresponds to only using the angles that are associated with a threshold exceedance. Also, because the BDP has difficulty when too much mass is on the edges, we make the following adjustment. The $\phi_i\in[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model.
+Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\phi_i$ for which $Y_i>1$. This corresponds to only using the angles that are associated with a threshold exceedance. Also, because the BDP has difficulty when too much mass is on the edges, we make the following adjustment. The $\phi_i\in[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model. We find that $k_{max}=300$, which determines the maximum degree of Bernstein polynomials the model is to allow for, was acceptable when applied to the angles.
 
 
 
@@ -40,14 +40,14 @@ Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\ph
 
 We wish to characterize the strength of tail dependence for climate simulation and observation pairs. This is typically done with the following statistic. Suppose $X$ and $Y$ share a common marginal distribution. Then
 \[ \chi = \lim_{z\rightarrow z^*} P(X>z| Y>z), \]
-where $z^*$ is the (possibly infinite) right end-point, informs us of the distribution of extremes for one variable $X$ given that another variable $Y$ is very large. When $\chi>0$, $X$ and $Y$ are said to be asymptotically dependent. They are asymptotically independent when $\chi=0$.
+where $z^*$ is the (possibly infinite) right end-point, informs us of the distribution of extremes for one variable $X$ given that another variable $Y$ is very large. When $\chi>0$, $X$ and $Y$ are said to be asymptotically dependent, otherwise they are asymptotically independent.
 
 Under the simple Pareto process from section \ref{simp_par}, the distribution function for $W_i\equiv W(s_i)$ is
 \[ F_{W_i}(w) = 1 - \frac{E(V_i)}{w} \]
 where $V_i\equiv V(s_i)$ and $w>1$. Using this fact, we can standardize $W_i$ to be uniform and compute $\chi$ in this way
-\begin{align*}
-\chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \\
-&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \\
-\end{align*}
+\begin{align}
+\chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \nonumber \\
+&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \label{ppchi}
+\end{align}
 The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
 

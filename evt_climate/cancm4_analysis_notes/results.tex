@@ -10,7 +10,9 @@ For each of the four data sources (i.e. the three climate simulation classes and
 \end{enumerate}
 There are then 16 combinations of the factors to be made. For each combination, the hierarchial model described in section \ref{hier} is fit to the decadal, historical, and control runs; the univariate model in section \ref{univariate} is fit to the observation product since this data source does not have replicates.
 
-Thresholds are chosen to be the $0.95$ quantile for the climate simulations and $0.85$ for the observations. These quantiles were found to be quite reasonable for this data while still giving us enough data with which to fit the models. The values of the thresholds themselves are not too important since different thresholds may produce similar return levels.
+Thresholds are chosen to be the $0.95$ quantile for the climate simulations and $0.85$ for the observations. These quantiles can be justified in part by looking at mean residual life plots (not shown), see seection 4.3.1 of \cite{coles2001introduction}. Such plots indicate that the generalized Pareto approximation (\ref{gpapprox}) is valid for exceedances of the selected thresholds. We also have to consider the sample size of the exceedances, and these quantiles give us enough data to accurately fit the models. The values of the thresholds themselves are not too important since different thresholds may produce similar return levels.
+
+For the simple Pareto process of section \ref{bivariate}, we make the comparison between the observations and each climate simulation. Specifically, for each of the 16 factor combinations mentioned earlier, we fit the BDP to the angles resulting from taking the observations to each replicate of a particular climate simulation (say, decadal) and then compute $\chi$ from (\ref{ppchi}). This would result in $R=10$ estimates for $\chi$, one for each replicate. We also fit the BDP to all $10$ sets of angles together to get a ``overall'' measure for asymptotic dependence between the observations and the simulation.
 
 \begin{figure}
 \begin{center}
@@ -80,12 +82,12 @@ Thresholds are chosen to be the $0.95$ quantile for the climate simulations and 
 \begin{center}
 \includegraphics[scale=0.72]{figs/chi4.pdf}
 \end{center}
-\caption{Measure of asymptotic dependence, calculated using results from the simple Pareto process. The dots mark the $\xi$ for each replicate against the observations. The X marks the value of $\xi$ when all replicates are taken together.}
-\label{theta}
+\caption{Measure of asymptotic dependence, calculated using results from the simple Pareto process. The dots mark the $\chi$ for each replicate against the observations. The X marks the value of $\xi$ when all replicates are taken together.}
+\label{chi}
 \end{figure}
 
 
-Figures \ref{ksi} through \ref{theta} show posterior parameters and other quantities of interest. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
+Figures \ref{ksi} through \ref{theta} show posterior parameters and other quantities of interest from the marginal analysis. For the hierarchical model, we show the results of the \emph{mean} process. For example, in Figure \ref{ksi} the parameter shown is the posterior for $\xi$, the mean of $\xi_1,\ldots,\xi_R$. This is in opposition to inference on an unknown replicate which would require sampling, among other things, a new shape parameter $\xi^*$. Therefore, the intervals are more narrow than if we looked at the posterior predictive distribution for a new replicate, but the parameters will be comparable to those from the univariate model with the observations and give us a sense of how the climate simulation performs on average.
 
 The posterior shape parameters in Figure \ref{ksi} show overlapping bounds in many cases, but in some combinations of factors we can see some departure from the observations. The numbers shown above the lines are indicators for whether the posterior from the observations is similar to the posterior of the replicates---in the sense of Bhattacharyya distance described in section \ref{bhatta}---for a particular simulation class.
 % TODO: find references for this claim, Weller et al. doesn't confirm it
@@ -98,3 +100,5 @@ Figures \ref{20rl} and \ref{50rl} give the $20$- and $50$-year return levels, re
 Figure \ref{tail} shows posterior predictive samples (based on the mean parameters for the hierarchical model) drawn from the generalized Pareto distribution, conditioned on the random variables being greater than the given threshold. With respect to the 95\% posterior intervals, there is significant overlap of the simulations with the observations, but this is not the case with Bhattacharyya distance. This is because nearly all replicates were very close to their mean, having a distance of roughly $0.02$, while the observations were different enough to have a distance of about $0.2$ from the mean process. Despite all this, we saw in Figures \ref{20rl} and \ref{50rl} that there is still some similarity between the important return level quantities, which account for $\zeta$ and $\theta$.
 
 The posterior mean and 95\% highest posterior density intervals for the extremal index are shown in Figure \ref{theta}. The climate simulations seem to be consistent with the observations for the temperature, but not so for precipiation where they tend to overestimate $\theta$. The Bhattacharyya distance was not computed for these parameters.
+
+Estimates for asymptotic dependence are given in Figure \ref{chi}. Many of them are in the region $[0.2, 0.4]$ indicating weak to moderate dependence. In only two instances do we have $\chi$ close to $0.5$. And in these cases the comparison is made with the control runs, which should be some cause of concern since the times for the control runs do not have the same meaning as those from the observations. In every other case we see relatively the same strength of dependence from the three climate simulations, though the dependence is weak.
