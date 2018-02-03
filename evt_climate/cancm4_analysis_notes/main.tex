@@ -1,41 +1,24 @@
 \documentclass[12pt]{article}
 
-\usepackage{natbib}
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{bm}
-\usepackage{dsfont}
-\usepackage[margin=1.00in]{geometry}
-\usepackage[font=scriptsize]{caption}
-\usepackage{dsfont}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage{bm}
-\usepackage{enumerate}
-\usepackage[shortlabels]{enumitem}
-\newcommand{\m}[1]{\mathbf{\bm{#1}}}
-\newcommand{\R}{I\hspace{-4.4pt}R}
-\newcommand{\bc}[1]{\textcolor{blue}{\mathbf{#1}}}
-\newcommand{\ind}{\mathds{1}}
 
-% \setlength\parindent{0pt}
+% Original formatting
+%\input{setup1.tex}
 
-\makeatletter
-\setlength{\@fptop}{0pt}
-\makeatother
+% Thesis formatting
+\input{setup2.tex}
 
-% TODO: should make a reference to Coles somewhere
-
-% TODO: prepare new section for bivariate analysis (references)
 
 \begin{document}
+
+% Include this line if using thesis formatting
+\input{title.tex}
 
 
 \input{intro.tex}
 
 \input{data_proc.tex}
 
-\input{marginal.tex}
+\input{univariate.tex}
 
 \input{bivariate.tex}
 

@@ -1,7 +1,7 @@
 \section{Bivariate analysis}
 \label{bivariate}
 
-The marginal analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
+The univariate analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
 
 \subsection{Simple Pareto processes}
 \label{simp_par}
@@ -12,7 +12,7 @@ with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto pr
 \[ T_t X = \left(1 + \xi \frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
 This theorem provides us with the means of transforming our data to a Pareto process, which we will in turn use to describe asymptotic tail dependence.
 
-We assume that $t$ is large enough that the theorem kicks in (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$ for each bivariate comparison. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
+We assume that $t$ is large enough that the theorem applies (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$ for each bivariate comparison. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
 
 We further assume that the parameters $\xi$ and $\sigma$ are indexed by $s\in S$, so that our transformation is
 \[ T_t X(s) = \left(1 + \xi(s) \frac{X(s) - u_t(s)}{\sigma_t(s)}\right)_+^{1/\xi(s)}. \]
@@ -27,8 +27,8 @@ forming the vector $\m{W}(s)=(W_1(s),\ldots,W_{n(s)}(s))^\top$. After performing
 By Theorem 3.2, $\m{W}_{12}$ has rows that are realizations of a simple Pareto process. By the constructive definition of a simple Pareto process (Appendix \ref{def_spp}), we can write $\m{W}_{12}$ as
 \[ \m{W}_{12} = \left(\begin{array}{rr} Y_1V_1(s_1) & Y_1V_1(s_2) \\ Y_2V_2(s_1) & Y_2V_2(s_2) \\ \multicolumn{2}{c}{\vdots} \\ Y_nV_n(s_1) & Y_nV_n(s_2) \end{array}\right) \]
 where $Y_i$ is a standard Pareto random variable, $V_i(s_j)\geq 0$ ($j=1,2$), and $V_i(s_1) \vee V_i(s_2) = 1$, for $i=1,\ldots,n=n(s)$. This is easily obtained by
-\[ Y_i = W_i(s_1) \vee W_i(s_2),~~~\mathrm{and}~~~ V_i(s_j) = W_i(s_j) / Y_i ~~~ (j=1,2),~~~~~\mathrm{for~}i=1,\ldots,n. \]
-The points $(V_i(s_1), V_i(s_2))$ fall along the curve of the non-negative unit sphere with supremum norm $\{(v_1, v_2):||(v_1,v_2)||_\infty=1, v_1\geq0,v_2\geq0\}$ which is thus one dimensional. An alternative representation is to specify $(V_i(s_1), V_i(s_2))$ in terms of a scaled angle
+\[ Y_i = W_i(s_1) \vee W_i(s_2),~~~\mathrm{and}~~~ V_i(s_j) = W_i(s_j) / Y_i ~~~ (j=1,2),~~~~~\mathrm{for~}i=1,\ldots,n, \]
+where $a \vee b=\max(a,b)$. The points $(V_i(s_1), V_i(s_2))$ fall along the curve of the non-negative unit sphere with supremum norm $\{(v_1, v_2):||(v_1,v_2)||_\infty=1, v_1\geq0,v_2\geq0\}$ which is thus one dimensional. An alternative representation is to specify $(V_i(s_1), V_i(s_2))$ in terms of a scaled angle
 \[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
 We scale $\phi_i$ to be in $[0,1]$ so we can model the density of the angles using a Bernstein-Dirichlet prior (BDP) \citep{petrone1999bayesian}. Since we will be fitting models to many sets of $\phi_i$'s, we desire a model that is flexible at capturing a large variety of possible distributions. The BDP is fit using the \texttt{R} package \texttt{DPpackage}.
 
@@ -47,7 +47,7 @@ Under the simple Pareto process from section \ref{simp_par}, the distribution fu
 where $V_i\equiv V(s_i)$ and $w>1$. Using this fact, we can standardize $W_i$ to be uniform and compute $\chi$ in this way
 \begin{align}
 \chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \nonumber \\
-&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right) \label{ppchi}
+&= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right), \label{ppchi}
 \end{align}
-The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
+where $a \wedge b=\min(a,b)$. The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
 
