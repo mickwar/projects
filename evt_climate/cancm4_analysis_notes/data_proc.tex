@@ -1,5 +1,15 @@
-\section{Data processing}
+\section{Data}
 \label{process}
+
+\subsection{Climate model simulations}
+
+The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). We further restrict our attention to analyzing two seasons---summer and winter---and two regions---California and the U.S.
+
+Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs. The decadal simulations provide climate estimates for ten years into the future, after conditioning on the state of the ocean at the starting time of the simulation. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on ocean states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years. The purpose of the control runs is to provide some measure of internal variability of the climate system. Decadal and historical simulations are run at $R=10$ different initial conditions. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
+
+\subsection{Observations}
+
+An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid (about $1/8^\circ$ degree spacing). To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
 \subsection{Aggregation}
 \label{aggregate}

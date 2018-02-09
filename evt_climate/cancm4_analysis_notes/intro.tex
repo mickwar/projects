@@ -13,19 +13,25 @@
 \bigskip
 \bigskip
 \begin{quote}
-\textbf{Abstract.} We explore similarities and differences in extreme behavior between climate simulations and observational records. We fit a Bayesian hierarchical threshold exceedance model to simulations from the climate model CanCM4. Three simulation classes are analyzed and compared: decadal, historical, and pre-industrial control. We extend the comparison to an observation product. To assess the extremes of the series considered we fit a generalized Pareto model to the exceedances over a threshold. This model is applied to data over California and the contiguous United States. Marginal comparisons are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities. We find that in some domains, the simulations are in agreement among themselves and with the observations, but in others they are quite different. We also perform a bivariate extreme value analysis using simple Pareto processes.
+\textbf{Abstract.}
+Climate models predict the intensity of extreme weather patterns, thus it is important to assess how similar the extreme behavior in climate model simulations is to that of observations.
+%We explore similarities and differences in extreme behavior between climate simulations and observational records.
+We fit a Bayesian hierarchical threshold exceedance model to simulations from the climate model CanCM4.
+Three simulation classes are analyzed and compared: decadal, historical, and pre-industrial control.
+We extend the comparison to an observation product.
+To assess the extremes of the series considered we fit a generalized Pareto model to the exceedances over a threshold.
+This model is applied to data over California and the contiguous United States.
+Comparisons for relevant distributions that result from the analysis are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities.
+We find that in some domains, the simulations are in agreement among themselves and with the observations, but in others they are quite different.
+In order to study the joint tail behavior of simulations and observations, we perform a bivariate extreme value analysis using simple Pareto processes in conjunction with a Bayesian non-parametric model. The results show weak to moderate tail dependence in nearly every comparison made [which are simulations to observations].
 \end{quote}
+%[You should say something about the methodological innovations of your analysis: hierarchical formulation; likelihood-based hierarchical model for declustering; extensions to a flexible model-based approach for bivariate extremes;]
+
 
 \section{Introduction}
 \label{intro}
 
 The main focus of this paper is to compare the extreme values of an observation product with those of CanCM4 climate simulations. We address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
-
-The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). We further restrict our attention to analyzing two seasons---summer and winter---and two regions---California and the U.S.
-
-Three experimental classes that are of particular interest are decadal, historical, and pre-industrial control runs. The decadal simulations provide climate estimates for ten years into the future, after conditioning on the state of the ocean at the starting time of the simulation. We consider two decades in this analysis: 1962--1971 and 1990--1999, which are conditioned on ocean states in 1961 and 1989, respectively. Historical simulations are obtained for the years 1961--2005 and are noted for including events that affect the climate such as volcanoes. The pre-industrial control, or simply control, simulations begin at climate conditions comparable to those preceding the industrial revolution and are run over a thousand years. The purpose of the control runs is to provide some measure of internal variability of the climate system. Decadal and historical simulations are run at $R=10$ different initial conditions. To obtain $R=10$ ``replicates'' for the control simulations, we randomly select ten non-overlapping 10-year periods.
-
-An observation product is obtained from \cite{maurer2002long}. The observations are based on daily measurements from weather stations throughout the United States and are interpolated onto a fine grid (about $1/8^\circ$ degree spacing). To make the observations comparable to the climate simulations, we take weighted sums or averages of the climate simulations and just sums or averages of the observations. See section \ref{process} for details, along with other changes made to the data in preparation for analysis.
 
 The classic approach to analyzing extreme values is to model block maxima (e.g. annual maxima). It can be shown that under certain conditions the block maxima of independent random variables have a distribution which belongs to the generalized extreme value (GEV) family of distributions \citep{coles2001introduction}. Such an approach naturally requires omitting a large portion of the data. This can be remedied by using a threshold exceedance model which involves selecting some large threshold and fitting the exceedances to the generalized Pareto distribution (GPD). See \cite{coles2001introduction} for an excellent introduction to these and other approaches in extreme value analysis.
 
@@ -36,7 +42,7 @@ The classic approach to analyzing extreme values is to model block maxima (e.g. 
 
 % Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
 
-We take a Bayesian approach to modeling threshold exceedances (section\ref{thresh}). Under this framework, taking into account the replicated experiments is naturally addressed with a hierarchical model.
+We take a Bayesian approach to modeling threshold exceedances (section \ref{thresh}). Under this framework, taking into account the replicated experiments is naturally addressed with a hierarchical model.
 
 We attempt to answer the questions posed earlier by comparing posterior intervals for statistical model parameters and other quantities such as return level (section \ref{return}) and Bhattacharyya distance (section \ref{bhatta}). Additionally, the bivariate analysis (section \ref{bivariate}) allows us to measure the strength of tail dependence between simulations and observations.
 
