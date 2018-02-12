@@ -3,7 +3,25 @@
 
 % \cite{weller2012investigation}  % for bivariate analysis
 
-The univariate analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
+The univariate analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. For this, we work under the framework of multivariate extremes.
+
+Univariate extreme value analysis can be generalized to a multivariate setting, though all the issues associated with univarite extremes persist (threshold selection, too few data points) and a handful of new problems arise.
+
+\cite{coles2001introduction} chapter 8 goes into the math behind the distribution of bivarate maxima
+
+\cite{goix2015sparsity} talk about some really complicated crap for modeling multivariate extremes
+
+\cite{de1977limit} more complicated crap, limit theory for multiextremes
+
+\cite{coles1991modelling} provide several families for modeling bivariate extremes
+
+\cite{coles1999dependence} discuss means of estimating tail dependence
+
+Dependence in the tails cannot be measured using a typical correlation which measures dependence in the center of the distribution. This gives rise to a statistic which measures asymptotic tail dependence discussed in section \ref{asy_tail}.
+
+Extremes are rare by definition, so increasing the number of dimensions exacerbates the issue of working with too few data points. For a threshold exceedance model, it is unclear how to appropriately select a multivariate threshold. 
+
+We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
 
 \subsection{Simple Pareto processes}
 \label{simp_par}
@@ -39,6 +57,7 @@ Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\ph
 
 
 \subsection{Asymptotic tail dependence}
+\label{asy_tail}
 
 We wish to characterize the strength of tail dependence for climate simulation and observation pairs. This is typically done with the following statistic. Suppose $X$ and $Y$ share a common marginal distribution. Then
 \[ \chi = \lim_{z\rightarrow z^*} P(X>z| Y>z), \]
