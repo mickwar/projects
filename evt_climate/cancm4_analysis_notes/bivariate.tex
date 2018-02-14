@@ -5,22 +5,15 @@
 
 The univariate analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. For this, we work under the framework of multivariate extremes.
 
-Univariate extreme value analysis can be generalized to a multivariate setting, wherein the limiting model for joint maxima is obtained. The model is comparable to the GEV distribution in the univariate case and further allows the modeling of tail dependence. Chapter 8 of \cite{coles2001introduction} provides a mathematical introduction to multivariate extremes, specifically in the bivariate case. Some possible families of distributions for modeling bivariate extremes are offered in \cite{coles1991modelling}.
+Univariate extreme value analysis can be generalized to a multivariate setting, wherein the limiting model for joint maxima is obtained. The model is comparable to the GEV distribution in the univariate case and further allows the modeling of tail dependence. Chapter 8 of \cite{coles2001introduction} provides an introduction to multivariate extremes, specifically in the bivariate case. Some possible families of distributions for modeling bivariate extremes are offered in \cite{coles1991modelling}.
 
-Why is it more difficult?
+As in the univariate case, we must be mindful of not wasting data. The threshold exceedancee approach can be applied in the bivariate setting to address this issue, but extra consideration must be made when determining what constitutes an extreme value and what model should be used to model those values. In fact, we will be using more data than that in the univariate analysis. For the bivariate extreme analysis, we include points that are extreme in at least one dimension, not just both.
 
-for some of the work done in multivariate extremes
-\cite{goix2015sparsity} talk about some really complicated crap for modeling multivariate extremes
+Still, a large variety of possible models can be used to describe the joint tail behavior and selecting an appropriate one can be difficult. We elect to use Pareto processes \citep{ferreira2014generalized} which justify a certain transformation of the data into a length component and an angular component, which angle is used primarily to describe the joint behavior. But this method is not without its setbacks, as described later.
 
-\cite{de1977limit} more complicated crap, limit theory for multiextremes
-
-
-
-% Dependence in the tails cannot be measured using a typical correlation which measures dependence in the center of the distribution. This gives rise to a statistic which measures asymptotic tail dependence discussed in section \ref{asy_tail}.
-
-% Extremes are rare by definition, so increasing the number of dimensions exacerbates the issue of working with too few data points. For a threshold exceedance model, it is unclear how to appropriately select a multivariate threshold. 
-
-We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
+% \cite{de1977limit} discuss limiting results for vector maxima.
+% 
+% \cite{goix2015sparsity} talk about some really complicated crap for modeling multivariate extremes
 
 \subsection{Simple Pareto processes}
 \label{simp_par}

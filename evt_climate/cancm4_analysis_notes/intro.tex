@@ -17,13 +17,17 @@
 Climate models predict the intensity of extreme weather patterns, thus it is important to assess how similar the extreme behavior in climate model simulations is to that of observations.
 %We explore similarities and differences in extreme behavior between climate simulations and observational records.
 We fit a Bayesian hierarchical threshold exceedance model to simulations from the climate model CanCM4.
-Three simulation classes are analyzed and compared: decadal, historical, and pre-industrial control.
-We extend the comparison to an observation product.
+Three simulation classes are analyzed and compared---decadal, historical, and pre-industrial control---as well as an observation product. 
+%(Extremal data over California and the contiguous United States.)
+%Three simulation classes are analyzed and compared: decadal, historical, and pre-industrial control.
+%We extend the comparison to an observation product.
 To assess the extremes of the series considered we fit a generalized Pareto model to the exceedances over a threshold.
-This model is applied to data over California and the contiguous United States.
+%This model is applied to data over California and the contiguous United States.
+Our method includes a likelihood-based hierarchical model for declustering.
 Comparisons for relevant distributions that result from the analysis are made visually with posterior parameter intervals and numerically using the Bhattacharyya distance between probability densities.
 We find that in some domains, the simulations are in agreement among themselves and with the observations, but in others they are quite different.
-In order to study the joint tail behavior of simulations and observations, we perform a bivariate extreme value analysis using simple Pareto processes in conjunction with a Bayesian non-parametric model. The results show weak to moderate tail dependence in nearly every comparison made [which are simulations to observations].
+In order to study the joint tail behavior of simulations and observations, we perform a bivariate extreme value analysis using simple Pareto processes in conjunction with a Bayesian non-parametric model of an angular measure.
+The results show weak to moderate tail dependence in nearly every comparison made.
 \end{quote}
 %[You should say something about the methodological innovations of your analysis: hierarchical formulation; likelihood-based hierarchical model for declustering; extensions to a flexible model-based approach for bivariate extremes;]
 
@@ -31,7 +35,13 @@ In order to study the joint tail behavior of simulations and observations, we pe
 \section{Introduction}
 \label{intro}
 
-The main focus of this paper is to compare the extreme values of an observation product with those of CanCM4 climate simulations. We address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
+% Bruno: Here we need a more introductory introduction. That is, you need to motivate the topic by saying that climate models are predicting an intensification of extreme activity (cite some papers), and that ther is a need to gauge the differences and similarities in extreme behavior  between climate model simulations and observations
+
+Climate models predict an intensification of extreme activity [SOURCE], necessitating the need to gauge the differences and similarities in extreme behavior between climate simulations and observations.
+
+%The main focus of this paper is to compare the extreme values of an observation product with those of CanCM4 climate simulations.
+
+We address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
 
 The classic approach to analyzing extreme values is to model block maxima (e.g. annual maxima). It can be shown that under certain conditions the block maxima of independent random variables have a distribution which belongs to the generalized extreme value (GEV) family of distributions \citep{coles2001introduction}. Such an approach naturally requires omitting a large portion of the data. This can be remedied by using a threshold exceedance model which involves selecting some large threshold and fitting the exceedances to the generalized Pareto distribution (GPD). See \cite{coles2001introduction} for an excellent introduction to these and other approaches in extreme value analysis.
 
