@@ -5,21 +5,20 @@
 
 The univariate analysis described in section \ref{margin} may reveal comparable extremal behavior among some of the simulations and observations, but it is insufficient to describe any tail dependence. For this, we work under the framework of multivariate extremes.
 
-Univariate extreme value analysis can be generalized to a multivariate setting, though all the issues associated with univarite extremes persist (threshold selection, too few data points) and a handful of new problems arise.
+Univariate extreme value analysis can be generalized to a multivariate setting, wherein the limiting model for joint maxima is obtained. The model is comparable to the GEV distribution in the univariate case and further allows the modeling of tail dependence. Chapter 8 of \cite{coles2001introduction} provides a mathematical introduction to multivariate extremes, specifically in the bivariate case. Some possible families of distributions for modeling bivariate extremes are offered in \cite{coles1991modelling}.
 
-\cite{coles2001introduction} chapter 8 goes into the math behind the distribution of bivarate maxima
+Why is it more difficult?
 
+for some of the work done in multivariate extremes
 \cite{goix2015sparsity} talk about some really complicated crap for modeling multivariate extremes
 
 \cite{de1977limit} more complicated crap, limit theory for multiextremes
 
-\cite{coles1991modelling} provide several families for modeling bivariate extremes
 
-\cite{coles1999dependence} discuss means of estimating tail dependence
 
-Dependence in the tails cannot be measured using a typical correlation which measures dependence in the center of the distribution. This gives rise to a statistic which measures asymptotic tail dependence discussed in section \ref{asy_tail}.
+% Dependence in the tails cannot be measured using a typical correlation which measures dependence in the center of the distribution. This gives rise to a statistic which measures asymptotic tail dependence discussed in section \ref{asy_tail}.
 
-Extremes are rare by definition, so increasing the number of dimensions exacerbates the issue of working with too few data points. For a threshold exceedance model, it is unclear how to appropriately select a multivariate threshold. 
+% Extremes are rare by definition, so increasing the number of dimensions exacerbates the issue of working with too few data points. For a threshold exceedance model, it is unclear how to appropriately select a multivariate threshold. 
 
 We perform several bivariate analyses using Pareto processes to model the joint tail behavior.
 
@@ -32,7 +31,7 @@ with $A \in \mathcal{B}(C_1^+(S))$, $P(\partial A)=0$, $W$ some simple Pareto pr
 \[ T_t X = \left(1 + \xi \frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
 This theorem provides us with the means of transforming our data to a Pareto process, which we will in turn use to describe asymptotic tail dependence.
 
-We assume that $t$ is large enough that the theorem applies (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case, we have data at only two fixed locations $s_1,s_2\in S$ for each bivariate comparison. The particular values of $s_1$ and $s_2$ are irrelevant since we are comparing climate simulations to observations which have no quantitative meaning as far as their position in $S$ is concerned; we only require that the labels for the observations be appropriately distinguished.
+We assume $t$ is large enough that the theorem applies (implying $u=u_t$ and $\sigma=\sigma_t$). Being interested in the bivariate case we can think of $S$ as a set containing two elements only, $s_1$ and $s_2$, which correspond to the two sets of climate data being compared. For notational convenience, instead of specifying an $s\in S$ for each data source and factor combination, we use $s_1$ and $s_2$ for all comparisons.
 
 We further assume that the parameters $\xi$ and $\sigma$ are indexed by $s\in S$, so that our transformation is
 \[ T_t X(s) = \left(1 + \xi(s) \frac{X(s) - u_t(s)}{\sigma_t(s)}\right)_+^{1/\xi(s)}. \]
@@ -70,5 +69,5 @@ where $V_i\equiv V(s_i)$ and $w>1$. Using this fact, we can standardize $W_i$ to
 \chi &= \lim_{u\rightarrow 1} P(F_{W_1}(W_1) > u | F_{W_2}(W_2) > u) \nonumber \\
 &= E\left(\frac{V_1}{E(V_1)} \wedge \frac{V_2}{E(V_2)}\right), \label{ppchi}
 \end{align}
-where $a \wedge b=\min(a,b)$. The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability.
+where $a \wedge b=\min(a,b)$. The major downside to the simple Pareto process is that we do not allow for asymptotic independence unless $P(V_1 \wedge V_2=0)=1$, which would require conditioning on a set of zero probability. \cite{coles1999dependence} note that models which have $\chi>0$, as ours does, would necessarily overestimate the degree of dependence in the tail.
 
