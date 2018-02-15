@@ -40,10 +40,17 @@ The results show weak to moderate tail dependence in nearly every comparison mad
 Climate models predict an intensification of extreme activity [SOURCE], necessitating the need to gauge the differences and similarities in extreme behavior between climate simulations and observations.
 
 %The main focus of this paper is to compare the extreme values of an observation product with those of CanCM4 climate simulations.
+% Bruno about the above line: the focus is not on CANCM4 simulations, CAMCM4 is one of the many. You have to say, later though, not in the first sentence, that we chose CAMCM4, and justify that, at least a little bit.
 
 We address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
 
+% Bruno: I think you need to talk first about CMP5 and the fifth assessment report. Very importantly, you have to mention that the fifth assessment was the first one for which there was a systematic analysis of decadal simulations. For that you actually have to spend some time explaining what they are, why they differ from the other ones, why they are important, and why it is particularly relevant to understand their extreme bahavior, which is one of the main issues of this paper. Try to find as many references as you can.
+
+% The issue of replication is particular to this problem. You should talk about it because I don't think this is something that is commonly considered in extreme value analysis.
+
 The classic approach to analyzing extreme values is to model block maxima (e.g. annual maxima). It can be shown that under certain conditions the block maxima of independent random variables have a distribution which belongs to the generalized extreme value (GEV) family of distributions \citep{coles2001introduction}. Such an approach naturally requires omitting a large portion of the data. This can be remedied by using a threshold exceedance model which involves selecting some large threshold and fitting the exceedances to the generalized Pareto distribution (GPD). See \cite{coles2001introduction} for an excellent introduction to these and other approaches in extreme value analysis.
+
+% Bruno: You need to write the references to previous statistical analysis of climate output, for sure Cooley's work
 
 % \cite{weller2013two}    % for modeling extremes
 
@@ -56,10 +63,12 @@ The classic approach to analyzing extreme values is to model block maxima (e.g. 
 
 % Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
 
-% Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study.
+% Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study. (mw: lol what is this nonsense?)
 
 We take a Bayesian approach to modeling threshold exceedances (section \ref{thresh}). Under this framework, taking into account the replicated experiments is naturally addressed with a hierarchical model.
 
 We attempt to answer the questions posed earlier by comparing posterior intervals for statistical model parameters and other quantities such as return level (section \ref{return}) and Bhattacharyya distance (section \ref{bhatta}). Additionally, the bivariate analysis (section \ref{bivariate}) allows us to measure the strength of tail dependence between simulations and observations.
+
+% Bruno: This is way too little an introduction to the bivariate modeling topic
 
 

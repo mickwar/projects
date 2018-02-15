@@ -14,6 +14,8 @@ An observation product is obtained from \cite{maurer2002long}. The observations 
 \subsection{Aggregation}
 \label{aggregate}
 
+% Bruno: Start by decsribing the problem. I mean, the issue is that climate models are run on grids. We need to make this compatible with an observation product that does not have the same grid.
+
 % We next describe how the simulations and observations were made to be comparable. Figure \ref{weight} shows the spatial locations of each data source for California.
 
 We will analyze precipitation and temperature over both California and the United States. In each case, we take the climate moodel grid cell locations and create non-overlapping cells, or rectangles, such that each location is roughly in the center of the cell (see Figure \ref{weight}). Then we count the number of locations from the observation product that are contained within each cell. The number of locations within the cells are used to weight the climate simulations (the right plot in Figure \ref{weight} shows which climate simulation locations have non-zero weight). For precipitation, we take a weighted sum and for temperature a weighted average. No weighting is used for the observations. Instead, a straight sum or average of all locations within our region of interest (either California or U.S.) is used. This method places the simulations and the observations on the same scale and yields daily time-series.
