@@ -2,8 +2,9 @@
 \label{process}
 
 \subsection{Climate model simulations}
+\label{clim_sim}
 
-% Why do we use CanCM4?
+% There are many climate models from which to choose. Why do we use CanCM4? Why not more than one?
 
 The Fourth Generation Coupled Global Climate Model (CanCM4) from the Canadian Centre for Climate Modeling and Analysis (CCCma) is made up of an atmospheric component, CanAM4 \citep{von2013canadian}, and an ocean component, CanOM4. The two components are coupled daily to produce climate predictions of a variety of variables on a roughly $2.5^\circ$ degree grid over the globe (see \cite{merryfield2013canadian}). Two variables will be analyzed: precipitation (labled \texttt{pr}, in meters) and maximum temperature (labeled \texttt{tasmax}, in Kelvin). We further restrict our attention to analyzing two seasons---summer and winter---and two regions---California and the U.S.
 
@@ -26,9 +27,12 @@ For precipitation, we take a weighted sum and for temperature a weighted average
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.26]{figs/cal_mod_box1.pdf}
-\includegraphics[scale=0.26]{figs/cal_mod_box2.pdf}
-\includegraphics[scale=0.26]{figs/cal_mod_box3.pdf}
+ \includegraphics[scale=0.22]{figs/cal_mod_box1.pdf}    % For MS project format
+ \includegraphics[scale=0.22]{figs/cal_mod_box2.pdf}
+ \includegraphics[scale=0.22]{figs/cal_mod_box3.pdf}
+%\includegraphics[scale=0.26]{figs/cal_mod_box1.pdf}    % For paper format
+%\includegraphics[scale=0.26]{figs/cal_mod_box2.pdf}
+%\includegraphics[scale=0.26]{figs/cal_mod_box3.pdf}
 \end{center}
 \caption{Left: CanCM4 simulation grid cells. Center: Observation locations. Right: method for computing weighted sum or average for CanCM4 to make values comparable with observations; the lighter gray points mean less weight is applied to the climate simulations and the darker gray means more weight. The data shown are from a single day in January.}
 \label{weight}
@@ -43,7 +47,8 @@ Climate data are often non-stationary series characterized by complicated trends
 
 \begin{figure}
 \begin{center}
-\includegraphics[scale=0.50]{figs/dlm.pdf}
+ \includegraphics[scale=0.45]{figs/dlm.pdf}     % MS
+%\includegraphics[scale=0.50]{figs/dlm.pdf}     % paper
 \end{center}
 \caption{One of the DLMs used to calculate the anomalies. Shown is one of the decadal replicates of average \texttt{tasmax} in California for about the first two and one-half years of the time-series. The green dashed lines mark the beginning and the end of the summer months.}
 \label{dlm_fig}

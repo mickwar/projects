@@ -1,7 +1,8 @@
 \begin{Large}
 % \noindent \textbf{Extreme value comparison of CanCM4 simulations and observations}
 % \noindent \textbf{Comparison of extreme values of different climate model simulations and observations}
-\noindent \textbf{Extreme value comparison of different climate model simulations and observations}
+%\noindent \textbf{Extreme value comparison of different climate model simulations and observations}
+\noindent \textbf{Extreme value comparison of climate model simulations and observations}
 \end{Large}
 \bigskip
 
@@ -29,46 +30,53 @@ We find that in some domains, the simulations are in agreement among themselves 
 In order to study the joint tail behavior of simulations and observations, we perform a bivariate extreme value analysis using simple Pareto processes in conjunction with a Bayesian non-parametric model of an angular measure.
 The results show weak to moderate tail dependence in nearly every comparison made.
 \end{quote}
-%[You should say something about the methodological innovations of your analysis: hierarchical formulation; likelihood-based hierarchical model for declustering; extensions to a flexible model-based approach for bivariate extremes;]
+% x Bruno: You should say something about the methodological innovations of your analysis: hierarchical formulation; likelihood-based hierarchical model for declustering; extensions to a flexible model-based approach for bivariate extremes;
 
 
 \section{Introduction}
 \label{intro}
 
-% Bruno: Here we need a more introductory introduction. That is, you need to motivate the topic by saying that climate models are predicting an intensification of extreme activity (cite some papers), and that ther is a need to gauge the differences and similarities in extreme behavior  between climate model simulations and observations
+% x Bruno: Here we need a more introductory introduction. That is, you need to motivate the topic by saying that climate models are predicting an intensification of extreme activity (cite some papers), and that ther is a need to gauge the differences and similarities in extreme behavior  between climate model simulations and observations
 
-Climate models predict an intensification of extreme activity [SOURCE], necessitating the need to gauge the differences and similarities in extreme behavior between climate simulations and observations.
+Climate models predict an intensification of extreme activity in weather patterns \citep{easterling2000climate}. Extreme weather has social, ecological, and political impacts, necessitating the need to gauge the differences and similarities in extreme behavior between climate simulations and observations.
 
 %The main focus of this paper is to compare the extreme values of an observation product with those of CanCM4 climate simulations.
 % Bruno about the above line: the focus is not on CANCM4 simulations, CAMCM4 is one of the many. You have to say, later though, not in the first sentence, that we chose CAMCM4, and justify that, at least a little bit.
 
-We address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
+% x Bruno: I think you need to talk first about CMP5 and the fifth assessment report. Very importantly, you have to mention that the fifth assessment was the first one for which there was a systematic analysis of decadal simulations. For that you actually have to spend some time explaining what they are, why they differ from the other ones, why they are important, and why it is particularly relevant to understand their extreme bahavior, which is one of the main issues of this paper. Try to find as many references as you can.
 
-% Bruno: I think you need to talk first about CMP5 and the fifth assessment report. Very importantly, you have to mention that the fifth assessment was the first one for which there was a systematic analysis of decadal simulations. For that you actually have to spend some time explaining what they are, why they differ from the other ones, why they are important, and why it is particularly relevant to understand their extreme bahavior, which is one of the main issues of this paper. Try to find as many references as you can.
+The fifth phase of the Coupled Model Intercomparison Project (CMIP5) brings together a variety of climate models under an experimental design framework \citep{taylor2012overview,hibbard2007strategy}. Some of the stated goals of CMIP5 is to examine the variability and predictability of climate models and to explore why some models differ in their responses. The experimental design of CMIP5 is made up of both long-term and short-term simulations. The long-term simulations are run far into the future while the short-term simulations, called decadal, are typically executed for $10$- and $30$-year forecasts. These decadal runs aim at improving the prediction skill of climate models through time-evolving regional climate conditions and external forcings \citep{meehl2009decadal}. The innovative experimental design of CMIP5 allows for assessing the prediction skill and internal variability of these decadal runs \citep{kim2012evaluation}. Should decadal simulations come to the forefront of climate model predictions, it becomes necessary to look at all predictive aspects of this simulation class, including, as discussed in this paper, the extremal behavior. Some recent work on extremes in climate simulations include \cite{weller2012investigation}, \cite{weller2013two}, and \cite{fix2016comparison}.
+
+For our analysis we consider a specific climate model, CanCM4 (described in more detail in section \ref{clim_sim}). This model includes decadal, historical, and pre-industrial control runs for about a 50 year period. Because of this, CanCM4 is a viable option for modeling and comparing the extremes, but our method could just as well be applied to other climate models.
+
+In this paper we address at least two questions: 1) Does using the same climate model in different ways produce similar extreme behavior? and 2) How well do the simulations agree with the observations? Answers to these questions would inform us whether the climate model is a reasonable representation of observed extremes.
 
 % Bruno: The issue of replication is particular to this problem. You should talk about it because I don't think this is something that is commonly considered in extreme value analysis.
 
 The classic approach to analyzing extreme values is to model block maxima (e.g. annual maxima). It can be shown that under certain conditions the block maxima of independent random variables have a distribution which belongs to the generalized extreme value (GEV) family of distributions \citep{coles2001introduction}. Such an approach naturally requires omitting a large portion of the data. This can be remedied by using a threshold exceedance model which involves selecting some large threshold and fitting the exceedances to the generalized Pareto distribution (GPD). See \cite{coles2001introduction} for an excellent introduction to these and other approaches in extreme value analysis.
 
-% Bruno: You need to write the references to previous statistical analysis of climate output, for sure Cooley's work
+CanCM4 climate simulations are run at several different initial conditions producing multiple replicates. Utilizing replicates is not standard in extreme value analysis, but is very naturally handled with Bayesian hierarchical models. This includes not only models for the exceedances, but also a hierarchical formulation for estimating the extremal index, a parameter which describes cluster sizes of exceedances in the limit. Such models allow us to make inference on the underlying climate model process and it is this process that is to be compared with the observations.
 
-% \cite{weller2013two}    % for modeling extremes
+BIVARIATE (Goix? Coles? Remove Coles Ch. 8 reference in Section 4?)
 
-% \cite{weller2012investigation} bivarate extreme
+The remainder of the paper is outlined as follows. In section \ref{process} we describe the data in more detail as well as the adjustments made to make the simulations comparable to the observations. The univariate model, including the hierarchical models for the exceedances and the extremal index, and quantities useful for comparison are given in section \ref{margin}. Section \ref{bivariate} describes our bivariate approach. Results are presented in section \ref{results} and we conclude with a discussion in section \ref{conclusions}.
 
-% \cite{fix2016comparison}
 
-% Need CMIP5 and other climate model references
+%We attempt to answer the questions posed earlier by comparing posterior intervals for statistical model parameters and other quantities such as return level (section \ref{return}) and Bhattacharyya distance (section \ref{bhatta}). Additionally, the bivariate analysis (section \ref{bivariate}) allows us to measure the strength of tail dependence between simulations and observations.
 
+% Bruno: This is way too little an introduction to the bivariate modeling topic
+
+
+% x Bruno: You need to write the references to previous statistical analysis of climate output, for sure Cooley's work
+
+
+
+%We take a Bayesian approach to modeling threshold exceedances (section \ref{thresh}). Under this framework, taking into account the replicated experiments is naturally addressed with a hierarchical model.
 
 % Being a threshold exceedance analysis, we must concern ourselves with exceedances occuring together within a short time. This is handled by studying the extremal index $\theta$, a measure of dependence among the extremes. With an estimate for $\theta$, we can ``decluster'' the exceedances to obtain independent clusters. The method for estimating $\theta$ and declustering has been generalized to the hierarchical setting, see section \ref{index}.
 
 % Having replicates of a time-series suggests the use of a hierarchical model, described in detail in section \ref{hier}. Under such a framework we can model each series separately, while assuming these series come from a larger population. In the analysis, we will place focus on the mean of this larger population, being akin to the ensemble average in a climate study. (mw: lol what is this nonsense?)
 
-We take a Bayesian approach to modeling threshold exceedances (section \ref{thresh}). Under this framework, taking into account the replicated experiments is naturally addressed with a hierarchical model.
 
-We attempt to answer the questions posed earlier by comparing posterior intervals for statistical model parameters and other quantities such as return level (section \ref{return}) and Bhattacharyya distance (section \ref{bhatta}). Additionally, the bivariate analysis (section \ref{bivariate}) allows us to measure the strength of tail dependence between simulations and observations.
-
-% Bruno: This is way too little an introduction to the bivariate modeling topic
 
 
