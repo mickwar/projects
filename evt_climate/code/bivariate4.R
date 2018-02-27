@@ -80,6 +80,11 @@ get_phi = function(x, obs.ind, sim.ind, cols){
     p = length(cols)
     n = nrow(x[[obs.ind]]$varmat)
 
+#   old.xy = matrix(0, n, p+1)
+#   old.xy[,1]  = x[[obs.ind]]$varmat[,1]
+#   old.xy[,2]  = x[[sim.ind]]$varmat[,cols[j]]
+#   thresh.xy = c(x[[obs.ind]]$threshold, x[[sim.ind]]$threshold[1])
+
     new.xy = matrix(0, n, p+1)
 
     ex = x[[obs.ind]]$varmat[,1] - x[[obs.ind]]$threshold
@@ -107,7 +112,6 @@ get_phi = function(x, obs.ind, sim.ind, cols){
 
     # ind = setdiff(ex.ind, zero.ind)
 
-    de.ind = rep(list(NULL), p)
     ind = rep(list(NULL), p)
     v = rep(list(NULL), p)
     cone = rep(list(NULL), p)
@@ -133,6 +137,39 @@ get_phi = function(x, obs.ind, sim.ind, cols){
 
     return (list("phi.s" = phi.s, "v" = v, "cone" = cone))
     }
+
+
+
+# pdf("~/biv_orig.pdf", height = 6, width = 6)
+# plot(old.xy, pch = 16, xlab = "Observations", ylab = "Simulations", axes = FALSE,
+#     main = "Original")
+# axis(1); axis(2)
+# abline(v = thresh.xy[1], lty = 2)
+# abline(h = thresh.xy[2], lty = 2)
+# dev.off()
+# 
+# pdf("~/biv_trans.pdf", height = 6, width = 6)
+# colors = rep("black", nrow(new.xy))
+# cexs = rep(1, nrow(new.xy))
+# colors[ind] = "firebrick"
+# cexs[ind] = 1.3
+# plot(new.xy, pch = 16, xlab = "Observations", ylab = "Simulations", axes = FALSE,
+#     main = "Transformed", col = colors, cex = cexs)
+# axis(1); axis(2)
+# dev.off()
+# 
+# pdf("~/biv_cone.pdf", height = 6, width = 6)
+# plot(cone, pch = 16, axes = FALSE, main = "Angles", col = 'firebrick',
+#     xlab = "Observations", ylab = "Simulations", cex = 1.3); axis(1); axis(2)
+# segments(rep(0, nrow(cone)), rep(0, nrow(cone)), cone[,1], cone[,2])
+# dev.off()
+# 
+# pdf("~/biv_phi.pdf", height = 6, width = 6)
+# hist(phi, col = 'gray', border = 'white', main = "Angles", freq = FALSE,
+#     xlab = expression(phi), breaks = 15)
+# lines(density(phi, bw = 0.04), col = 'firebrick', lwd = 3)
+# dev.off()
+
 
 
 wrapper = function(x, obs.ind, sim.ind, cols, zero, one, parts, nburn = 10000, nmcmc = 10000){
@@ -168,7 +205,6 @@ wrapper = function(x, obs.ind, sim.ind, cols, zero, one, parts, nburn = 10000, n
 
     # ind = setdiff(ex.ind, zero.ind)
 
-    de.ind = rep(list(NULL), p)
     ind = rep(list(NULL), p)
     v = rep(list(NULL), p)
     cone = rep(list(NULL), p)

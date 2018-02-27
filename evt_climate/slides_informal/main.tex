@@ -8,7 +8,9 @@
 \begin{document}
 
 
-\titlepage{Comparison of extreme values of different climate model simulations and observations}{Mickey Warner}{\ }{30 Oct 2017}
+\titlepage{Extreme value comparison of climate model simulations and observations}{Mickey Warner}{\ }{27 Feb 2018}
+
+%\titlepage{Comparison of extreme values of different climate model simulations and observations}{Mickey Warner}{\ }{30 Oct 2017}
 
 
 
@@ -269,22 +271,111 @@ $D_B$ is computed between parameters in the replicates (and observations) and pa
 
 \begin{frame}{Bivariate analysis}
 
-Bivariate analysis using simple Pareto processes
+The univariate analysis allows us to make comparisons between simulations and observations, but not to model their extremal relationship.
+\bigskip
+
+A key concept in multivariate extreme value analysis is asymptotic tail dependence, described by the following quantity
+\[ \chi = \lim_{z\rightarrow z^*} P(X > z | Y > z) \]
+where $X$ and $Y$ share a common marginal distribution and $z^*$ is the (possibly infinite) right end-point of $X$ and $Y$.
+\bigskip
+
+Note: even for normal distributions with correlation $\rho < 1$, $\chi=0$.
+
+
 
 \end{frame}
 
-\begin{frame}{Simple pareto process}
+\begin{frame}{Simple Pareto process}
 
-Limit
+For stochastic process $X$, define
+\[ T_t X  = \left(1 + \xi\frac{X - u_t}{\sigma_t}\right)_+^{1/\xi}. \]
 
-Transform
+Under certain conditions,
+\[ \lim_{t\rightarrow\infty} P\left(T_t X \in A \middle| \sup_{s\in S} T_t X(s) > 1\right) = P(W \in A) \]
+where $W$ is a simple Pareto process (SPP).
+\bigskip
 
-Figure of transformed (include supremum cone) and non-transformed data
+Note: for SPP, we cannot have $\chi=0$.
 
 \end{frame}
 
-\begin{frame}{}
+\begin{frame}{Simple Pareto process, continued}
+
+Climate simulations and observations are transformed with
+\[ W_i(s_j) = T_t X_i(s_j) = \left(1 + \xi(s_j)\frac{X_i(s_j) - u_t(s_j)}{\sigma_t(s_j)}\right)_+^{1/\xi(s_j)}. \]
+using posterior means for $\xi$ and $\sigma$, where $s_j$ denotes the data source and $i$ denotes individual observations.
+\bigskip
+
+Let $\m{W}(s)=(W_1(s),\ldots, W_{n(s)}(s))^\top$, and form the bivariate vector $\m{W}_{12}=(\m{W}(s_1), \m{W}(s_2))$ for some $s_1,s_2$ pair.
+\bigskip
+
+Rows of $\m{W}_{12}$ are considered samples from a simple Pareto process.
+
+
 \end{frame}
+
+\begin{frame}{Bivariate data}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.34]{figs/biv_orig.pdf}
+\end{center}
+\caption{Untransformed data for CA winter precipitation, observations against the first control replicate. Dashed lines mark the thresholds.}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Bivariate  data}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.34]{figs/biv_trans.pdf}
+\end{center}
+\caption{Data transformed to have Pareto marginals in the exceedances. Red dots mark the points that are kept after declustering.}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Asymptotic tail dependence for SPP}
+
+Each row of $\m{W}_{12}$ can be written as
+\[ (Y_iV_i(s_1), ~ Y_iV_i(s_2)), \]
+where $Y_i$ is a standard Pareto random variable and $V_i(s_j)\geq 0$ with $V_i(s_1) \vee V_i(s_2) = 1$, for all $i$.
+\bigskip
+
+It can be shown that 
+\[ \chi &= E\left(\frac{V(s_1)}{E(V(s_1))} \wedge \frac{V(s_2)}{E(V(s_2))}\right) \]
+
+\end{frame}
+
+\begin{frame}{Bivariate data}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.34]{figs/biv_cone.pdf}
+\end{center}
+\caption{The red dots mark the points $(V_i(s_1), V_i(s_2)$. These are constrained to lie on the unit supremum cone.}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Asymptotic tail dependence for SPP, continued}
+
+Given the supremum constraint for $V_i(s_1)$ and $V_i(s_2)$, we can write rows of $\m{W}_{12}$ in terms of $Y_i$ and the angle
+\[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
+
+The angles $\phi_1,\ldots,\phi_n$ are modeled with a Bernstein-Dirichlet prior (BDP), a flexible model for density estimation.
+\bigskip
+
+Posterior samples for $\phi$ are back-transformed to $(V(s_1), V(s_2))$ and $\chi$ is estimated.
+
+\end{frame}
+
+
+\begin{frame}{Bivariate data}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.34]{figs/biv_phi.pdf}
+\end{center}
+\caption{$(V_i(s_1), V_i(s_2))$ transformed to $ \phi_i$.}
+\end{figure}
+\end{frame}
+
 
 \begin{frame}
 \begin{center}
@@ -295,98 +386,5 @@ Figure of transformed (include supremum cone) and non-transformed data
 
 
 
-
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_california_winter_pr_hier_zeta.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_california_winter_pr_hier_returnlevel.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_ksi.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_sigma.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_zeta.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_california_winter_pr_hier_returnlevel.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_ksi.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_sigma.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_zeta.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1961_usa_winter_pr_hier_returnlevel.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_ksi.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_sigma.pdf}
-% \end{center}
-% \end{frame}
-% 
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_zeta.pdf}
-% \end{center}
-% \end{frame}
-% 
-% \begin{frame}
-% \begin{center}
-% \includegraphics[scale=0.28]{figs/decadal1989_usa_winter_pr_hier_returnlevel.pdf}
-% \end{center}
-% \end{frame}
 
 \end{document}
