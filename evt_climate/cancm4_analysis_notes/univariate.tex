@@ -83,7 +83,33 @@ l(\theta, p; \m{T}) =&~ m_1\log(1-\theta p^\theta) + (N-1-m_1)\{\log(\theta)+ \l
  &+ \theta\log(p)\sum_{i=1}^{N-1}(T_i-1) \label{ferro}
 \end{align}
 where $p$ is the probability of not exceeding the threshold. We require that this likelihood be used in a hierarchical model.
-independence between the simulations, we can construct the following log-likelihood
+
+Suppose we have $R$ replicates from a climate model with values from replicate $i$ denoted $X_{i,1},\ldots,X_{i,n}$. If we assume these simulations are independent from each other, then we expect there to be $R$ unique extremal indices $\theta_1,\ldots,\theta_R$. However, since these all come from the same climate model, we may wish to assume that the $\theta_i$ come from a common distribution,  
+\[ \theta_i \overset{iid}\sim Beta\left(\theta\nu, (1-\theta)\nu\right), \]    
+having mean $\theta\nu /(\theta\nu + (1-\theta)\nu) = \theta$. Under model (\ref{ferro}), we place a similar prior on the $p_i$,   
+\[ p_i \overset{iid}\sim Beta\left(p\tau, (1-p)\tau\right). \] 
+   
+The model is completed by choosing priors for $\theta$, $\nu$, $p$, and $\tau$---the latter two parameters being required only for model (\ref{ferro}). We assume  
+\begin{align*} 
+\theta &\sim Beta(a_\theta, b_\theta) \\   
+\nu &\sim Gamma(a_\nu, b_\nu) \\   
+p &\sim Beta(a_p, b_p) \\  
+\tau &\sim Gamma(a_\tau, b_\tau)   
+\end{align*}   
+with the hyperparameters chosen to be  
+%\begin{table}[h]  
+\begin{center} 
+\begin{tabular}{rlcl}  
+$\theta$: & $a_\theta = 1          $ &~~& $b_\theta = 1/2             $ \\ 
+$   \nu$: & $   a_\nu = 1          $ &~~& $   b_\nu = 1/10            $ \\ 
+$     p$: & $     a_p = 100 \hat{F}$ &~~& $     b_p = 100 (1-\hat{F}) $ \\ 
+$  \tau$: & $  a_\tau = 1          $ &~~& $  b_\tau = 1/10            $ \\ 
+\end{tabular}  
+\end{center}   
+%\end{table}   
+where $\hat{F}=\sum_{i=1}^R\sum_{j=1}^n \ind(X_{i,j}\leq u)$. Our parametrization for the gamma random variables are such that $X\sim Gamma(\alpha,\beta)$ has mean $\alpha/\beta$. The prior values for $\theta$ attempt to mitigate some of the issues surrounding model (\ref{ferro}).  
+   
+By assuming conditional independence between the simulations, we can construct the following log-likelihood
 \begin{align}
 L = \sum_{i=1}^R l(\theta_i, p_i; \m{T}^{(i)}) \label{hiertheta}
 \end{align}
@@ -97,21 +123,32 @@ Declustering is done as given in \cite{ferro2003inference}. Each replicate is de
 
 The $C_i$ clusters that will be formed using the above scheme are assumed to be independent. For each cluster we compute the cluster maximum, this being the ultimate quantity used in our inference.
 
+% \subsection{Return levels}
+% \label{return}
+% 
+% A most useful quantity in an extreme value analysis is the return level. Generally, for a distribution $G$, the return level $x_m$ is the solution to
+% \begin{align}
+% G(x_m) = 1-\frac{1}{m}
+% \end{align}
+% and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
+% 
+% When working with the generalized Pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
+% \begin{align}
+% x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{rl}
+% \end{align}
+% where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. We can obtain a distribution for $x_m$ using MCMC samples for $(\xi, \sigma, \zeta)$. Posterior samples for $\theta$ are obtained separately from $(\xi, \sigma, \zeta)$, and so we choose to use the posterior mean for $\theta$ when computing return levels. The intention here is avoid possible complications due to the fact we do not have samples of the joint vector $(\xi, \sigma, \zeta, \theta)$.
+
 \subsection{Return levels}
 \label{return}
 
 A most useful quantity in an extreme value analysis is the return level. Generally, for a distribution $G$, the return level $x_m$ is the solution to
-\begin{align}
-G(x_m) = 1-\frac{1}{m}
-\end{align}
-and has the convenient interpretation as the quantity that is exceeded on average once every $m$ observations.
-% TODO: needs more intuition
-
-When working with the generalized Pareto model (\ref{gpapprox}), it can be shown that the $m$-observation return level is
+$ G(x_m) = 1-1/m$ which is interpreted as
+the quantity that is exceeded on average once every $m$ observations.
+For our model the return level is
 \begin{align}
 x_m = u +\frac{\sigma}{\xi}\left[\left(m\zeta\theta\right)^\xi-1\right] \label{rl}
 \end{align}
-where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. We can obtain a distribution for $x_m$ using MCMC samples for $(\xi, \sigma, \zeta)$. Posterior samples for $\theta$ are obtained separately from $(\xi, \sigma, \zeta)$, and so we choose to use the posterior mean for $\theta$ when computing return levels. The intention here is avoid possible complications due to the fact we do not have samples of the joint vector $(\xi, \sigma, \zeta, \theta)$.
+where the terms $\zeta$ and $\theta$ account for the probability of exceeding $u$ and being within a cluster, respectively. 
 
 
 \subsection{Bhattacharyya distance}

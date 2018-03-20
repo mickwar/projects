@@ -44,7 +44,7 @@ where $a \vee b=\max(a,b)$. The points $(V_i(s_1), V_i(s_2))$ fall along the cur
 \[ \phi_i = \frac{2}{\pi}\arctan\left(\frac{V_i(s_2)}{V_i(s_1)}\right)\in[0,1]. \]
 We scale $\phi_i$ to be in $[0,1]$ so we can model the density of the angles using a Bernstein-Dirichlet prior (BDP) \citep{petrone1999bayesian}. Since we will be fitting models to many sets of $\phi_i$'s, we desire a model that is flexible at capturing a large variety of possible distributions. The BDP is fit using the \texttt{R} package \texttt{DPpackage}.
 
-Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\phi_i$ for which $Y_i>1$. This corresponds to only using the angles that are associated with a threshold exceedance. Also, because the BDP has difficulty when too much mass is on the edges, we make the following adjustment. The $\phi_i\in[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remainder are used in the BDP model. We find that $k_{max}=300$, which determines the maximum degree of Bernstein polynomials the model is to allow for, was acceptable when applied to the angles.
+Since Theorem 3.2 holds when $\sup_{s\in S}T_t X(s) > 1$ we need only those $\phi_i$ for which $Y_i>1$. This corresponds to only using the angles that are associated with a threshold exceedance. Due to some difficulty fitting the BDP with \texttt{DPpackage} when too much mass is on the edges, we make the following adjustment. The $\phi_i\in[0, 0.005]$ are treated as zero and those in $[0.995, 1]$ are treated as one. The remaining $\phi_i\in(0.005, 0.995)$ are used in the BDP model. We find that $k_{max}=300$, which determines the maximum degree of Bernstein polynomials the model is to allow for, was acceptable when applied to the angles.
 
 
 
